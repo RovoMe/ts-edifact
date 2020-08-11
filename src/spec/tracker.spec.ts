@@ -18,10 +18,10 @@
 
 import { Tracker } from "../main/tracker";
 
-fdescribe("Tracker", () => {
+describe("Tracker", () => {
     let tracker: Tracker;
 
-    // -
+    // ok
     it("shouldn't accept unknown segments", () => {
         tracker = new Tracker([
             { content: "AAA", mandatory: true, repetition: 1 }
@@ -29,7 +29,7 @@ fdescribe("Tracker", () => {
         expect(() => tracker.accept("SEG")).toThrow();
     });
 
-    // -
+    // ok
     it("should throw if omitting a mandatory segment", () => {
         tracker = new Tracker([
             { content: "AAA", mandatory: true, repetition: 1 },
@@ -38,7 +38,7 @@ fdescribe("Tracker", () => {
         expect(() => tracker.accept("BBB")).toThrow();
     });
 
-    // -
+    // ok
     it("can accept the first segment again after a reset", () => {
         tracker = new Tracker([
             { content: "AAA", mandatory: false, repetition: 1 },
@@ -50,7 +50,7 @@ fdescribe("Tracker", () => {
         expect(() => tracker.accept("AAA")).not.toThrow();
     });
 
-    // -
+    // ok
     describe("expecting a mandatory repeatable segment", () => {
         // Such a segment defines a repetition property higher than one. However,
         // a mandatory segment only requires the segment to be included once
@@ -73,7 +73,7 @@ fdescribe("Tracker", () => {
         });
     });
 
-    // -
+    // ok
     describe("expecting a conditional segment", () => {
         beforeEach(() => {
             tracker = new Tracker([
@@ -145,7 +145,7 @@ fdescribe("Tracker", () => {
             expect(() => tracker.accept("DDD")).not.toThrow();
         });
 
-        // -
+        // ok
         it("can skip to the next entry", () => {
             expect(() => tracker.accept("DDD")).not.toThrow();
         });
@@ -186,7 +186,7 @@ fdescribe("Tracker", () => {
         });
     });
 
-    // -
+    // ok
     it("can skip a mandatory group without mandatory elements", () => {
         // Checking for mandatory omissions should only be done for segments and not
         // for groups

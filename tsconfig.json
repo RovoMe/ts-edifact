@@ -12,7 +12,9 @@
 		"noUnusedLocals": true,
 		"strictNullChecks": true,
 		"strict": true,   /* enable all strict type-checking options */
-		"skipLibCheck": true
+		"skipLibCheck": true,
+		"resolveJsonModule": true,
+		"moduleResolution": "node"
 	},
 	"include": [
 		"src/**/*.ts",

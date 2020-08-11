@@ -23,6 +23,9 @@ export type MessageType = {
     data?: string[];
 };
 
+/**
+ * A utility class representing the current position in a segment group.
+ */
 class Pointer {
 
     array: MessageType[];
@@ -52,16 +55,34 @@ export class Tracker {
 
     stack: Pointer[];
 
+    /**
+     * Construct a new tracker pointing to the first segment in the table.
+     *
+     * @constructs Tracker
+     * @param table The segment table to track against.
+     */
     constructor(table: MessageType[]) {
         this.stack = [ new Pointer(table, 0) ];
     }
 
+    /**
+     * Reset the tracker to the initial position of the current segment table.
+     */
     reset(): void {
         this.stack.length = 1;
         this.stack[0].position = 0;
         this.stack[0].count = 0;
     }
 
+    /**
+     * Match a segment to the message structure and update the current
+     * position of the tracker.
+     *
+     * @param segment The segment name.
+     * @throws {Error} Throws if a mandatory segment was omitted.
+     * @throws {Error} Throws if unidentified segments are encountered.
+     * @throws {Error} Throws if a segment is repeated too much.
+     */
     accept(segment: string | MessageType): void {
         let current: Pointer = this.stack[this.stack.length - 1];
         let optionals: number[] = [];
@@ -94,38 +115,39 @@ export class Tracker {
                         probe = probe + this.stack.length;
                     }
                 }
-            }
 
-            current.position++;
-            current.count = 0;
-            if (current.position === current.array.length) {
-                this.stack.pop();
-                current = this.stack[this.stack.length - 1];
-                if (this.stack.length === 0) {
-                    throw new Error("Reached the end of the segment table");
-                }
-                if (probe === 0 && current.count < current.repetition()) {
-                    // If we are not currently probling (meaning the tracker actually
-                    // accepted the group), we should retry the current group, except if
-                    // the maximum number of repetition was reached
-                    probe++;
-                    optionals = [this.stack.length];
-                    current.count++;
-                    current = new Pointer(current.content() as MessageType[], 0);
-                    this.stack.push(current);
-                } else {
-                    if (!current.mandatory() || current.count > 1) {
-                        optionals.pop();
+                current.position++;
+                current.count = 0;
+                if (current.position === current.array.length) {
+                    this.stack.pop();
+                    current = this.stack[this.stack.length - 1];
+                    if (this.stack.length === 0) {
+                        throw new Error("Reached the end of the segment table");
                     }
-                    // Decrease the probing level only if the tracker is currently in a
-                    // probing state.
-                    probe = probe > 0 ? probe - 1 : 0;
-                    // Make sure the tracker won't enter the current group again by
-                    // setting an apprpriate count value on the groups pointer
-                    current.count = current.repetition();
+                    if (probe === 0 && current.count < current.repetition()) {
+                        // If we are not currently probling (meaning the tracker actually
+                        // accepted the group), we should retry the current group, except if
+                        // the maximum number of repetition was reached
+                        probe++;
+                        optionals = [this.stack.length];
+                        current.count++;
+                        current = new Pointer(current.content() as MessageType[], 0);
+                        this.stack.push(current);
+                    } else {
+                        if (!current.mandatory() || current.count > 1) {
+                            optionals.pop();
+                        }
+                        // Decrease the probing level only if the tracker is currently in a
+                        // probing state.
+                        probe = probe > 0 ? probe - 1 : 0;
+                        // Make sure the tracker won't enter the current group again by
+                        // setting an apprpriate count value on the groups pointer
+                        current.count = current.repetition();
+                    }
                 }
             }
         }
         current.count += 1;
+        return;
     }
 }
