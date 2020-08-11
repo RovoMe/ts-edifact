@@ -1,0 +1,26 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"target": "es6",
+		"outDir": "out",
+		"lib": [
+			"es6"
+		],
+		"sourceMap": true,
+		"rootDir": "src",
+		"removeComments": true,
+		"noUnusedLocals": true,
+		"strictNullChecks": true,
+		"strict": true,   /* enable all strict type-checking options */
+		"skipLibCheck": true
+	},
+	"include": [
+		"src/**/*.ts",
+        "./node_modules/vscode/vscode.d.ts",
+        "./node_modules/vscode/lib/*", "spec/runner.ts"
+	],
+	"exclude": [
+		"node_modules",
+		".vscode-test"
+	]
+}
