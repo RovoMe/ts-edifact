@@ -21,12 +21,13 @@ export type MessageType = {
     mandatory: boolean;
     repetition: number;
     data?: string[];
+    name?: string;
 };
 
 /**
  * A utility class representing the current position in a segment group.
  */
-class Pointer {
+export class Pointer {
 
     array: MessageType[];
     position: number;
@@ -48,6 +49,10 @@ class Pointer {
 
     repetition(): number {
         return this.array[this.position].repetition;
+    }
+
+    name(): string | undefined {
+        return this.array[this.position].name;
     }
 }
 
@@ -125,7 +130,7 @@ export class Tracker {
                         throw new Error("Reached the end of the segment table");
                     }
                     if (probe === 0 && current.count < current.repetition()) {
-                        // If we are not currently probling (meaning the tracker actually
+                        // If we are not currently probing (meaning the tracker actually
                         // accepted the group), we should retry the current group, except if
                         // the maximum number of repetition was reached
                         probe++;
@@ -141,7 +146,7 @@ export class Tracker {
                         // probing state.
                         probe = probe > 0 ? probe - 1 : 0;
                         // Make sure the tracker won't enter the current group again by
-                        // setting an apprpriate count value on the groups pointer
+                        // setting an appropriate count value on the groups pointer
                         current.count = current.repetition();
                     }
                 }
