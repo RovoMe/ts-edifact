@@ -6,6 +6,9 @@
       "engines": {
             "vscode": "^1.46.0"
       },
+      "main": "lib/index.js",
+      "types": "lib/index.d.ts",
+      "keywords": ["edi", "edifact", "parser"],
       "publisher": "Roman Vottner",
       "preview": true,
       "readme": "README.md",
@@ -23,18 +26,24 @@
       },
       "scripts": {
             "lint": "eslint ./src/main --ext .ts,.tsx",
-            "build": "npm run lint && tsc -p .",
+            "build": "tsc -p .",
             "build:watch": "tsc -p . --watch",
             "check": "npm run check:tsc",
             "check:tsc": "tsc -p . --noEmit",
-            "pretest": "npm run build && npm run lint",
+            "pretest": "npm run lint && npm run build",
             "test": "jasmine-ts JASMINE_CONFIG_PATH=spec/support/jasmine.json",
             "test:alloy": "ts-node -r tsconfig-paths/registernode_modules/jasmine/bin/jasmine.js \"src/test/**/*.spec.ts\"",
             "coverage": "nyc -r lcov -e .ts -x \"*.spec.ts\" jasmine-ts JASMINE_CONFIG_PATH=spec/support/jasmine.json",
             "webpack": "webpack --mode development",
             "webpack-dev": "webpack --mode development --watch",
             "prepackage-dev": "npm run test && npm run webpack",
-            "prepackage": "npm run test && webpack --mode production"
+            "prepackage": "npm run test && webpack --mode production",
+
+            "prepare": "npm run build",
+            "prepublishOnly": "npm test && npm run lint",
+            "preversion": "npm run lint",
+            "version": "git add -A src",
+            "postversion": "git push && git push -- tags"
       },
       "devDependencies": {
             "@types/jasmine": "^3.5.11",
@@ -59,10 +68,5 @@
             "webpack": "^4.43.0",
             "webpack-cli": "^3.3.12"
       },
-      "dependencies": {
-            "@types/events": "^3.0.0",
-            "@types/node": "^14.0.23",
-            "events": "^3.1.0",
-            "typescript": "^3.9.6"
-      }
+      "files": ["lib/**/*"]
 }

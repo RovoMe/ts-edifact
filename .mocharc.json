@@ -1,8 +1,0 @@
-{
-    "extension": ["ts"],
-    "files": "src/test/unit/**/*.ts",
-    "require": "ts-node/register",
-    "ui": "tdd",
-    "timeout": "999999",
-    "colors": true
-}

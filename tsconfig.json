@@ -2,16 +2,17 @@
 	"compilerOptions": {
 		"module": "commonjs",
 		"target": "es6",
-		"outDir": "out",
+		"outDir": "./lib",
 		"lib": [
 			"es6"
 		],
+		"declaration": true,
 		"sourceMap": true,
-		"rootDir": "src",
+		"rootDir": "src/main",
 		"removeComments": true,
 		"noUnusedLocals": true,
 		"strictNullChecks": true,
-		"strict": true,   /* enable all strict type-checking options */
+		"strict": true,
 		"skipLibCheck": true,
 		"resolveJsonModule": true,
 		"moduleResolution": "node"
@@ -19,10 +20,14 @@
 	"include": [
 		"src/**/*.ts",
         "./node_modules/vscode/vscode.d.ts",
-        "./node_modules/vscode/lib/*", "spec/runner.ts"
+		"./node_modules/vscode/lib/*", 
+		"spec/runner.ts",
+		"src/main/messages/**/*"
 	],
 	"exclude": [
 		"node_modules",
-		".vscode-test"
+		".vscode-test",
+		"**/spec/*",
+		"src/examples/**"
 	]
 }
