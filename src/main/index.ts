@@ -52,3 +52,31 @@ export {
 
 export { segments as segmentTable } from "./segments";
 export { elements as elementTable} from "./elements";
+
+import * as APERAK from "./messages/APERAK.json";
+import * as AUTHOR from "./messages/AUTHOR.json";
+import * as BALANC from "./messages/BALANC.json";
+import * as DESADV from "./messages/DESADV.json";
+import * as INVOIC from "./messages/INVOIC.json";
+import * as INVRPT from "./messages/INVRPT.json";
+import * as ORDERS from "./messages/ORDERS.json";
+import * as OSTENQ from "./messages/OSTENQ.json";
+import * as OSTRPT from "./messages/OSTRPT.json";
+import * as PARTIN from "./messages/PARTIN.json";
+import * as TAXCON from "./messages/TAXCON.json";
+import * as VATDEC from "./messages/VATDEC.json";
+
+import * as D96A_INVOIC from "./messages/D96A_INVOIC.json";
+import * as D01B_INVOIC from "./messages/D01B_INVOIC.json";
+
+import * as D04A_DESADV from "./messages/D04A_DESADV.json";
+import * as D05A_DESADV from "./messages/D05A_DESADV.json";
+import * as D06A_DESADV from "./messages/D06A_DESADV.json";
+import * as D07A_DESADV from "./messages/D07A_DESADV.json";
+import * as D08A_DESADV from "./messages/D08A_DESADV.json";
+import * as D09A_DESADV from "./messages/D09A_DESADV.json";
+import * as D18A_DESADV from "./messages/D18A_DESADV.json";
+
+export { APERAK, AUTHOR, BALANC, DESADV, INVOIC, INVRPT, ORDERS, OSTENQ, OSTRPT, PARTIN, TAXCON, VATDEC };
+export { D96A_INVOIC, D01B_INVOIC };
+export { D04A_DESADV, D05A_DESADV, D06A_DESADV, D07A_DESADV, D08A_DESADV, D09A_DESADV, D18A_DESADV};
