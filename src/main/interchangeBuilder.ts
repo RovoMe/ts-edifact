@@ -22,20 +22,29 @@ import { MessageType, Pointer } from "./tracker";
 import * as fs from "fs";
 
 abstract class SegmentContainer {
-    groups: Group[] = [];
-    segments: ResultType[] = [];
+    data: (Group | ResultType)[] = [];
 
     addSegment(segment: ResultType): void {
-        this.segments.push(segment);
+        this.data.push(segment);
     }
 
     addGroup(group: Group): void {
-        this.groups.push(group);
+        this.data.push(group);
+    }
+
+    groupCount(): number {
+        let count: number = 0;
+        for (const group of this.data) {
+            if (group instanceof Group) {
+                count++;
+            }
+        }
+        return count;
     }
 
     containsGroup(groupName: string): boolean {
-        for (const group of this.groups) {
-            if (group.name === groupName) {
+        for (const group of this.data) {
+            if (group instanceof Group && group.name === groupName) {
                 return true;
             }
         }
@@ -43,8 +52,8 @@ abstract class SegmentContainer {
     }
 
     groupByName(groupName: string): Group | undefined {
-        for (const group of this.groups) {
-            if (group.name === groupName) {
+        for (const group of this.data) {
+            if (group instanceof Group && group.name === groupName) {
                 return group;
             }
         }
@@ -52,7 +61,7 @@ abstract class SegmentContainer {
     }
 }
 
-class Group extends SegmentContainer {
+export class Group extends SegmentContainer {
     name: string;
     parent: Message | Group;
 
@@ -63,7 +72,7 @@ class Group extends SegmentContainer {
     }
 }
 
-class MessageIdentifier {
+export class MessageIdentifier {
 
     messageType: string;
     messageVersionNumber: string;
@@ -90,7 +99,7 @@ class MessageIdentifier {
     }
 }
 
-class StatusOfTransfer {
+export class StatusOfTransfer {
 
     sequenceOfTransfer: number;
     firstAndLastTransfer: string | undefined;
@@ -124,26 +133,26 @@ abstract class IdAndVersionPart {
     }
 }
 
-class MessageSubsetIdentification extends IdAndVersionPart {
+export class MessageSubsetIdentification extends IdAndVersionPart {
 
     constructor(components: string[]) {
         super(components);
     }
 }
 
-class MessageImplementationGuidelineIdentification extends IdAndVersionPart {
+export class MessageImplementationGuidelineIdentification extends IdAndVersionPart {
     constructor(components: string[]) {
         super(components);
     }
 }
 
-class ScenarioIdentification extends IdAndVersionPart {
+export class ScenarioIdentification extends IdAndVersionPart {
     constructor(components: string[]) {
         super(components);
     }
 }
 
-class Message extends SegmentContainer {
+export class Message extends SegmentContainer {
 
     messageRefNumber: string | undefined;
     messageIdentifier: MessageIdentifier;
@@ -175,7 +184,7 @@ class Message extends SegmentContainer {
     }
 }
 
-class SyntaxIdentifier {
+export class SyntaxIdentifier {
 
     syntaxIdentifer: string;
     version: string;
@@ -215,21 +224,21 @@ abstract class Participant {
     }
 }
 
-class Sender extends Participant {
+export class Sender extends Participant {
 
     constructor(compnenets: string[]) {
         super(compnenets);
     }
 }
 
-class Receiver extends Participant {
+export class Receiver extends Participant {
 
     constructor(components: string[]) {
         super(components);
     }
 }
 
-class RecipientsRef {
+export class RecipientsRef {
 
     password: string;
     passwordQualifier: string | undefined;
@@ -412,7 +421,7 @@ export class InterchangeBuilder {
                         this.stack.push(current);
                     } else {
                         if (!current.mandatory() || current.count > 1) {
-                            optionals.push();
+                            optionals.pop();
                         }
                         // Decrease the probing level only if the tracker is currently in a
                         // probing state
@@ -441,6 +450,36 @@ export class InterchangeBuilder {
                         const group: Group | undefined = curObj.groupByName(groupName);
                         if (group) {
                             curObj = group;
+                            // check wheter the stack count is larger than 1, if so, we know that
+                            // there is a repetition going on, which we would like to put into
+                            // their own subgroups.
+                            if (pointer.count > 1) {
+                                // If the first entry in the object is not a group, we need to
+                                // pop everything from that group, create a new subgroup, assign
+                                // the popped fields to the subgroup and add the subgroup to the
+                                // group. We can assume that the first entry to a group will never
+                                // be a group itself but a segment
+                                if (!(group.data[0] instanceof Group)) {
+                                    const subGroup: Group = new Group("0", group);
+                                    for (const data of group.data) {
+                                        if (data instanceof Group) {
+                                            subGroup.addGroup(data);
+                                        } else {
+                                            subGroup.addSegment(data);
+                                        }
+                                    }
+                                    group.data = [];
+                                    group.addGroup(subGroup);
+                                }
+                                const subGroup: Group | undefined = group.groupByName(`${pointer.count - 1}`);
+                                if (subGroup) {
+                                    curObj = subGroup;
+                                } else {
+                                    const sg: Group = new Group(`${group.groupCount()}`, group);
+                                    group.addGroup(sg);
+                                    curObj = sg;
+                                }
+                            }
                         } else {
                             throw Error(`Could not find group ${groupName} as part of ${curObj.toString()}`);
                         }
@@ -450,7 +489,11 @@ export class InterchangeBuilder {
                 }
             }
         } else {
-            obj.addSegment(segment);
+            // UNH is already converted to a Message object, so we don't need to store
+            // that data again
+            if (segment.name !== "UNH") {
+                obj.addSegment(segment);
+            }
         }
     }
 
