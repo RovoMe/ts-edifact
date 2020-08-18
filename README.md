@@ -175,7 +175,7 @@ new Reader();
 
 | Function | Description |
 | -------- | ----------- |
-| `define(definitions: (Dictionary<SegmentEntry> | Dictionary<ElementEntry>)): void` | Feeds the validator used inside the reader with the set of known segment and element definitions. Parsed segments which do not adhere to the segments or elements defined in these tables will lead to a failure being thrown and therefore fail the parsing of the Edifact document. |
+| `define(definitions: (Dictionary\<SegmentEntry> \| Dictionary\<ElementEntry>)): void` | Feeds the validator used inside the reader with the set of known segment and element definitions. Parsed segments which do not adhere to the segments or elements defined in these tables will lead to a failure being thrown and therefore fail the parsing of the Edifact document. |
 | `encoding(encoding: string): void` | Specifies the character set to use while parsing the Edifact document. By default [`UNOA`](https://blog.sandro-pereira.com/2009/08/15/edifact-encoding-edi-character-set-support/) will be used. | 
 | `parse(document: string): ResultType[]` | Will attempt to parse the document to an array of segment objects where each segment object contains a name and a further multidimensional array of strings representing the elements in the outer array and the respective components of an element in the inner array. Any validation error encountered while reading the Edifact document will lead to an error being thrown and does ending the parsing process preemptively. |
 
@@ -206,8 +206,8 @@ new ValidatorImpl()
 | -------- | ----------- |
 | `disable(): void` | Disable validation. |
 | `enable(): void` | Enable validation. |
-| `define(definitions: (Dictionary<SegmentEntry> | Dictionary<ElementEntry>)): void` | Provision the validator with an array of segment and element definitions. |
-| `format(formatString: string): FormatType | undefined` | Requests a component definition associated with a format string |
+| `define(definitions: (Dictionary<SegmentEntry> \| Dictionary<ElementEntry>)): void` | Provision the validator with an array of segment and element definitions. |
+| `format(formatString: string): FormatType \| undefined` | Requests a component definition associated with a format string |
 | `onOpenSegment(segment: string): void` | Start validation of a new segment |
 | `onElement(): void` | Add an element |
 | `onOpenComponent(buffer: Tokenizer): void` | Open a component |
