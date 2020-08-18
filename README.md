@@ -86,7 +86,7 @@ Definitions can be provided to describe the structure of segments and elements. 
 }
 ```
 
-A corresponding definition from the UN/EDIFACT `D06A` spec for the above mentioned `BGM` segment can be seen following [this link].
+A corresponding definition from the UN/EDIFACT `D06A` spec for the above mentioned `BGM` segment can be seen following [this link](http://www.unece.org/trade/untdid/d06a/trsd/trsdbgm.htm).
 
 The `requires` property indicates the number of elements which are required to obtain a valid segment. The `elements` array contains the names of the elements which should be provided. Definitions can also be provided for these elements:
 
