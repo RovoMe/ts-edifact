@@ -184,14 +184,14 @@ new Reader();
 
 A utility class which validates segment order against a given message structure. The constructor accepts a segment table as it's first argument:
 
-```
-new Tracker(table)
+```typescript
+new Tracker(table: MessageType[]);
 ```
 
 | Function | Description |
 | -------- | ----------- |
-| `accept(segment)` | Match a segment to the message structure and update the current position of the tracker. |
-| `reset()` | Reset the tracker to the initial position of the current segment table. |
+| `accept(segment: string \| MessageType): void` | Match a segment to the message structure and update the current position of the tracker. |
+| `reset(): void` | Reset the tracker to the initial position of the current segment table. |
 
 <a name="Validator"></a>
 ### Validator
@@ -199,7 +199,7 @@ new Tracker(table)
 The `Validator` can be used to validate segments, elements and components. It keeps track of element and component counts and checks if the component types match those in the segment definition.
 
 ```typescript
-new ValidatorImpl()
+new ValidatorImpl();
 ```
 
 | Function | Description |
