@@ -38,6 +38,7 @@
     "RFF": { "requires": 1, "elements": ["C506"] },
     "SEL": { "requires": 0, "elements": ["9308", "C215", "4517", "C208"] },
     "SGP": { "requires": 1, "elements": ["C237", "7224"] },
+    "TAX": { "requires": 1, "elements": ["5283", "C241", "C533", "5286", "c243", "5305", "3446"] },
     "TDT": { "requires": 1, "elements": ["8051", "8028", "C220", "C228", "C040", "8101", "C401", "C222", "8281"] },
     "TMD": { "requires": 0, "elements": ["C219", "8332", "8341"] },
     "TOD": { "requires": 0, "elements": ["4055", "4215", "C100"] },

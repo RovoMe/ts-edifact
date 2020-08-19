@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * @author Roman Vottner
  * @copyright 2020 Roman Vottner

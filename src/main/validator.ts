@@ -233,7 +233,7 @@ export class ValidatorImpl implements Validator {
                     // the validator in the elements state.
                     this.state = ValidatorStates.ELEMENTS;
                 } else {
-                    this.state = ValidatorStates.SEGMENTS;
+                    throw this.errors.missingSegmentDefinition(segment);
                 }
         }
         this.counts.segment += 1;
@@ -333,8 +333,18 @@ export class ValidatorImpl implements Validator {
             case ValidatorStates.ALL:
                 // Component validation is only needed when validation is set to all
                 length = buffer.length();
-                if (length < this.minimum || length > this.maximum) {
-                    throw this.errors.invalidData(buffer.content());
+                // eslint-disable-next-line no-case-declarations
+                let name: string;
+                if (this.segment) {
+                    name = this.segment.elements[this.counts.element];
+                } else {
+                    throw this.errors.missingSegmentStart(this.segment);
+                }
+
+                if (length < this.minimum) {
+                    throw this.errors.invalidData(name, `'${buffer.content()}' length is less than minimum length ${this.minimum}`);
+                } else if (length > this.maximum) {
+                    throw this.errors.invalidData(name, `'${buffer.content()} exceeds maximum length ${this.maximum}`);
                 }
         }
     }
@@ -372,8 +382,8 @@ export class ValidatorImpl implements Validator {
     }
 
     private errors = {
-        invalidData: function(data: string): Error {
-            return new Error("Could not accept " + data);
+        invalidData: function(element: string, msg: string): Error {
+            return new Error(`Could not accept data on element ${element}: ${msg}`);
         },
         invalidFormatString: function(formatString: string): Error {
             return new Error("Invalid format string " + formatString);
@@ -413,7 +423,10 @@ export class ValidatorImpl implements Validator {
             } else {
                 name = "";
             }
-            return new Error(`Active open segment ${name}expected. Found none`);
+            return new Error(`Active open segment ${name} expected. Found none`);
+        },
+        missingSegmentDefinition: function(segment: string): Error {
+            return new Error(`No segment definition found for segment name ${segment}`);
         }
     };
 }
