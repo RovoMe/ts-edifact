@@ -59,6 +59,41 @@ parser.write(doc);
 parser.end();
 ```
 
+or more streamlined using the `Reader` utility class
+
+```typescript
+import { Reader, ResultType } from "ts-edifact";
+
+const document: string = ...;
+
+const reader: Reader = new Reader();
+reader.encoding("UNOC");
+const result: ResultType[] = reader.parse(document);
+...
+```
+
+or if a custom set of segment- and element definitions should be used
+
+```typescript
+import { Reader, ResultType, Dictionary, SegmentEntry, ElementEntry } from "ts-edifact";
+
+import * as segmentsData from ".../segments.json";
+import * as elementsData from ".../elements.json";
+
+const document: string = ...;
+
+const segments: Dictionary<SegmentEntry> = new Dictionary<SegmentEntry>(segmentsData);
+const elements: Dictionary<ElementEntry> = new Dictionary<ElmentEntry>(elementsData);
+
+const reader: Reader = new Reader();
+reader.encoding("UNOC");
+reader.define(segments);
+reader.define(elements);
+
+const result: ResultType[] = reader.parse(document);
+...
+```
+
 ## Installation
 
 The module can be installled through:
@@ -150,9 +185,12 @@ Keep in mind that this avoids any `openSegment` events to be produced and as suc
 
 A parser capable of accepting data formatted as an UN/EDIFACT interchange. The constructor accepts a `Validator` instance as an optional argument:
 
+```typescript
+new Parser();
+new Parser(validator);
 ```
-new Parser([validator])
-```
+
+The first constructor will initialize a `NullValidator`, which does not perform any validation and therefore also not throw any errors.
 
 | Function | Description |
 | -------- | ----------- |
@@ -214,7 +252,7 @@ new ValidatorImpl();
 | `onCloseComponent(buffer: Tokenizer): void` | Close a component |
 | `onCloseSegment(segment: string): void` | Finish the segment |
 
-The `buffer` argument to both `onopencomponent()` and `onclosecomponent()` should provide three methods `alpha()`, `alphanumeric()`, and `numeric()` allowing the mode of the buffer to be set. It should also expose a `length()` method to check the length of the data currently in the buffer.
+The `buffer` argument to both `onOpenComponent()` and `onCloseComponent()` should provide three methods `alpha()`, `alphanumeric()`, and `numeric()` allowing the mode of the buffer to be set. It should also expose a `length()` method to check the length of the data currently in the buffer.
 
 <a name="InterchangeBuilder"></a>
 ### InterchangeBuilder

@@ -43,10 +43,11 @@ export class Reader {
     private validator: Validator;
     private parser: Parser;
 
+    private defined: boolean = false;
+    private validationTables: (Dictionary<SegmentEntry> | Dictionary<ElementEntry>)[] = [];
+
     constructor() {
         this.validator = new ValidatorImpl();
-        this.validator.define(segmentTable);
-        this.validator.define(elementTable);
         this.parser = new Parser(this.validator);
 
         this.result = [];
@@ -85,7 +86,23 @@ export class Reader {
         this.parser.encoding(level);
     }
 
+    private initializeIfNeeded(): void {
+        if (!this.defined) {
+            if (this.validationTables.length === 0) {
+                this.validator.define(segmentTable);
+                this.validator.define(elementTable);
+            } else {
+                for (const table of this.validationTables) {
+                    this.validator.define(table);
+                }
+            }
+            this.defined = true;
+        }
+    }
+
     parse(document: string): ResultType[] {
+        this.initializeIfNeeded();
+
         this.parser.write(document);
         // this.parser.end();
         return this.result;

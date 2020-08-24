@@ -39,9 +39,9 @@ export class Tokenizer {
 
     private regexes: RegExType =  {
         alpha: /[A-Z]*/g,
-        numeric: /[0-9]*/g,
-        alphanumeric: /[A-Z0-9]*/g,
-        decimal: /[0-9]*/g
+        numeric: /[-]?[0-9]*/g,
+        alphanumeric: /[-]?[A-Z0-9]*/g,
+        decimal: /[-]?[0-9]*/g
     };
     private cache: Cache<RegExType> = new Cache<RegExType>(40);
 
