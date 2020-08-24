@@ -105,4 +105,138 @@ describe("Validator", () => {
             expect(numericHook).toHaveBeenCalled();
         });
     });
+
+    describe("with actual segment and element definitions", () => {
+
+        let validator: Validator;
+
+        const buffer: Tokenizer = new Tokenizer();
+
+        beforeEach(() => {
+            // https://www.stylusstudio.com/edifact/40100/UNB_.htm
+            const segments: Dictionary<SegmentEntry> = new Dictionary<SegmentEntry>();
+            segments.add("UNB", { requires: 5, elements: ["S001", "S002", "S003", "S004", "0020", "S005", "0026", "0029", "0031", "0032", "0035"] });
+            const elements: Dictionary<ElementEntry> = new Dictionary<ElementEntry>();
+            elements.add("S001", { requires: 2, components: ["a4", "an1", "an..6", "an..3"] });
+            elements.add("S002", { requires: 1, components: ["an..35", "an..4", "an..35", "an..35"] });
+            elements.add("S003", { requires: 1, components: ["an..35", "an..4", "an..35", "an..35"] });
+            elements.add("S004", { requires: 2, components: ["n..8", "n4"] });
+            elements.add("0020", { requires: 1, components: ["an..14"] });
+            elements.add("S005", { requires: 1, components: ["an..14", "an2"] });
+            elements.add("0026", { requires: 0, components: ["an..14"] });
+            elements.add("0029", { requires: 0, components: ["a1"] });
+            elements.add("0031", { requires: 0, components: ["n1"] });
+            elements.add("0032", { requires: 0, components: ["an..35"] });
+            elements.add("0035", { requires: 0, components: ["n1"] });
+
+            validator = new ValidatorImpl();
+            validator.define(segments);
+            validator.define(elements);
+        })
+
+        it("should not throw on optional UNB elements", () => {
+            // UNB+UNOC:3+1234567890123:14+3210987654321:14+200608:0945+KC6C2Y-U9NTGBR++++++1'
+            expect(() => validator.onOpenSegment("UNB")).not.toThrow();
+
+            // S001
+            setBuffer("");
+            expect(() => validator.onElement()).not.toThrow();
+            expect(() => validator.onOpenComponent(buffer)).not.toThrow();
+            setBuffer("UNOC");
+            expect(() => validator.onCloseComponent(buffer)).not.toThrow();
+            setBuffer("");
+            expect(() => validator.onOpenComponent(buffer)).not.toThrow();
+            setBuffer("3");
+            expect(() => validator.onCloseComponent(buffer)).not.toThrow();
+
+            // S002
+            expect(() => validator.onElement()).not.toThrow();
+            setBuffer("");
+            expect(() => validator.onOpenComponent(buffer)).not.toThrow();
+            setBuffer("1234567890123");
+            expect(() => validator.onCloseComponent(buffer)).not.toThrow();
+            setBuffer("");
+            expect(() => validator.onOpenComponent(buffer)).not.toThrow();
+            setBuffer("14");
+            expect(() => validator.onCloseComponent(buffer)).not.toThrow();
+
+            // S003
+            expect(() => validator.onElement()).not.toThrow();
+            setBuffer("");
+            expect(() => validator.onOpenComponent(buffer)).not.toThrow();
+            setBuffer("3210987654321");
+            expect(() => validator.onCloseComponent(buffer)).not.toThrow();
+            setBuffer("");
+            expect(() => validator.onOpenComponent(buffer)).not.toThrow();
+            setBuffer("14");
+            expect(() => validator.onCloseComponent(buffer)).not.toThrow();
+
+            // S004
+            expect(() => validator.onElement()).not.toThrow();
+            setBuffer("");
+            expect(() => validator.onOpenComponent(buffer)).not.toThrow();
+            setBuffer("200608");
+            expect(() => validator.onCloseComponent(buffer)).not.toThrow();
+            setBuffer("");
+            expect(() => validator.onOpenComponent(buffer)).not.toThrow();
+            setBuffer("0945");
+            expect(() => validator.onCloseComponent(buffer)).not.toThrow();
+
+            // 0020
+            expect(() => validator.onElement()).not.toThrow();
+            setBuffer("");
+            expect(() => validator.onOpenComponent(buffer)).not.toThrow();
+            setBuffer("KC6C2Y-U9NTGBR");
+            expect(() => validator.onCloseComponent(buffer)).not.toThrow();
+
+            // S005
+            expect(() => validator.onElement()).not.toThrow();
+            setBuffer("");
+            expect(() => validator.onOpenComponent(buffer)).not.toThrow();
+            setBuffer("");
+            expect(() => validator.onCloseComponent(buffer)).not.toThrow();
+            
+            // 0026
+            expect(() => validator.onElement()).not.toThrow();
+            setBuffer("");
+            expect(() => validator.onOpenComponent(buffer)).not.toThrow();
+            setBuffer("");
+            expect(() => validator.onCloseComponent(buffer)).not.toThrow();
+            
+            // 0029
+            expect(() => validator.onElement()).not.toThrow();
+            setBuffer("");
+            expect(() => validator.onOpenComponent(buffer)).not.toThrow();
+            setBuffer("");
+            expect(() => validator.onCloseComponent(buffer)).not.toThrow();
+            
+            // 0031
+            expect(() => validator.onElement()).not.toThrow();
+            setBuffer("");
+            expect(() => validator.onOpenComponent(buffer)).not.toThrow();
+            setBuffer("");
+            expect(() => validator.onCloseComponent(buffer)).not.toThrow();
+            
+            // 0032
+            expect(() => validator.onElement()).not.toThrow();
+            setBuffer("");
+            expect(() => validator.onOpenComponent(buffer)).not.toThrow();
+            setBuffer("");
+            expect(() => validator.onCloseComponent(buffer)).not.toThrow();
+            
+            // 0035
+            expect(() => validator.onElement()).not.toThrow();
+            setBuffer("");
+            expect(() => validator.onOpenComponent(buffer)).not.toThrow();
+            setBuffer("1");
+            expect(() => validator.onCloseComponent(buffer)).not.toThrow();
+
+            expect(() => validator.onCloseSegment("UNB")).not.toThrow();
+        });
+
+        function setBuffer(value: string): void {
+            buffer.content = () => value;
+            buffer.length = () => value.length;
+        }
+    });
 });
