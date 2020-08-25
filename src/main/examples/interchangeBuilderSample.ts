@@ -51,7 +51,7 @@ function parseDocument(doc: string): Edifact {
     const reader: Reader = new Reader();
     const result: ResultType[] = reader.parse(doc);
 
-    const builder: InterchangeBuilder = new InterchangeBuilder(result);
+    const builder: InterchangeBuilder = new InterchangeBuilder(result, "./src/main/messages/");
 
     return builder.interchange;
 }

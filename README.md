@@ -261,6 +261,8 @@ The `InterchangeBuilder` uses the result of the `Parser` or `Reader` to convert 
 
 It will attempt to use the specific message structure definition for the concrete version defined in the message header (`UNH`) to check whether a mandatory segment according to the Edifact specification is missing. A `D96A` invoice should therefore attempt to use the respective `D96A_INVOIC` message structure specification and if not obtainable fall back of a common `INVOIC` message struture specification.
 
+The constructuro expects, besides the parsing result of the Edifact document a base path where the Edifact message structure definition files are located. An incomplete list can be found using the `./node_modules/ts-edifact/lib/messages/` base path.
+
 ```typescript
-new InterchangeBuilder(parsingResult: ResultType[]);
+new InterchangeBuilder(parsingResult: ResultType[], basePath: string);
 ```

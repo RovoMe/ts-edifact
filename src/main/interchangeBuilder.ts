@@ -307,7 +307,22 @@ export class InterchangeBuilder {
 
     private stack: Pointer[] = [];
 
-    constructor(parsingResult: ResultType[]) {
+    /**
+     * Uses the provided parsing result to create an Edifact interchange structure. This
+     * process will validate the order of the parsed segment definitions against available
+     * Edifact message structure definition files, which are determined by the respective
+     * version defined in the UNH segments of the parsing result.
+     *
+     * This process will fail if mandatory segments are missing of if any unexpected
+     * segments, not defined in the message structure definition file, are found. If no
+     * definition for the exact version can be found, i.e. D96A_INVOIC a fallback for a
+     * generic INVOIC message structure is attempted.
+     *
+     * @param parsingResult The actual result of the Edifact document parsing process.
+     * @param basePath The base location the Edifact message structure definition files
+     *                 in JSON format can be found
+     */
+    constructor(parsingResult: ResultType[], basePath: string) {
 
         if (!parsingResult || parsingResult.length === 0) {
             throw Error("Invalid list of parsed segments provided");
@@ -331,8 +346,8 @@ export class InterchangeBuilder {
                         // lookup the message definition for the respective edifact version, i.e. D96A => INVOIC
                         const messageVersion: string = message.messageIdentifier.messageVersionNumber
                                 + message.messageIdentifier.messageReleaseNumber;
-                        const messageType: string =message.messageIdentifier.messageType;
-                        const table: MessageType[] = this.getMessageStructureDefForMessage(messageVersion, messageType);
+                        const messageType: string = message.messageIdentifier.messageType;
+                        const table: MessageType[] = this.getMessageStructureDefForMessage(basePath, messageVersion, messageType);
                         this.stack = [ new Pointer(table, 0) ];
 
                         if (interchange) {
@@ -497,8 +512,7 @@ export class InterchangeBuilder {
         }
     }
 
-    private getMessageStructureDefForMessage(messageVersion: string, messageType: string): MessageType[] {
-        const basePath: string = "./src/main/messages/";
+    private getMessageStructureDefForMessage(basePath: string, messageVersion: string, messageType: string): MessageType[] {
         let path: string = basePath + messageVersion + "_" + messageType + ".json";
         if (fs.existsSync(path)) {
             return this.readFileAsMessageStructure(path);

@@ -1,7 +1,7 @@
 {
       "name": "ts-edifact",
       "description": "Edifact parser library",
-      "version": "0.0.5",
+      "version": "0.0.6",
       "type": "commonjs",
       "engines": {
             "vscode": "^1.46.0"
