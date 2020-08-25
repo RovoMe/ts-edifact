@@ -105,4 +105,21 @@ describe("Parser.write", () => {
         expect(() => parser2.write(msg)).not.toThrow();
         expect(() => parser2.end()).not.toThrow();
     });
+
+    it("should handle negative number values correctly", () => {
+        parser.encoding("UNOA");
+        const hook: jasmine.Spy = spyOn(parser, "onComponent");
+        parser.write("RNG+5+");
+        expect(hook.calls.count()).toEqual(1);
+        parser.write("CEL:-5:5'");
+        expect(hook.calls.count()).toEqual(4);
+    });
+
+    it("should throw on invalid minus/hyphen character used", () => {
+        parser.encoding("UNOA");
+        const hook: jasmine.Spy = spyOn(parser, "onComponent");
+        parser.write("RNG+5+");
+        expect(hook.calls.count()).toEqual(1);
+        expect(() => parser.write("CEL:‐5:5'")).toThrow(); // contains invalid - symbol
+    });
 });
