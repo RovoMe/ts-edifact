@@ -152,8 +152,9 @@ export class ValidatorImpl implements Validator {
     private element: ElementEntry | undefined = undefined;
     private component: FormatType | undefined = undefined;
 
-    private minimum = 0;
-    private maximum = 0;
+    private required: number = 0;
+    private minimum: number = 0;
+    private maximum: number = 0;
 
     constructor() {
         this.state = ValidatorStates.ALL;
@@ -297,11 +298,12 @@ export class ValidatorImpl implements Validator {
                     throw this.errors.missingElementStart(name);
                 }
 
-                // Retrieve a comonent definition if validation is set to all
+                // Retrieve a component definition if validation is set to all
                 this.component = this.format(this.element.components[this.counts.component]);
                 if (this.component === undefined) {
                     return;
                 }
+                this.required = this.element.requires;
                 this.minimum = this.component.minimum;
                 this.maximum = this.component.maximum;
                 // Set the corresponding buffer mode
@@ -341,10 +343,14 @@ export class ValidatorImpl implements Validator {
                     throw this.errors.missingSegmentStart(this.segment);
                 }
 
-                if (length < this.minimum) {
-                    throw this.errors.invalidData(name, `'${buffer.content()}' length is less than minimum length ${this.minimum}`);
-                } else if (length > this.maximum) {
-                    throw this.errors.invalidData(name, `'${buffer.content()} exceeds maximum length ${this.maximum}`);
+                // We perform validation if either the required component count is greater than
+                // or equal to the current component count or if a non-empty value was found
+                if (this.required >= this.counts.component || length > 0) {
+                    if (length < this.minimum) {
+                        throw this.errors.invalidData(name, `'${buffer.content()}' length is less than minimum length ${this.minimum}`);
+                    } else if (length > this.maximum) {
+                        throw this.errors.invalidData(name, `'${buffer.content()} exceeds maximum length ${this.maximum}`);
+                    }
                 }
         }
     }
