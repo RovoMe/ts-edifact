@@ -198,6 +198,8 @@ describe("InterchangeBuilder", () => {
         expect(edi).toBeDefined();
         expect(edi.messages.length).toEqual(1);
         // expected 2 LIN group segments
+        expect(edi.messages[0].detail.length).toEqual(2);
+        // looking up the LIN segments by group name should also return the same result
         const segGroup: Group | undefined = edi.messages[0].groupByName("Segment group 26");
         expect(segGroup?.data.length).toEqual(2);
         // subgroup should contain 6 segments (LIN, IMD, QTY, ALI) or groups (MOA + PRI)
