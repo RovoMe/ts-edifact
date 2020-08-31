@@ -22,6 +22,7 @@ export type MessageType = {
     repetition: number;
     data?: string[];
     name?: string;
+    section?: string;
 };
 
 /**
@@ -53,6 +54,13 @@ export class Pointer {
 
     name(): string | undefined {
         return this.array[this.position].name;
+    }
+
+    section(): string | undefined {
+        if (this.array[this.position] && this.array[this.position].section) {
+            return this.array[this.position].section;
+        }
+        return undefined;
     }
 }
 

@@ -20,11 +20,20 @@
 import { ResultType } from "./reader";
 import { MessageType, Pointer } from "./tracker";
 import * as fs from "fs";
+import { MessageHeader, Segment, toSegmentObject } from "./edifact";
 
-abstract class SegmentContainer {
-    data: (Group | ResultType)[] = [];
 
-    addSegment(segment: ResultType): void {
+export class Group {
+    name: string;
+    parent: Message | Group;
+    data: (Group | Segment)[] = [];
+
+    constructor(name: string, parent: Message | Group) {
+        this.name = name;
+        this.parent = parent;
+    }
+
+    addSegment(segment: Segment): void {
         this.data.push(segment);
     }
 
@@ -61,126 +70,63 @@ abstract class SegmentContainer {
     }
 }
 
-export class Group extends SegmentContainer {
-    name: string;
-    parent: Message | Group;
+export class Message {
 
-    constructor(name: string, parent: Message | Group) {
-        super();
-        this.name = name;
-        this.parent = parent;
+    messageHeader: MessageHeader;
+    header: (Group | Segment)[] = [];
+    detail: (Group | Segment)[] = [];
+    summary: (Group | Segment)[] = [];
+
+    constructor(data: ResultType) {
+        this.messageHeader = new MessageHeader(data);
     }
-}
 
-export class MessageIdentifier {
+    addSegment(segment: Segment, sectionName: string): void {
+        this.section(sectionName).push(segment);
+    }
 
-    messageType: string;
-    messageVersionNumber: string;
-    messageReleaseNumber: string;
-    controllingAgency: string;
-    associationAssignedCode: string | undefined;
-    codeListDirectoryVersionNumber: string | undefined;
-    messageTypeSubFunctionId: string | undefined;
+    addGroup(group: Group, sectionName: string): void {
+        this.section(sectionName).push(group);
+    }
 
-    constructor(components: string[]) {
-        this.messageType = components[0];
-        this.messageVersionNumber = components[1];
-        this.messageReleaseNumber = components[2];
-        this.controllingAgency = components[3];
-        if (components.length >= 5) {
-            this.associationAssignedCode = components[4];
-        }
-        if (components.length >= 6) {
-            this.codeListDirectoryVersionNumber = components[5];
-        }
-        if (components.length === 7) {
-            this.messageTypeSubFunctionId = components[6];
+    private section(name?: string): (Group | Segment)[] {
+        if (name === "header") {
+            return this.header;
+        } else if (name === "detail") {
+            return this.detail;
+        } else if (name === "summary") {
+            return this.summary;
+        } else {
+            return this.header.concat(this.detail).concat(this.summary);
         }
     }
-}
 
-export class StatusOfTransfer {
-
-    sequenceOfTransfer: number;
-    firstAndLastTransfer: string | undefined;
-
-    constructor(components: string[]) {
-        this.sequenceOfTransfer = parseInt(components[0]);
-        if (components.length === 2) {
-            this.firstAndLastTransfer = components[1];
+    groupCount(sectionName?: string): number {
+        let count: number = 0;
+        for (const group of this.section(sectionName)) {
+            if (group instanceof Group) {
+                count++;
+            }
         }
+        return count;
     }
-}
 
-abstract class IdAndVersionPart {
-
-    id: string;
-    versionNumber: string | undefined;
-    releaseNumber: string | undefined;
-    controllingAgency: string | undefined;
-
-    constructor(components: string[]) {
-        this.id = components[0];
-        if (components.length >= 2) {
-            this.versionNumber = components[1];
+    containsGroup(groupName: string, sectionName?: string): boolean {
+        for (const group of this.section(sectionName)) {
+            if (group instanceof Group && group.name === groupName) {
+                return true;
+            }
         }
-        if (components.length >= 3) {
-            this.releaseNumber = components[2];
-        }
-        if (components.length === 4) {
-            this.controllingAgency = components[3];
-        }
+        return false;
     }
-}
 
-export class MessageSubsetIdentification extends IdAndVersionPart {
-
-    constructor(components: string[]) {
-        super(components);
-    }
-}
-
-export class MessageImplementationGuidelineIdentification extends IdAndVersionPart {
-    constructor(components: string[]) {
-        super(components);
-    }
-}
-
-export class ScenarioIdentification extends IdAndVersionPart {
-    constructor(components: string[]) {
-        super(components);
-    }
-}
-
-export class Message extends SegmentContainer {
-
-    messageRefNumber: string | undefined;
-    messageIdentifier: MessageIdentifier;
-    commonAccessReference: string | undefined;
-    statusOfTransfer: StatusOfTransfer | undefined;
-    messageSubsetId: MessageSubsetIdentification | undefined;
-    messageImplGuidelineId: MessageImplementationGuidelineIdentification | undefined;
-    scenarioId: ScenarioIdentification | undefined;
-
-    constructor(elements: string[][]) {
-        super();
-        this.messageRefNumber = elements[0][0];
-        this.messageIdentifier = new MessageIdentifier(elements[1]);
-        if (elements.length >= 3) {
-            this.commonAccessReference = elements[2][0];
+    groupByName(groupName: string, sectionName?: string): Group | undefined {
+        for (const group of this.section(sectionName)) {
+            if (group instanceof Group && group.name === groupName) {
+                return group;
+            }
         }
-        if (elements.length >= 4) {
-            this.statusOfTransfer = new StatusOfTransfer(elements[3]);
-        }
-        if (elements.length >= 5) {
-            this.messageSubsetId = new MessageSubsetIdentification(elements[4]);
-        }
-        if (elements.length >= 6) {
-            this.messageImplGuidelineId = new MessageImplementationGuidelineIdentification(elements[5]);
-        }
-        if (elements.length === 7) {
-            this.scenarioId = new ScenarioIdentification(elements[6]);
-        }
+        return undefined;
     }
 }
 
@@ -306,6 +252,7 @@ export class InterchangeBuilder {
     interchange: Edifact;
 
     private stack: Pointer[] = [];
+    private curSection: string = "header";
 
     /**
      * Uses the provided parsing result to create an Edifact interchange structure. This
@@ -328,9 +275,13 @@ export class InterchangeBuilder {
             throw Error("Invalid list of parsed segments provided");
         }
 
+        let decimalSeparator: string = ".";
         let interchange: Edifact | undefined;
         for (const segment of parsingResult) {
             switch (segment.name) {
+                case "UNA":
+                    decimalSeparator = segment.elements[0][5];
+                    break;
                 case "UNB":
                     interchange = new Edifact(segment.elements);
                     break;
@@ -342,11 +293,11 @@ export class InterchangeBuilder {
                     break;
                 default:
                     if (segment.name === "UNH") {
-                        const message: Message = new Message(segment.elements);
+                        const message: Message = new Message(segment);
                         // lookup the message definition for the respective edifact version, i.e. D96A => INVOIC
-                        const messageVersion: string = message.messageIdentifier.messageVersionNumber
-                                + message.messageIdentifier.messageReleaseNumber;
-                        const messageType: string = message.messageIdentifier.messageType;
+                        const messageVersion: string = message.messageHeader.messageIdentifier.messageVersionNumber
+                                + message.messageHeader.messageIdentifier.messageReleaseNumber;
+                        const messageType: string = message.messageHeader.messageIdentifier.messageType;
                         const table: MessageType[] = this.getMessageStructureDefForMessage(basePath, messageVersion, messageType);
                         this.stack = [ new Pointer(table, 0) ];
 
@@ -359,7 +310,9 @@ export class InterchangeBuilder {
 
                     const message: Message | undefined = interchange?.messages[interchange.messages.length - 1];
                     if (message) {
-                        this.accept(segment, message);
+                        const messageVersion: string = message.messageHeader.messageIdentifier.messageVersionNumber
+                                + message.messageHeader.messageIdentifier.messageReleaseNumber;
+                        this.accept(segment, message, messageVersion, decimalSeparator);
                     } else {
                         throw Error(`Couldn't process ${segment.name} segment as no message was found.`);
                     }
@@ -379,7 +332,7 @@ export class InterchangeBuilder {
         this.stack[0].count = 0;
     }
 
-    private accept(segment: ResultType, obj: Message): void {
+    private accept(segment: ResultType, obj: Message, version: string, decimalSeparator: string): void {
         let current: Pointer = this.stack[this.stack.length - 1];
         let optionals: number[] = [];
         let probe: number = 0;
@@ -419,6 +372,10 @@ export class InterchangeBuilder {
 
                 current.position++;
                 current.count = 0;
+                const sect: string | undefined = current.section();
+                if (sect) {
+                    this.curSection = sect;
+                }
                 if (current.position === current.array.length) {
                     this.stack.pop();
                     current = this.stack[this.stack.length - 1];
@@ -459,7 +416,7 @@ export class InterchangeBuilder {
                 if (groupName) {
                     if (!curObj.containsGroup(groupName)) {
                         const group: Group = new Group(groupName, curObj);
-                        curObj.addGroup(group);
+                        curObj.addGroup(group, this.curSection);
                         curObj = group;
                     } else {
                         const group: Group | undefined = curObj.groupByName(groupName);
@@ -500,14 +457,16 @@ export class InterchangeBuilder {
                         }
                     }
                 } else {
-                    curObj.addSegment(segment);
+                    const seg: Segment = toSegmentObject(segment, version, decimalSeparator);
+                    curObj.addSegment(seg, this.curSection);
                 }
             }
         } else {
             // UNH is already converted to a Message object, so we don't need to store
             // that data again
             if (segment.name !== "UNH") {
-                obj.addSegment(segment);
+                const seg: Segment = toSegmentObject(segment, version, decimalSeparator);
+                obj.addSegment(seg, this.curSection);
             }
         }
     }

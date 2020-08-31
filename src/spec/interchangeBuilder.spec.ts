@@ -192,7 +192,7 @@ describe("InterchangeBuilder", () => {
         expect(() => new InterchangeBuilder([], "./src/main/messages/")).toThrow();
     });
 
-    it ("should build D01B interchange correctly", () => {
+    fit ("should build D01B interchange correctly", () => {
         const builder: InterchangeBuilder = new InterchangeBuilder(parseResult, "./src/main/messages/");
         const edi: Edifact = builder.interchange;
         expect(edi).toBeDefined();
