@@ -32,22 +32,34 @@ export {
 } from "./validator";
 export { MessageType, Pointer, Tracker } from "./tracker";
 export { Reader, ResultType } from "./reader";
-export { Separators, EdifactBuilder } from "./edi/builder";
+export {
+    Separators,
+    EdifactSeparatorsBuilder,
+    AnsiX12SeparatorsBuilder,
+    TradacomsSeparatorsBuilder
+} from "./edi/separators";
 export {
     InterchangeBuilder,
     Edifact,
     Group,
     Message,
-    MessageIdentifier,
-    StatusOfTransfer,
-    MessageSubsetIdentification,
-    MessageImplementationGuidelineIdentification,
-    ScenarioIdentification,
     SyntaxIdentifier,
     Sender,
     Receiver,
     RecipientsRef
 } from "./interchangeBuilder";
+export {
+    Map,
+    MapConstructor,
+    sanitizeFloat,
+    MoaType,
+    Segment,
+    BeginOfMessage,
+    LineItem,
+    Quantity,
+    PriceDetails,
+    MonetaryAmount
+} from "./edifact";
 
 export { segments as segmentTable } from "./segments";
 export { elements as elementTable} from "./elements";

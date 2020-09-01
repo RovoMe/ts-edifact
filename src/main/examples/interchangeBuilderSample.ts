@@ -18,6 +18,7 @@
 
 import { Reader, ResultType } from "../reader";
 import { InterchangeBuilder, Edifact } from "../interchangeBuilder";
+import { Separators } from "../edi/separators";
 
 let document: string = "";
 document += "UNB+UNOA:1:::::::::::::::::::::+005435656:1+006415160:1+060515:1434+00000000000778'";
@@ -50,8 +51,9 @@ document += "UNZ+1+00000000000778'";
 function parseDocument(doc: string): Edifact {
     const reader: Reader = new Reader();
     const result: ResultType[] = reader.parse(doc);
+    const separators: Separators = reader.separators;
 
-    const builder: InterchangeBuilder = new InterchangeBuilder(result, "./src/main/messages/");
+    const builder: InterchangeBuilder = new InterchangeBuilder(result, separators, "./src/main/messages/");
 
     return builder.interchange;
 }

@@ -18,9 +18,11 @@
 
 import { ResultType } from "../main/reader";
 import { InterchangeBuilder, Edifact, Group } from "../main/interchangeBuilder";
+import { Separators, EdifactSeparatorsBuilder } from "../main/edi/separators";
 
 describe("InterchangeBuilder", () => {
     let parseResult: ResultType[];
+    const separators: Separators = new EdifactSeparatorsBuilder().build();
 
     beforeEach(() => {
         parseResult = [
@@ -189,11 +191,11 @@ describe("InterchangeBuilder", () => {
     });
 
     it ("shouldn't accept empty parse result as input", () => {
-        expect(() => new InterchangeBuilder([], "./src/main/messages/")).toThrow();
+        expect(() => new InterchangeBuilder([], separators, "./src/main/messages/")).toThrow();
     });
 
-    fit ("should build D01B interchange correctly", () => {
-        const builder: InterchangeBuilder = new InterchangeBuilder(parseResult, "./src/main/messages/");
+    it ("should build D01B interchange correctly", () => {
+        const builder: InterchangeBuilder = new InterchangeBuilder(parseResult, separators, "./src/main/messages/");
         const edi: Edifact = builder.interchange;
         expect(edi).toBeDefined();
         expect(edi.messages.length).toEqual(1);
@@ -212,6 +214,6 @@ describe("InterchangeBuilder", () => {
             ['00000000000117'],
             ['INVOIC', 'D', '96A', 'UN']
         ];
-        expect(() => new InterchangeBuilder(parseResult, "./src/main/messages/")).toThrow();
+        expect(() => new InterchangeBuilder(parseResult, separators, "./src/main/messages/")).toThrow();
     });
 });

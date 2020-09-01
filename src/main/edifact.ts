@@ -19,7 +19,7 @@
 import { ResultType } from "./reader";
 
 // lend from lib.es2015.collection.d.ts as it refused to get imported
-interface Map<K, V> {
+export interface Map<K, V> {
     clear(): void;
     delete(key: K): boolean;
     forEach(callbackfn: (value: V, key: K, map: Map<K, V>) => void, thisArg?: unknown): void;
@@ -29,7 +29,7 @@ interface Map<K, V> {
     readonly size: number;
 }
 
-interface MapConstructor {
+export interface MapConstructor {
     new(): Map<unknown, unknown>;
     new<K, V>(entries?: readonly (readonly [K, V])[] | null): Map<K, V>;
     readonly prototype: Map<unknown, unknown>;
@@ -130,7 +130,7 @@ export class MoaType {
 
 MoaType.init();
 
-function sanitizeFloat(str: string, decimalSymbol: string): number {
+export function sanitizeFloat(str: string, decimalSymbol: string): number {
     const updatedStr: string = str.replace(decimalSymbol, ".");
     return parseFloat(updatedStr);
 }

@@ -21,6 +21,7 @@ import { Tokenizer } from "./tokenizer";
 import { EventValidator, NullValidator } from "./validator";
 
 import { EventEmitter } from "events";
+import { Separators, EdifactSeparatorsBuilder } from "./edi/separators";
 
 enum States {
     EMPTY = 0,
@@ -52,6 +53,16 @@ export class Parser extends EventEmitter {
         this.configuration = new Configuration();
         this.tokenizer = new Tokenizer(this.configuration);
         this.state = States.EMPTY;
+    }
+
+    separators(): Separators {
+        const builder: EdifactSeparatorsBuilder = new EdifactSeparatorsBuilder();
+        builder.elementSeparator(String.fromCharCode(this.configuration.config.dataElementSeparator));
+        builder.componentSeparator(String.fromCharCode(this.configuration.config.componentDataSeparator));
+        builder.decimalSeparator(String.fromCharCode(this.configuration.config.decimalMark));
+        builder.releaseIndicator(String.fromCharCode(this.configuration.config.releaseCharacter));
+        builder.segmentTerminator(String.fromCharCode(this.configuration.config.segmentTerminator));
+        return builder.build();
     }
 
     onOpenSegment(segment: string): void {

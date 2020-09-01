@@ -75,7 +75,7 @@ export class Separators {
     }
 }
 
-export class EdifactBuilder implements Builder {
+export class EdifactSeparatorsBuilder implements Builder {
 
     private _componentSeparator = ":";
     private _elementSeparator = "+";
@@ -84,32 +84,32 @@ export class EdifactBuilder implements Builder {
     private _blankSpace = " ";
     private _segmentTerminator = "'";
 
-    public componentSeparator(componentSeparator: string): EdifactBuilder {
+    public componentSeparator(componentSeparator: string): EdifactSeparatorsBuilder {
         this._componentSeparator = componentSeparator;
         return this;
     }
 
-    public elementSeparator(elementSeparator: string): EdifactBuilder {
+    public elementSeparator(elementSeparator: string): EdifactSeparatorsBuilder {
         this._elementSeparator = elementSeparator;
         return this;
     }
 
-    public decimalSeparator(decimalSeparator: string): EdifactBuilder {
+    public decimalSeparator(decimalSeparator: string): EdifactSeparatorsBuilder {
         this._decimalSeparator = decimalSeparator;
         return this;
     }
 
-    public releaseIndicator(releaseIndicator: string): EdifactBuilder {
+    public releaseIndicator(releaseIndicator: string): EdifactSeparatorsBuilder {
         this._releaseIndicator = releaseIndicator;
         return this;
     }
 
-    public blankSpace(blankSpace: string): EdifactBuilder {
+    public blankSpace(blankSpace: string): EdifactSeparatorsBuilder {
         this._blankSpace = blankSpace;
         return this;
     }
 
-    public segmentTerminator(segmentTerminator: string): EdifactBuilder {
+    public segmentTerminator(segmentTerminator: string): EdifactSeparatorsBuilder {
         this._segmentTerminator = segmentTerminator;
         return this;
     }
@@ -129,34 +129,34 @@ export class EdifactBuilder implements Builder {
     }
 }
 
-export class TradacomsBuilder implements Builder {
+export class TradacomsSeparatorsBuilder implements Builder {
     private _componentSeparator = ":";
     private _elementSeparator = "+";
     private _decimalSeparator = ".";
     private _segmentTagDelimiter = "=";
     private _segmentTerminator = "'";
 
-    public componentSeparator(componentSeparator: string): TradacomsBuilder {
+    public componentSeparator(componentSeparator: string): TradacomsSeparatorsBuilder {
         this._componentSeparator = componentSeparator;
         return this;
     }
 
-    public elementSeparator(elementSeparator: string): TradacomsBuilder {
+    public elementSeparator(elementSeparator: string): TradacomsSeparatorsBuilder {
         this._elementSeparator = elementSeparator;
         return this;
     }
 
-    public decimalSeparator(decimalSeparator: string): TradacomsBuilder {
+    public decimalSeparator(decimalSeparator: string): TradacomsSeparatorsBuilder {
         this._decimalSeparator = decimalSeparator;
         return this;
     }
 
-    public segmentTagDelimiter(segmentTagDelimiter: string): TradacomsBuilder {
+    public segmentTagDelimiter(segmentTagDelimiter: string): TradacomsSeparatorsBuilder {
         this._segmentTagDelimiter = segmentTagDelimiter;
         return this;
     }
 
-    public segmentTerminator(segmentTerminator: string): TradacomsBuilder {
+    public segmentTerminator(segmentTerminator: string): TradacomsSeparatorsBuilder {
         this._segmentTerminator = segmentTerminator;
         return this;
     }
@@ -176,28 +176,28 @@ export class TradacomsBuilder implements Builder {
     }
 }
 
-export class AnsiX12Builder implements Builder {
+export class AnsiX12SeparatorsBuilder implements Builder {
     private _componentSeparator = ":";
     private _elementSeparator = "*";
     private _repetitionElementSeparator = "^";
     private _segmentTerminator = "'";
 
-    public componentSeparator(componentSeparator: string): AnsiX12Builder {
+    public componentSeparator(componentSeparator: string): AnsiX12SeparatorsBuilder {
         this._componentSeparator = componentSeparator;
         return this;
     }
 
-    public elementSeparator(elementSeparator: string): AnsiX12Builder {
+    public elementSeparator(elementSeparator: string): AnsiX12SeparatorsBuilder {
         this._elementSeparator = elementSeparator;
         return this;
     }
 
-    public repetitionElementSeparator(repetitionElementSeparator: string): AnsiX12Builder {
+    public repetitionElementSeparator(repetitionElementSeparator: string): AnsiX12SeparatorsBuilder {
         this._repetitionElementSeparator = repetitionElementSeparator;
         return this;
     }
 
-    public segmentTerminator(segmentTerminator: string): AnsiX12Builder {
+    public segmentTerminator(segmentTerminator: string): AnsiX12SeparatorsBuilder {
         this._segmentTerminator = segmentTerminator;
         return this;
     }

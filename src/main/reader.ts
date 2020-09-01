@@ -21,6 +21,7 @@ import { Validator, ValidatorImpl, Dictionary, SegmentEntry, ElementEntry } from
 
 import { segments as segmentTable } from "./segments";
 import { elements as elementTable} from "./elements";
+import { Separators } from "./edi/separators";
 
 export type ResultType = {
     name: string;
@@ -46,6 +47,8 @@ export class Reader {
     private defined: boolean = false;
     private validationTables: (Dictionary<SegmentEntry> | Dictionary<ElementEntry>)[] = [];
 
+    separators: Separators;
+
     constructor() {
         this.validator = new ValidatorImpl();
         this.parser = new Parser(this.validator);
@@ -70,6 +73,9 @@ export class Reader {
         this.parser.onComponent = function (value: string): void {
             components.push(value);
         };
+
+        // will initialize default separators
+        this.separators = this.parser.separators();
     }
 
     /**
@@ -104,7 +110,11 @@ export class Reader {
         this.initializeIfNeeded();
 
         this.parser.write(document);
-        // this.parser.end();
+        this.parser.end();
+        // update separators in case the document contained a UNA header
+        // with custom separators
+        this.separators = this.parser.separators();
+
         return this.result;
     }
 }

@@ -21,6 +21,7 @@ import { ResultType } from "./reader";
 import { MessageType, Pointer } from "./tracker";
 import * as fs from "fs";
 import { MessageHeader, Segment, toSegmentObject } from "./edifact";
+import { Separators } from "./edi/separators";
 
 
 export class Group {
@@ -269,19 +270,15 @@ export class InterchangeBuilder {
      * @param basePath The base location the Edifact message structure definition files
      *                 in JSON format can be found
      */
-    constructor(parsingResult: ResultType[], basePath: string) {
+    constructor(parsingResult: ResultType[], separators: Separators, basePath: string) {
 
         if (!parsingResult || parsingResult.length === 0) {
             throw Error("Invalid list of parsed segments provided");
         }
 
-        let decimalSeparator: string = ".";
         let interchange: Edifact | undefined;
         for (const segment of parsingResult) {
             switch (segment.name) {
-                case "UNA":
-                    decimalSeparator = segment.elements[0][5];
-                    break;
                 case "UNB":
                     interchange = new Edifact(segment.elements);
                     break;
@@ -312,7 +309,7 @@ export class InterchangeBuilder {
                     if (message) {
                         const messageVersion: string = message.messageHeader.messageIdentifier.messageVersionNumber
                                 + message.messageHeader.messageIdentifier.messageReleaseNumber;
-                        this.accept(segment, message, messageVersion, decimalSeparator);
+                        this.accept(segment, message, messageVersion, separators.decimalSeparator);
                     } else {
                         throw Error(`Couldn't process ${segment.name} segment as no message was found.`);
                     }
