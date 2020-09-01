@@ -1,5 +1,5 @@
 [
-  { "content": "UNH", "mandatory": true, "repetition": 1, "data": ["APERAK"], "section": "header" },
+  { "content": "UNH", "mandatory": true, "repetition": 1, "data": ["D16A", "APERAK"], "section": "header" },
   { "content": "BGM", "mandatory": true, "repetition": 1 },
   { "content": "DTM", "mandatory": false, "repetition": 9 },
   { "content": "FTX", "mandatory": false, "repetition": 9 },

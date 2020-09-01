@@ -1,5 +1,5 @@
 [
-  { "content": "UNH", "mandatory": true, "repetition": 1, "data": ["ORDERS"], "section": "header" },
+  { "content": "UNH", "mandatory": true, "repetition": 1, "data": ["D16A", "ORDERS"], "section": "header" },
   { "content": "BGM", "mandatory": true, "repetition": 1 },
   { "content": "DTM", "mandatory": true, "repetition": 35 },
   { "content": "PAI", "mandatory": false, "repetition": 1 },
@@ -104,11 +104,11 @@
     { "content": [
       { "content": "MOA", "mandatory": true, "repetition": 1 },
       { "content": "RNG", "mandatory": false, "repetition": 1 }
-    ], "mandatory": false, "repetition": 1, "name": "Segment group 22" },
+    ], "mandatory": false, "repetition": 2, "name": "Segment group 22" },
     { "content": [
       { "content": "RTE", "mandatory": true, "repetition": 1 },
       { "content": "RNG", "mandatory": false, "repetition": 1 }
-    ], "mandatory": false, "repetition": 2, "name": "Segment group 23" },
+    ], "mandatory": false, "repetition": 1, "name": "Segment group 23" },
     { "content": [
       { "content": "TAX", "mandatory": true, "repetition": 1 },
       { "content": "MOA", "mandatory": false, "repetition": 1 }
@@ -128,6 +128,14 @@
       { "content": "COM", "mandatory": false, "repetition": 5 }
     ], "mandatory": false, "repetition": 99, "name": "Segment group 27" }
   ], "mandatory": false, "repetition": 999, "name": "Segment group 26" },
+  { "content": [
+    { "content": "EFI", "mandatory": true, "repetition": 1 },
+    { "content": "CED", "mandatory": false, "repetition": 99 },
+    { "content": "COM", "mandatory": false, "repetition": 9 },
+    { "content": "RFF", "mandatory": false, "repetition": 9 },
+    { "content": "DTM", "mandatory": false, "repetition": 9 },
+    { "content": "QTY", "mandatory": false, "repetition": 9 }
+  ], "mandatory": false, "repetition": 99, "name": "Segment group 28" },
   { "content": [
     { "content": "LIN", "mandatory": true, "repetition": 1 },
     { "content": "PIA", "mandatory": false, "repetition": 25 },
@@ -150,7 +158,7 @@
       { "content": "CCI", "mandatory": true, "repetition": 1 },
       { "content": "CAV", "mandatory": false, "repetition": 10 },
       { "content": "MEA", "mandatory": false, "repetition": 10 }
-    ], "mandatory": false, "repetition": 999, "name": "Segment group 29" },
+    ], "mandatory": false, "repetition": 999, "name": "Segment group 30" },
     { "content": [
       { "content": "PYT", "mandatory": true, "repetition": 1 },
       { "content": "DTM", "mandatory": false, "repetition": 5 },
@@ -158,21 +166,21 @@
       { "content": [
         { "content": "MOA", "mandatory": true, "repetition": 1 },
         { "content": "GIR", "mandatory": false, "repetition": 9 }
-      ], "mandatory": false, "repetition": 9999, "name": "Segment group 31" }
-    ], "mandatory": false, "repetition": 10, "name": "Segment group 30" },
+      ], "mandatory": false, "repetition": 9999, "name": "Segment group 32" }
+    ], "mandatory": false, "repetition": 10, "name": "Segment group 31" },
     { "content": [
       { "content": "PRI", "mandatory": true, "repetition": 1 },
       { "content": "CUX", "mandatory": false, "repetition": 1 },
       { "content": "APR", "mandatory": false, "repetition": 99 },
       { "content": "RNG", "mandatory": false, "repetition": 1 },
       { "content": "DTM", "mandatory": false, "repetition": 5 }
-    ], "mandatory": false, "repetition": 25, "name": "Segment group 32" },
+    ], "mandatory": false, "repetition": 25, "name": "Segment group 33" },
     { "content": [
       { "content": "RFF", "mandatory": true, "repetition": 1 },
       { "content": "DTM", "mandatory": false, "repetition": 5 },
       { "content": "GEI", "mandatory": false, "repetition": 99 },
       { "content": "MOA", "mandatory": false, "repetition": 99 }
-    ], "mandatory": false, "repetition": 9999, "name": "Segment group 33" },
+    ], "mandatory": false, "repetition": 9999, "name": "Segment group 34" },
     { "content": [
       { "content": "PAC", "mandatory": true, "repetition": 1 },
       { "content": "MEA", "mandatory": false, "repetition": 5 },
@@ -181,25 +189,28 @@
       { "content": [
         { "content": "RFF", "mandatory": true, "repetition": 1 },
         { "content": "DTM", "mandatory": false, "repetition": 5 }
-      ], "mandatory": false, "repetition": 1, "name": "Segment group 35" },
+      ], "mandatory": false, "repetition": 1, "name": "Segment group 36" },
       { "content": [
         { "content": "PCI", "mandatory": true, "repetition": 1 },
         { "content": "RFF", "mandatory": false, "repetition": 1 },
         { "content": "DTM", "mandatory": false, "repetition": 5 },
         { "content": "GIN", "mandatory": false, "repetition": 10 }
-      ], "mandatory": false, "repetition": 5, "name": "Segment group 36" }
-    ], "mandatory": false, "repetition": 99, "name": "Segment group 34" },
+      ], "mandatory": false, "repetition": 5, "name": "Segment group 37" }
+    ], "mandatory": false, "repetition": 99, "name": "Segment group 35" },
     { "content": [
       { "content": "LOC", "mandatory": true, "repetition": 1 },
-      { "content": "QTY", "mandatory": false, "repetition": 1 },
       { "content": "PCD", "mandatory": false, "repetition": 1 },
-      { "content": "DTM", "mandatory": false, "repetition": 5 }
-    ], "mandatory": false, "repetition": 9999, "name": "Segment group 37" },
+      { "content": "DTM", "mandatory": false, "repetition": 5 },
+      { "content": [
+        { "content": "QTY", "mandatory": true, "repetition": 1 },
+        { "content": "STS", "mandatory": false, "repetition": 99 }
+      ], "mandatory": false, "repetition": 99, "name":"Segment group 39" }
+    ], "mandatory": false, "repetition": 9999, "name": "Segment group 38" },
     { "content": [
       { "content": "TAX", "mandatory": true, "repetition": 1 },
       { "content": "MOA", "mandatory": false, "repetition": 1 },
       { "content": "LOC", "mandatory": false, "repetition": 5 }
-    ], "mandatory": false, "repetition": 10, "name": "Segment group 38" },
+    ], "mandatory": false, "repetition": 10, "name": "Segment group 40" },
     { "content": [
       { "content": "NAD", "mandatory": true, "repetition": 1 },
       { "content": "LOC", "mandatory": false, "repetition": 5 },
@@ -207,16 +218,16 @@
       { "content": [
         { "content": "RFF", "mandatory": true, "repetition": 1 },
         { "content": "DTM", "mandatory": false, "repetition": 5 }
-      ], "mandatory": false, "repetition": 99, "name": "Segment group 40" },
+      ], "mandatory": false, "repetition": 99, "name": "Segment group 42" },
       { "content": [
         { "content": "DOC", "mandatory": true, "repetition": 1 },
         { "content": "DTM", "mandatory": false, "repetition": 5 }
-      ], "mandatory": false, "repetition": 5, "name": "Segment group 41" },
+      ], "mandatory": false, "repetition": 5, "name": "Segment group 43" },
       { "content": [
         { "content": "CTA", "mandatory": true, "repetition": 1 },
         { "content": "COM", "mandatory": false, "repetition": 5 }
-      ], "mandatory": false, "repetition": 5, "name": "Segment group 42" }
-    ], "mandatory": false, "repetition": 999, "name": "Segment group 39" },
+      ], "mandatory": false, "repetition": 5, "name": "Segment group 44" }
+    ], "mandatory": false, "repetition": 999, "name": "Segment group 41" },
     { "content": [
       { "content": "ALC", "mandatory": true, "repetition": 1 },
       { "content": "ALI", "mandatory": false, "repetition": 5 },
@@ -224,41 +235,41 @@
       { "content": [
         { "content": "QTY", "mandatory": true, "repetition": 1 },
         { "content": "RNG", "mandatory": false, "repetition": 1 }
-      ], "mandatory": false, "repetition": 1, "name": "Segment group 44" },
+      ], "mandatory": false, "repetition": 1, "name": "Segment group 46" },
       { "content": [
         { "content": "PCD", "mandatory": true, "repetition": 1 },
         { "content": "RNG", "mandatory": false, "repetition": 1 }
-      ], "mandatory": false, "repetition": 1, "name": "Segment group 45" },
+      ], "mandatory": false, "repetition": 1, "name": "Segment group 47" },
       { "content": [
         { "content": "MOA", "mandatory": true, "repetition": 1 },
         { "content": "RNG", "mandatory": false, "repetition": 1 }
-      ], "mandatory": false, "repetition": 2, "name": "Segment group 46" },
+      ], "mandatory": false, "repetition": 2, "name": "Segment group 48" },
       { "content": [
         { "content": "RTE", "mandatory": true, "repetition": 1 },
         { "content": "RNG", "mandatory": false, "repetition": 1 }
-      ], "mandatory": false, "repetition": 1, "name": "Segment group 47" },
+      ], "mandatory": false, "repetition": 1, "name": "Segment group 49" },
       { "content": [
         { "content": "TAX", "mandatory": true, "repetition": 1 },
         { "content": "MOA", "mandatory": false, "repetition": 1 }
-      ], "mandatory": false, "repetition": 5, "name": "Segment group 48" }
-    ], "mandatory": false, "repetition": 99, "name": "Segment group 43" },
+      ], "mandatory": false, "repetition": 5, "name": "Segment group 50" }
+    ], "mandatory": false, "repetition": 99, "name": "Segment group 45" },
     { "content": [
       { "content": "TDT", "mandatory": true, "repetition": 1 },
       { "content": [
         { "content": "LOC", "mandatory": true, "repetition": 1 },
         { "content": "DTM", "mandatory": false, "repetition": 5 }
-      ], "mandatory": false, "repetition": 10, "name": "Segment group 50" }
-    ], "mandatory": false, "repetition": 10, "name": "Segment group 49" },
+      ], "mandatory": false, "repetition": 10, "name": "Segment group 52" }
+    ], "mandatory": false, "repetition": 10, "name": "Segment group 51" },
     { "content": [
       { "content": "TOD", "mandatory": true, "repetition": 1 },
       { "content": "LOC", "mandatory": false, "repetition": 2 }
-    ], "mandatory": false, "repetition": 5, "name": "Segment group 51" },
+    ], "mandatory": false, "repetition": 5, "name": "Segment group 53" },
     { "content": [
       { "content": "EQD", "mandatory": true, "repetition": 1 },
       { "content": "HAN", "mandatory": false, "repetition": 5 },
       { "content": "MEA", "mandatory": false, "repetition": 5 },
       { "content": "FTX", "mandatory": false, "repetition": 5 }
-    ], "mandatory": false, "repetition": 10, "name": "Segment group 52" },
+    ], "mandatory": false, "repetition": 10, "name": "Segment group 54" },
     { "content": [
       { "content": "SCC", "mandatory": true, "repetition": 1 },
       { "content": "FTX", "mandatory": false, "repetition": 5 },
@@ -266,30 +277,38 @@
       { "content": [
         { "content": "QTY", "mandatory": true, "repetition": 1 },
         { "content": "DTM", "mandatory": false, "repetition": 5 }
-      ], "mandatory": false, "repetition": 10, "name": "Segment group 54" }
-    ], "mandatory": false, "repetition": 100, "name": "Segment group 53" },
+      ], "mandatory": false, "repetition": 10, "name": "Segment group 56" }
+    ], "mandatory": false, "repetition": 100, "name": "Segment group 55" },
     { "content": [
       { "content": "RCS", "mandatory": true, "repetition": 1 },
       { "content": "RFF", "mandatory": false, "repetition": 5 },
       { "content": "DTM", "mandatory": false, "repetition": 5 },
       { "content": "FTX", "mandatory": false, "repetition": 99999 }
-    ], "mandatory": false, "repetition": 999, "name": "Segment group 55" },
+    ], "mandatory": false, "repetition": 999, "name": "Segment group 57" },
     { "content": [
       { "content": "STG", "mandatory": true, "repetition": 1 },
       { "content": [
         { "content": "QTY", "mandatory": true, "repetition": 1 },
         { "content": "MOA", "mandatory": false, "repetition": 1 }
-      ], "mandatory": false, "repetition": 3, "name": "Segment group 57" }
-    ], "mandatory": false, "repetition": 10, "name": "Segment group 56" },
+      ], "mandatory": false, "repetition": 3, "name": "Segment group 59" }
+    ], "mandatory": false, "repetition": 10, "name": "Segment group 58" },
     { "content": [
       { "content": "DGS", "mandatory": true, "repetition": 1 },
       { "content": "FTX", "mandatory": false, "repetition": 5 },
       { "content": [
         { "content": "CTA", "mandatory": true, "repetition": 1 },
         { "content": "COM", "mandatory": false, "repetition": 5 }
-      ], "mandatory": false, "repetition": 99, "name": "Segment group 59" }
-    ], "mandatory": false, "repetition": 999, "name": "Segment group 58" }
-  ], "mandatory": false, "repetition": 200000, "name": "Segment group 28", "section": "detail" },
+      ], "mandatory": false, "repetition": 99, "name": "Segment group 61" }
+    ], "mandatory": false, "repetition": 999, "name": "Segment group 60" },
+    { "content": [
+      { "content": "EFI", "mandatory": true, "repetition": 1 },
+      { "content": "CED", "mandatory": false, "repetition": 99 },
+      { "content": "COM", "mandatory": false, "repetition": 99 },
+      { "content": "RFF", "mandatory": false, "repetition": 9 },
+      { "content": "DTM", "mandatory": false, "repetition": 9 },
+      { "content": "QTY", "mandatory": false, "repetition": 9 }
+    ], "mandatory": false, "repetition": 99, "name": "Segment group 62" }
+  ], "mandatory": false, "repetition": 200000, "name": "Segment group 29", "section": "detail" },
   { "content": "UNS", "mandatory": true, "repetition": 1, "section": "summary" },
   { "content": "MOA", "mandatory": false, "repetition": 99 },
   { "content": "CNT", "mandatory": false, "repetition": 10 },
@@ -297,6 +316,6 @@
     { "content": "ALC", "mandatory": true, "repetition": 1 },
     { "content": "ALI", "mandatory": false, "repetition": 1 },
     { "content": "MOA", "mandatory": true, "repetition": 2 }
-  ], "mandatory": false, "repetition": 10, "name": "Segment group 60" },
+  ], "mandatory": false, "repetition": 10, "name": "Segment group 63" },
   { "content": "UNT", "mandatory": true, "repetition": 1 }
 ]

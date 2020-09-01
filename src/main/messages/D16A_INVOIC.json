@@ -1,5 +1,5 @@
 [
-  { "content": "UNH", "mandatory": true, "repetition": 1, "data": ["INVOIC"], "section": "header" },
+  { "content": "UNH", "mandatory": true, "repetition": 1, "data": ["D16A", "INVOIC"], "section": "header" },
   { "content": "BGM", "mandatory": true, "repetition": 1 },
   { "content": "DTM", "mandatory": true, "repetition": 35 },
   { "content": "PAI", "mandatory": false, "repetition": 1 },
@@ -205,7 +205,7 @@
       { "content": [
         { "content": "RFF", "mandatory": true, "repetition": 1 },
         { "content": "DTM", "mandatory": false, "repetition": 5 }
-      ], "mandatory": false, "repetition": 99, "name": "Segment group 37" },
+      ], "mandatory": false, "repetition": 5, "name": "Segment group 37" },
       { "content": [
         { "content": "DOC", "mandatory": true, "repetition": 1 },
         { "content": "DTM", "mandatory": false, "repetition": 5 }
@@ -240,7 +240,7 @@
       ], "mandatory": false, "repetition": 1, "name": "Segment group 44" },
       { "content": [
         { "content": "TAX", "mandatory": true, "repetition": 1 },
-        { "content": "MOA", "mandatory": false, "repetition": 1 }
+        { "content": "MOA", "mandatory": false, "repetition": 2 }
       ], "mandatory": false, "repetition": 5, "name": "Segment group 45" }
     ], "mandatory": false, "repetition": 30, "name": "Segment group 40" },
     { "content": [
@@ -299,6 +299,6 @@
     { "content": "ALI", "mandatory": false, "repetition": 1 },
     { "content": "MOA", "mandatory": false, "repetition": 2 },
     { "content": "FTX", "mandatory": false, "repetition": 1 }
-  ], "mandatory": false, "repetition": 10, "name": "Segment group 55" },
+  ], "mandatory": false, "repetition": 15, "name": "Segment group 55" },
   { "content": "UNT", "mandatory": true, "repetition": 1 }
 ]

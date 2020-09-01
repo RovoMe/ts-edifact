@@ -149,8 +149,18 @@ export function toSegmentObject(data: ResultType, version: string, decimalSepara
             return new AdditionalInformation(data);
         case "APR":
             return new AdditionalPriceInformation(data, decimalSeparator);
+        case "ARD":
+            return new MonetaryAmountFunction(data);
+        case "AUT":
+            return new AuthenticationResult(data);
         case "BGM":
             return new BeginOfMessage(data);
+        case "BUS":
+            return new BusinessFunction(data);
+        case "CAV":
+            return new CharacteristicValue(data);
+        case "CCI":
+            return new CharacteristicClassID(data);
         case "CED":
             return new ComputerEnvironmentDetails(data);
         case "CNT":
@@ -169,6 +179,8 @@ export function toSegmentObject(data: ResultType, version: string, decimalSepara
             return new DangerousGoods(data);
         case "DLM":
             return new DeliveryLimitations(data);
+        case "DMS":
+            return new MessageSummary(data);
         case "DOC":
             return new MessageDetails(data);
         case "DTM":
@@ -179,6 +191,8 @@ export function toSegmentObject(data: ResultType, version: string, decimalSepara
             return new AttachedEquipment(data);
         case "EQD":
             return new EquipmentDetails(data);
+        case "ERC":
+            return new ApplicationErrorInformation(data);
         case "FII":
             return new FinancialInstitutionInformation(data);
         case "FTX":
@@ -193,10 +207,16 @@ export function toSegmentObject(data: ResultType, version: string, decimalSepara
             return new GeneralIndicator(data);
         case "HAN":
             return new HandlingInstructions(data);
+        case "HYN":
+            return new HierarchyInformation(data);
+        case "IDE":
+            return new Identity(data);
         case "IMD":
             return new ItemDescription(data);
         case "INP":
             return new PartiesAndInstruction(data);
+        case "IRQ":
+            return new InformationRequired(data);
         case "LIN":
             return new LineItem(data);
         case "LOC":
@@ -205,6 +225,8 @@ export function toSegmentObject(data: ResultType, version: string, decimalSepara
             return new Measurements(data);
         case "MOA":
             return new MonetaryAmount(data, decimalSeparator);
+        case "MTD":
+            return new MaintenanceOperationDetails(data);
         case "NAD":
             return new NameAndAddress(data);
         case "PAC":
@@ -233,14 +255,22 @@ export function toSegmentObject(data: ResultType, version: string, decimalSepara
             return new RequirementsAndConditions(data);
         case "RFF":
             return new Reference(data);
+        case "RJL":
+            return new AccountingJournalIdentification(data);
         case "RNG":
             return new RangeDetails(data, decimalSeparator);
         case "RTE":
             return new RateDetails(data, decimalSeparator);
         case "SEL":
             return new SealNumber(data);
+        case "SCC":
+            return new SchedulingConditions(data);
+        case "SEQ":
+            return new SequenceDetails(data);
         case "SGP":
             return new SplitGoodsPlacement(data);
+        case "STS":
+            return new Status(data);
         case "TAX":
             return new TaxDetails(data);
         case "TDT":
@@ -447,6 +477,70 @@ export class AdditionalPriceInformation implements Segment {
     }
 }
 
+// ARD
+
+class MonetaryAmountFunctionData {
+    monetaryAmountFunctionDescriptionCode: string | undefined;
+    codeListIdentificationCode: string | undefined;
+    codeListResponsibleAgencyCode: string | undefined;
+    monetaryAmountFunctionDescription: string | undefined;
+
+    constructor(data: string[]) {
+        this.monetaryAmountFunctionDescriptionCode = data[0];
+        this.codeListIdentificationCode = data[1];
+        this.codeListResponsibleAgencyCode = data[2];
+        this.monetaryAmountFunctionDescription = data[3];
+    }
+}
+
+class MonetaryAmountFunctionDetail {
+    monetaryAmountFunctionDetailDescriptionCode: string | undefined;
+    codeListIdentificationCode: string | undefined;
+    codeListResponsibleAgencyCode: string | undefined;
+    monetaryAmountFunctionDetailDescription: string | undefined;
+
+    constructor(data: string[]) {
+        this.monetaryAmountFunctionDetailDescriptionCode = data[0];
+        this.codeListIdentificationCode = data[1];
+        this.codeListResponsibleAgencyCode = data[2];
+        this.monetaryAmountFunctionDetailDescription = data[3];
+    }
+}
+
+export class MonetaryAmountFunction implements Segment {
+
+    tag = "ARD";
+
+    monetaryAmountFunction: MonetaryAmountFunctionData | undefined;
+    monetaryAmountFunctionDetail: MonetaryAmountFunctionDetail | undefined;
+
+    constructor(data: ResultType) {
+        if (data.elements.length > 0) {
+            this.monetaryAmountFunction = new MonetaryAmountFunctionData(data.elements[0]);
+        }
+        if (data.elements.length > 1) {
+            this.monetaryAmountFunctionDetail = new MonetaryAmountFunctionDetail(data.elements[1]);
+        }
+    }
+}
+
+// AUT
+
+export class AuthenticationResult implements Segment {
+
+    tag = "AUT";
+
+    validationResultText: string;
+    validationKeyIdentifier: string | undefined;
+
+    constructor(data: ResultType) {
+        this.validationResultText = data.elements[0][0];
+        if (data.elements.length > 1) {
+            this.validationKeyIdentifier = data.elements[1][0];
+        }
+    }
+}
+
 // BGM
 
 class MessageName {
@@ -504,6 +598,137 @@ export class BeginOfMessage implements Segment {
         }
         if (data.elements.length > 5) {
             this.languageNameCode = data.elements[5][0];
+        }
+    }
+}
+
+// BUS
+
+class BusinessFunctionData {
+    businessFunctionTypeCodeQualifier: string;
+    businessFunctionCode: string;
+    codeListIdentificationCode: string | undefined;
+    codeListResponsibleAgencyCode: string | undefined;
+    businessDescription: string | undefined;
+
+    constructor(data: string[]) {
+        this.businessFunctionTypeCodeQualifier = data[0];
+        this.businessFunctionCode = data[1];
+        this.codeListIdentificationCode = data[2];
+        this.codeListResponsibleAgencyCode = data[3];
+        this.businessDescription = data[4];
+    }
+}
+
+class BankOperation {
+    bankOperationCode: string;
+    codeListIdentificationCode: string | undefined;
+    codeListResponsibleAgencyCode: string | undefined;
+
+    constructor(data: string[]) {
+        this.bankOperationCode = data[0];
+        this.codeListIdentificationCode = data[1];
+        this.codeListResponsibleAgencyCode = data[2];
+    }
+}
+
+export class BusinessFunction implements Segment {
+
+    tag = "BUS";
+
+    businessFunction: BusinessFunctionData | undefined;
+    geographicAreaCode: string | undefined;
+    financialTransactionTypeCode: string | undefined;
+    bankOperation: BankOperation | undefined;
+    intraCompanyPaymentIndicatorCode: string | undefined;
+
+    constructor(data: ResultType) {
+        if (data.elements.length > 0) {
+            this.businessFunction = new BusinessFunctionData(data.elements[0]);
+        }
+        if (data.elements.length > 1) {
+            this.geographicAreaCode = data.elements[1][0];
+        }
+        if (data.elements.length > 2) {
+            this.financialTransactionTypeCode = data.elements[2][0];
+        }
+        if (data.elements.length > 3) {
+            this.bankOperation = new BankOperation(data.elements[3]);
+        }
+        if (data.elements.length > 4) {
+            this.intraCompanyPaymentIndicatorCode = data.elements[4][0];
+        }
+    }
+}
+
+// CAV
+
+class CharacteristicValueData {
+    characteristicValueDescriptionCode: string | undefined;
+    codeListIdentificationCode: string | undefined;
+    codeListResponsibleAgencyCode: string | undefined;
+    characteristicValueDescription: string | undefined;
+    characteristicValueDescription2: string | undefined;
+
+    constructor(data: string[]) {
+        this.characteristicValueDescriptionCode = data[0];
+        this.codeListIdentificationCode = data[1];
+        this.codeListResponsibleAgencyCode = data[2];
+        this.characteristicValueDescription = data[3];
+        this.characteristicValueDescription2 = data[4];
+    }
+}
+
+export class CharacteristicValue implements Segment {
+
+    tag = "CAV";
+
+    characteristicValue: CharacteristicValueData;
+
+    constructor(data: ResultType) {
+        this.characteristicValue = new CharacteristicValueData(data.elements[0]);
+    }
+}
+
+// CCI
+
+class CharacteristicDescription {
+    characteristicDescriptionCode: string;
+    codeListIdentificationCode: string | undefined;
+    codeListResponsibleAgencyCode: string | undefined;
+    characteristicDescription: string | undefined;
+    characteristicDescription2: string | undefined;
+
+    constructor(data: string[]) {
+        this.characteristicDescriptionCode = data[0];
+        this.codeListIdentificationCode = data[1];
+        this.codeListResponsibleAgencyCode = data[2];
+        this.characteristicDescription = data[3];
+        this.characteristicDescription2 = data[4];
+    }
+}
+
+export class CharacteristicClassID implements Segment {
+
+    tag = "CCI";
+
+    classTypeCode: string | undefined;
+    measurementDetails: MeasurementDetails | undefined;
+    characteristicDescription: CharacteristicDescription | undefined;
+    characteristicRelevanceCode: string | undefined;
+
+    constructor(data: ResultType) {
+        if (data.elements.length > 0) {
+            this.classTypeCode = data.elements[0][0];
+        }
+        if (data.elements.length > 1) {
+            this.measurementDetails = new MeasurementDetails(data.elements[1]);
+        }
+        if (data.elements.length > 2) {
+            this.characteristicDescription = new CharacteristicDescription(data.elements[2]);
+        }
+        if (data.elements.length > 3) {
+            this.characteristicRelevanceCode = data.elements[3][0];
         }
     }
 }
@@ -882,6 +1107,29 @@ export class DeliveryLimitations implements Segment {
     }
 }
 
+// DMS
+
+export class MessageSummary implements Segment {
+
+    tag = "DMS";
+
+    messageIdentification: MessageIdentification | undefined;
+    messageName: MessageName | undefined;
+    itemTotalQuantity: number | undefined;
+
+    constructor(data: ResultType) {
+        if (data.elements.length > 0) {
+            this.messageIdentification = new MessageIdentification(data.elements[0]);
+        }
+        if (data.elements.length > 1) {
+            this.messageName = new MessageName (data.elements[1]);
+        }
+        if (data.elements.length > 2) {
+            this.itemTotalQuantity = parseInt(data.elements[2][0]);
+        }
+    }
+}
+
 // DOC
 
 class MessageDetailsData {
@@ -1076,6 +1324,31 @@ export class EquipmentDetails implements Segment {
         if (data.elements.length > 5) {
             this.fullOrEmptyIndicatorCode = data.elements[5][0];
         }
+    }
+}
+
+// ERC
+
+class ApplicationErrorDetail {
+    applicationErrorCode: string;
+    codeListIdentificationCode: string | undefined;
+    codeListResponsibleAgencyCode: string | undefined;
+
+    constructor(data: string[]) {
+        this.applicationErrorCode = data[0];
+        this.codeListIdentificationCode = data[1];
+        this.codeListResponsibleAgencyCode = data[2];
+    }
+}
+
+export class ApplicationErrorInformation implements Segment {
+
+    tag = "ERC";
+
+    applicationErrorDetail: ApplicationErrorDetail;
+
+    constructor(data: ResultType) {
+        this.applicationErrorDetail = new ApplicationErrorDetail(data.elements[0]);
     }
 }
 
@@ -1378,6 +1651,82 @@ export class HandlingInstructions implements Segment {
     }
 }
 
+// HYN
+
+export class HierarchyInformation implements Segment {
+
+    tag = "HYN";
+
+    hierarchyObjectCodeQualifier: string;
+    hierarchicalStructureRelationshipCode: string | undefined;
+    actionCode: string | undefined;
+    itemNumberIdentification: ItemNumberIdentification | undefined;
+    hierarchicalStructureParentIdentifier: string | undefined;
+
+    constructor(data: ResultType) {
+        this.hierarchyObjectCodeQualifier = data.elements[0][0];
+        if (data.elements.length > 1) {
+            this.hierarchicalStructureRelationshipCode = data.elements[1][0];
+        }
+        if (data.elements.length > 2) {
+            this.actionCode = data.elements[2][0];
+        }
+        if (data.elements.length > 3) {
+            this.itemNumberIdentification = new ItemNumberIdentification(data.elements[3]);
+        }
+        if (data.elements.length > 4) {
+            this.hierarchicalStructureParentIdentifier = data.elements[4][0];
+        }
+    }
+}
+
+// IDE
+
+class PositionIdentification {
+    hierarchicalStructureLevelIdentifier: string | undefined;
+    sequencePositionIdentifier: string | undefined;
+
+    constructor(data: string[]) {
+        this.hierarchicalStructureLevelIdentifier = data[0];
+        this.sequencePositionIdentifier = data[1];
+    }
+}
+
+export class Identity implements Segment {
+
+    tag = "IDE";
+
+    objectTypeCodeQualifier: string;
+    identificationNumber: IdentificationNumber | undefined;
+    partyIdentificationDetails: PartyIdentificationDetails | undefined;
+    statusDescriptionCode: string | undefined;
+    configurationLevelNumber: number | undefined;
+    positionIdentification: PositionIdentification | undefined;
+    characteristicDescription: CharacteristicDescription | undefined;
+
+    constructor(data: ResultType) {
+        this.objectTypeCodeQualifier = data.elements[0][0];
+        if (data.elements.length > 1) {
+            this.identificationNumber = new IdentificationNumber(data.elements[1]);
+        }
+        if (data.elements.length > 2) {
+            this.partyIdentificationDetails = new PartyIdentificationDetails(data.elements[2]);
+        }
+        if (data.elements.length > 3) {
+            this.statusDescriptionCode = data.elements[3][0];
+        }
+        if (data.elements.length > 4) {
+            this.configurationLevelNumber = parseInt(data.elements[4][0]);
+        }
+        if (data.elements.length > 5) {
+            this.positionIdentification = new PositionIdentification(data.elements[5]);
+        }
+        if (data.elements.length > 6) {
+            this.characteristicDescription = new CharacteristicDescription(data.elements[6]);
+        }
+    }
+}
+
 // IMD
 
 class ItemCharacteristic {
@@ -1495,6 +1844,33 @@ export class PartiesAndInstruction implements Segment {
         if (data.elements.length > 3) {
             this.actionRequestNotificationDescriptionCode = data.elements[3][0];
         }
+    }
+}
+
+// IRQ
+
+class InformationRequest {
+    requestInformationDescriptionCode: string | undefined;
+    codeListIdentificationCode: string | undefined;
+    codeListResponsibleAgencyCode: string | undefined;
+    requestInformationDescription: string | undefined;
+
+    constructor(data: string[]) {
+        this.requestInformationDescriptionCode = data[0];
+        this.codeListIdentificationCode = data[1];
+        this.codeListResponsibleAgencyCode = data[2];
+        this.requestInformationDescription = data[3];
+    }
+}
+
+export class InformationRequired implements Segment {
+
+    tag = "IRQ";
+
+    informationRequest: InformationRequest;
+
+    constructor(data: ResultType) {
+        this.informationRequest = new InformationRequest(data.elements[0]);
     }
 }
 
@@ -1721,6 +2097,31 @@ export class MonetaryAmount implements Segment {
     constructor(data: ResultType, decimalSeparator: string) {
         this.moaType = MoaType.parse(data.elements[0][0]);
         this.monetaryAmount = new MonetaryAmountData(data.elements[0], decimalSeparator);
+    }
+}
+
+// MTD
+
+export class MaintenanceOperationDetails implements Segment {
+
+    tag = "MTD";
+
+    objectTypeCodeQualifier: string;
+    maintenanceOperationCode: string | undefined;
+    maintenanceOperationOperatorCode: string | undefined;
+    maintenanceOperationPayerCode: string | undefined;
+
+    constructor(data: ResultType) {
+        this.objectTypeCodeQualifier = data.elements[0][0];
+        if (data.elements.length > 1) {
+            this.maintenanceOperationCode = data.elements[1][0];
+        }
+        if (data.elements.length > 2) {
+            this.maintenanceOperationOperatorCode = data.elements[2][0];
+        }
+        if (data.elements.length > 3) {
+            this.maintenanceOperationPayerCode = data.elements[3][0];
+        }
     }
 }
 
@@ -2396,6 +2797,53 @@ export class Reference implements Segment {
     }
 }
 
+// RJL
+
+class AccountingJournalIdentificationData {
+    accountingJournalIdentification: string;
+    codeListIdentificationCode: string | undefined;
+    codeListResponsibleAgencyCode: string | undefined;
+    accountingJournalName: string | undefined;
+
+    constructor(data: string[]) {
+        this.accountingJournalIdentification = data[0];
+        this.codeListIdentificationCode = data[1];
+        this.codeListResponsibleAgencyCode = data[2];
+        this.accountingJournalName = data[3];
+    }
+}
+
+class AccountingEntryTypeDetails {
+    accountingEntryTypeNameCode: string;
+    codeListIdentificationCode: string | undefined;
+    codeListResponsibleAgencyCode: string | undefined;
+    accountingEntryTypeName: string | undefined;
+
+    constructor(data: string[]) {
+        this.accountingEntryTypeNameCode = data[0];
+        this.codeListIdentificationCode = data[1];
+        this.codeListResponsibleAgencyCode = data[2];
+        this.accountingEntryTypeName = data[3];
+    }
+}
+
+export class AccountingJournalIdentification implements Segment {
+
+    tag = "RJL";
+
+    accountingJournalIdentification: AccountingJournalIdentificationData | undefined;
+    accountingEntryTypeDetails: AccountingEntryTypeDetails | undefined;
+
+    constructor(data: ResultType) {
+        if (data.elements.length > 0) {
+            this.accountingJournalIdentification = new AccountingJournalIdentificationData(data.elements[0]);
+        }
+        if (data.elements.length > 1) {
+            this.accountingEntryTypeDetails = new AccountingEntryTypeDetails(data.elements[1]);
+        }
+    }
+}
+
 // RNG
 
 class Range {
@@ -2495,6 +2943,72 @@ export class SealNumber implements Segment {
     }
 }
 
+// SCC
+
+class PatternDescription {
+    frequencyCode: string | undefined;
+    despatchPatternCode: string | undefined;
+    despatchPatternTimingCode: string | undefined;
+
+    constructor(data: string[]) {
+        this.frequencyCode = data[0];
+        this.despatchPatternCode = data[1];
+        this.despatchPatternTimingCode = data[2];
+    }
+}
+
+export class SchedulingConditions implements Segment {
+
+    tag = "SCC";
+
+    deliveryPlanCommitmentLevelCode: string;
+    deliveryInstructionCode: string | undefined;
+    patternDescription: PatternDescription | undefined;
+
+    constructor(data: ResultType) {
+        this.deliveryPlanCommitmentLevelCode = data.elements[0][0];
+        if (data.elements.length > 1) {
+            this.deliveryInstructionCode = data.elements[1][0];
+        }
+        if (data.elements.length > 2) {
+            this.patternDescription = new PatternDescription(data.elements[2]);
+        }
+    }
+}
+
+// SEQ
+
+class SequenceInformation {
+    sequencePositionIdentifier: string;
+    sequenceIdentifierSoruceCode: string | undefined;
+    codeListIdentificationCode: string | undefined;
+    codeListResponsibleAgencyCode: string | undefined;
+
+    constructor(data: string[]) {
+        this.sequencePositionIdentifier = data[0];
+        this.sequenceIdentifierSoruceCode = data[1];
+        this.codeListIdentificationCode = data[2];
+        this.codeListResponsibleAgencyCode = data[3];
+    }
+}
+
+export class SequenceDetails implements Segment {
+
+    tag = "SEQ";
+
+    actionCode: string | undefined;
+    sequenceInformation: SequenceInformation | undefined;
+
+    constructor(data: ResultType) {
+        if (data.elements.length > 0) {
+            this.actionCode = data.elements[0][0];
+        }
+        if (data.elements.length > 1) {
+            this.sequenceInformation = new SequenceInformation(data.elements[1]);
+        }
+    }
+}
+
 // SGP
 
 export class SplitGoodsPlacement implements Segment {
@@ -2508,6 +3022,85 @@ export class SplitGoodsPlacement implements Segment {
         this.equipmentIdentification = new EquipmentIdentification(data.elements[0]);
         if (data.elements.length > 1) {
             this.packageQuantity = parseInt(data.elements[1][0]);
+        }
+    }
+}
+
+// STS
+
+class StatusCategory {
+    statusCategoryCode: string;
+    codeListIdentificationCode: string | undefined;
+    codeListResponsibleAgencyCode: string | undefined;
+
+    constructor(data: string[]) {
+        this.statusCategoryCode = data[0];
+        this.codeListIdentificationCode = data[1];
+        this.codeListResponsibleAgencyCode = data[2];
+    }
+}
+
+class StatusData {
+    statusDescriptionCode: string;
+    codeListIdentificationCode: string | undefined;
+    codeListResponsibleAgencyCode: string | undefined;
+    statusDescription: string | undefined;
+
+    constructor(data: string[]) {
+        this.statusDescriptionCode = data[0];
+        this.codeListIdentificationCode = data[1];
+        this.codeListResponsibleAgencyCode = data[2];
+        this.statusDescription = data[3];
+    }
+}
+
+class StatusReason {
+    statusReasonDescriptionCode: string;
+    codeListIdentificationCode: string | undefined;
+    codeListResponsibleAgencyCode: string | undefined;
+    statusReasonDescription: string | undefined;
+
+    constructor(data: string[]) {
+        this.statusReasonDescriptionCode = data[0];
+        this.codeListIdentificationCode = data[1];
+        this.codeListResponsibleAgencyCode = data[2];
+        this.statusReasonDescription = data[3];
+    }
+}
+
+export class Status implements Segment {
+
+    tag = "STS";
+
+    statusCategory: StatusCategory | undefined;
+    status: StatusData | undefined;
+    statusReason1: StatusReason | undefined;
+    statusReason2: StatusReason | undefined;
+    statusReason3: StatusReason | undefined;
+    statusReason4: StatusReason | undefined;
+    statusReason5: StatusReason | undefined;
+
+    constructor(data: ResultType) {
+        if (data.elements.length > 0) {
+            this.statusCategory = new StatusCategory(data.elements[0]);
+        }
+        if (data.elements.length > 1) {
+            this.status = new StatusData(data.elements[1]);
+        }
+        if (data.elements.length > 2) {
+            this.statusReason1 = new StatusReason(data.elements[2]);
+        }
+        if (data.elements.length > 3) {
+            this.statusReason2 = new StatusReason(data.elements[3]);
+        }
+        if (data.elements.length > 4) {
+            this.statusReason3 = new StatusReason(data.elements[4]);
+        }
+        if (data.elements.length > 5) {
+            this.statusReason4 = new StatusReason(data.elements[5]);
+        }
+        if (data.elements.length > 6) {
+            this.statusReason5 = new StatusReason(data.elements[6]);
         }
     }
 }

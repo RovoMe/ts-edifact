@@ -1,5 +1,5 @@
 [
-  { "content": "UNH", "mandatory": true, "repetition": 1, "data": ["D96A", "INVOIC"] },
+  { "content": "UNH", "mandatory": true, "repetition": 1, "data": ["D96A", "INVOIC"], "section": "header" },
   { "content": "BGM", "mandatory": true, "repetition": 1 },
   { "content": "DTM", "mandatory": true, "repetition": 35 },
   { "content": "PAI", "mandatory": false, "repetition": 1 },
@@ -226,10 +226,10 @@
       { "content": "DTM", "mandatory": false, "repetition": 5 },
       { "content": "FTX", "mandatory": false, "repetition": 5 }
     ], "mandatory": false, "repetition": 100, "name": "Segment group 47" }
-  ], "mandatory": false, "repetition": 99999, "name": "Segment group 25" },
+  ], "mandatory": false, "repetition": 99999, "name": "Segment group 25", "section": "detail" },
 
 
-  { "content": "UNS", "mandatory": true, "repetition": 1 },
+  { "content": "UNS", "mandatory": true, "repetition": 1, "section": "summary" },
   { "content": "CNT", "mandatory": false, "repetition": 10 },
   { "content": [
     { "content": "MOA", "mandatory": true, "repetition": 1 },

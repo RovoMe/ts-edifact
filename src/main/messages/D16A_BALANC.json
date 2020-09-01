@@ -1,5 +1,5 @@
 [
-  { "content": "UNH", "mandatory": true, "repetition": 1, "data": ["BALANC"], "section": "header" },
+  { "content": "UNH", "mandatory": true, "repetition": 1, "data": ["D16A", "BALANC"], "section": "header" },
   { "content": "BGM", "mandatory": true, "repetition": 1 },
   { "content": "DTM", "mandatory": true, "repetition": 99 },
   { "content": "RFF", "mandatory": false, "repetition": 99 },

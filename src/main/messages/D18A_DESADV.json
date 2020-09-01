@@ -1,5 +1,5 @@
 [
-  { "content": "UNH", "mandatory": true, "repetition": 1, "data": ["D18A", "DESADV"] },
+  { "content": "UNH", "mandatory": true, "repetition": 1, "data": ["D18A", "DESADV"], "section": "header" },
   { "content": "BGM", "mandatory": true, "repetition": 1 },
   { "content": "DTM", "mandatory": false, "repetition": 10 },
   { "content": "ALI", "mandatory": false, "repetition": 5 },
@@ -161,7 +161,7 @@
         { "content": "QTY", "mandatory": false, "repetition": 9 }
       ], "mandatory": false, "repetition": 99, "name": "Segment group 28" }
     ], "mandatory": false, "repetition": 9999, "name": "Segment group 19" }
-  ], "mandatory": false, "repetition": 9999, "name": "Segment group 11" },
-  { "content": "CNT", "mandatory": false, "repetition": 5 },
+  ], "mandatory": false, "repetition": 9999, "name": "Segment group 11", "section": "detail" },
+  { "content": "CNT", "mandatory": false, "repetition": 5, "section": "summary" },
   { "content": "UNT", "mandatory": true, "repetition": 1 }
 ]

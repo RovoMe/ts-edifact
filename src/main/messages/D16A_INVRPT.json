@@ -1,5 +1,5 @@
 [
-  { "content": "UNH", "mandatory": true, "repetition": 1, "data": ["INVRPT"], "section": "header" },
+  { "content": "UNH", "mandatory": true, "repetition": 1, "data": ["D18A", "INVRPT"], "section": "header" },
   { "content": "BGM", "mandatory": true, "repetition": 1 },
   { "content": "FTX", "mandatory": false, "repetition": 99 },
   { "content": "DTM", "mandatory": true, "repetition": 10 },
@@ -34,7 +34,7 @@
         { "content": "DTM", "mandatory": false, "repetition": 5 }
       ], "mandatory": false, "repetition": 9999, "name": "Segment group 8" }
     ], "mandatory": false, "repetition": 999, "name": "Segment group 7" }
-  ], "mandatory": false, "repetition": 9999, "name": "Segment group 6" },
+  ], "mandatory": false, "repetition": 9999, "name": "Segment group 6", "section": "detail" },
   { "content": [
     { "content": "LIN", "mandatory": true, "repetition": 1 },
     { "content": "PIA", "mandatory": false, "repetition": 10 },

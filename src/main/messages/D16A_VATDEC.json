@@ -1,5 +1,5 @@
 [
-  { "content": "UNH", "mandatory": true, "repetition": 1, "data": ["VATDEC"], "section": "header" },
+  { "content": "UNH", "mandatory": true, "repetition": 1, "data": ["D16A", "VATDEC"], "section": "header" },
   { "content": "BGM", "mandatory": true, "repetition": 1 },
   { "content": "DTM", "mandatory": false, "repetition": 1 },
   { "content": "LOC", "mandatory": false, "repetition": 1 },
