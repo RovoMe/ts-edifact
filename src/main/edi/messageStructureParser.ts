@@ -84,6 +84,17 @@ enum Part {
     AfterStructureDef
 }
 
+enum SegmentPart {
+    BeforeStructureDef,
+    Data,
+    AfterStructureDef
+}
+
+type ParsingResultType = {
+    specObj: EdifactMessageSpecification;
+    promises: Promise<EdifactMessageSpecification>[];
+};
+
 export class MessageStructureParser {
 
     private version: string;
@@ -111,13 +122,116 @@ export class MessageStructureParser {
         return "";
     }
 
-    private parsePage(page: string): EdifactMessageSpecification {
+    private async parseSegmentDefinitionPage(segment: string, page: string, definition: EdifactMessageSpecification): Promise<EdifactMessageSpecification> {
+        if (definition.segmentTable.contains(segment)) {
+            return Promise.resolve(definition);
+        }
+
+        const segEntry: SegmentEntry = { "requires": 0, "elements": [] };
+        let state: SegmentPart = SegmentPart.BeforeStructureDef;
+
+        let overflowLine: string | null = null;
+        let complexEleId: string | null = null;
+        let complexEleEntry: ElementEntry | null = null;
+        for (let line of page.split("\n")) {
+            if (overflowLine !== null) {
+                line = overflowLine.trimRight() + " " + line.trim();
+                overflowLine =  null;
+            }
+
+            if (state === SegmentPart.BeforeStructureDef && line.includes("<H3>")) {
+                state = SegmentPart.Data;
+            } else if (state === SegmentPart.Data && !line.includes("<P>")) {
+                const regexp: RegExp = /^([\d]*)\s*([X|\\*]?)\s*<A.*>([a-zA-Z0-9]*)<\/A>\s*([a-zA-Z0-9 \-\\/]*)\s{2,}([M|C])\s*([\d]*)\s*([a-zA-Z0-9\\.]*).*/g;
+                const arr: RegExpExecArray | null = regexp.exec(line);
+                if (isDefined(arr)) {
+                    const segGroupId: string | undefined = arr[1] === "" ? undefined : arr[1];
+                    // const deprecated: boolean = arr[2] === "X" ? true : false;
+                    const id: string = arr[3];
+                    // const name: string = arr[4];
+                    const mandatory: boolean = arr[5] === "M" ? true : false;
+                    // const repetition: number | undefined = isDefined(arr[6]) ? parseInt(arr[6]) : undefined;
+                    const elementDef: string | undefined = arr[7] === "" ? undefined :  arr[7];
+
+                    if (segGroupId) {
+                        segEntry.elements.push(id);
+
+                        if (mandatory) {
+                            segEntry.requires = segEntry.requires +  1;
+                        }
+                        if (elementDef) {
+                            if (complexEleEntry !== null && complexEleId !== null) {
+                                definition.elementTable.add(complexEleId, complexEleEntry);
+                            }
+                            complexEleId = null;
+                            complexEleEntry = null;
+
+                            if (definition.elementTable.contains(id)) {
+                                continue;
+                            }
+                            const eleEntry: ElementEntry = { "requires": 0, "components": [] };
+                            if (mandatory) {
+                                eleEntry.requires = eleEntry.requires + 1;
+                            }
+                            eleEntry.components.push(elementDef);
+                            definition.elementTable.add(id, eleEntry);
+                        } else {
+                            if (complexEleEntry !== null && complexEleId !== null) {
+                                definition.elementTable.add(complexEleId, complexEleEntry);
+                            }
+                            if (definition.elementTable.contains(id)) {
+                                continue;
+                            }
+                            complexEleId =  id;
+                            complexEleEntry = { "requires": 0, "components": [] };
+                        }
+                    } else {
+                        if (complexEleEntry !== null) {
+                            complexEleEntry.components.push(id);
+                        }
+                        // simple element definition
+                        if (definition.elementTable.contains(id)) {
+                            continue;
+                        }
+
+                        const eleEntry: ElementEntry = { "requires": 0, "components": [] };
+
+                        if (mandatory) {
+                            eleEntry.requires = eleEntry.requires + 1;
+                        }
+                        if (elementDef) {
+                            eleEntry.components.push(elementDef);
+                        }
+                        definition.elementTable.add(id, eleEntry);
+                    }
+                } else {
+                    const regexpAlt: RegExp = /^([\d]*)\s*([X|\\*]?)\s*<A.*>([a-zA-Z0-9]*)<\/A>\s*([a-zA-Z0-9 \\-\\/]*)/g;
+                    const arrAlt: RegExpExecArray | null = regexpAlt.exec(line);
+                    if (isDefined(arrAlt)) {
+                        overflowLine = line;
+                    }
+                }
+            } else if (state === SegmentPart.Data && line.includes("<P>")) {
+                state = SegmentPart.AfterStructureDef;
+                break;
+            }
+        }
+        if (complexEleEntry !== null && complexEleId !== null) {
+            definition.elementTable.add(complexEleId, complexEleEntry);
+        }
+        definition.segmentTable.add(segment, segEntry);
+
+        return Promise.resolve(definition);
+    }
+
+    private async parsePage(page: string): Promise<ParsingResultType> {
         let definition: EdifactMessageSpecification | undefined;
         const handler: DomHandler = new DomHandler();
 
         let state: Part = Part.BeforeStructureDef;
         let section: string | null = "header";
         const segStack: MessageType[][] = [];
+        const lookupSegmentPromises: Promise<EdifactMessageSpecification>[] = [];
 
         const nextState = () => {
             if (state === Part.RefLink) {
@@ -143,10 +257,6 @@ export class MessageStructureParser {
                 segStack.push(definition.messageStructureDefinition);
             } else if (text.includes("Message structure")) {
                 state = Part.RefLink;
-            } else if (text.includes("DETAIL SECTION")) {
-                section = "detail";
-            } else if (text.includes("SUMMARY SECTION")) {
-                section = "summary";
             } else if (state !== Part.BeforeStructureDef && state !== Part.AfterStructureDef) {
                 if (state === Part.RefLink) {
                     // ignored
@@ -155,7 +265,7 @@ export class MessageStructureParser {
                     console.log(`Pos: ${text}`);
                 } else if (state === Part.Deprecated) {
 
-                    if (text.includes("----- Segment group")) {
+                    if (text.includes("- Segment group")) {
                         const regex: RegExp = /^\s*-* (Segment group \d*)\s*-*\s*([M|C])\s*(\d*)([-|\\+|\\|]*).*/g;
                         const arr: RegExpExecArray | null = regex.exec(text);
                         if (isDefined(arr)) {
@@ -164,8 +274,10 @@ export class MessageStructureParser {
                                 content: groupArray,
                                 mandatory: arr[2] === "M" ? true : false,
                                 repetition: parseInt(arr[3]),
-                                name: arr[1]
+                                name: arr[1],
+                                section: isDefined(section) ? section : undefined
                             };
+                            section = null;
                             // add the group to the end of the current top segments
                             segStack[segStack.length - 1].push(group);
                             // push the array managed by this group to the end of the stack to fill it down the road
@@ -197,8 +309,7 @@ export class MessageStructureParser {
                     section = null;
                 } else if (state === Part.Name) {
                     console.log(`Name: ${text}`);
-                    // reusing the regex-pattern result in an empty value every second usage for some reason ...
-                    const regex: RegExp = /^([a-zA-Z /\\-]*)\s*?([M|C])\s*?([0-9]*?)[^0-9]*?([-|\\+|\\||\s]*?)$/g;
+                    const regex: RegExp = /^([a-zA-Z /\\-]*)\s*?([M|C])\s*?([0-9]*?)([^0-9]*)$/g;
                     const arr: RegExpExecArray | null = regex.exec(text);
                     if (isDefined(arr)) {
                         const name: string = arr[1].trim();
@@ -222,14 +333,36 @@ export class MessageStructureParser {
 
                         nextState();
                     }
+                    if (text.includes("DETAIL SECTION")) {
+                        section = "detail";
+                    } else if (text.includes("SUMMARY SECTION")) {
+                        section = "summary";
+                    }
                 } else {
                     console.log(`Unknown part: ${text}`);
                 }
             }
         };
-        handler.onopentag = (name: string) => {
+        handler.onopentag = (name: string, attribs: { [key: string]: string }) => {
             if (name === "p" && state !== Part.BeforeStructureDef && state !== Part.AfterStructureDef) {
                 state = Part.AfterStructureDef;
+            }
+            if (state === Part.Tag && attribs.href !== undefined) {
+                if (definition) {
+                    const end: number = attribs.href.indexOf(".htm");
+                    const curSeg: string = attribs.href.substring(end - 3, end).toUpperCase();
+
+                    // skip segments that do not point to the right segment definition page
+                    if (curSeg !== "UNH" && curSeg !== "UNS" && curSeg !== "UNT") {
+
+                        console.log(`Adding promise to lookup segment definition for segment ${curSeg} for URI ${attribs.href}`);
+
+                        const def: EdifactMessageSpecification = definition;
+                        lookupSegmentPromises.push(this.loadPage(attribs.href)
+                            .then(result => this.parseSegmentDefinitionPage(curSeg, result, def))
+                        );
+                    }
+                }
             }
         };
         handler.onclosetag = () => {
@@ -240,14 +373,24 @@ export class MessageStructureParser {
         parser.end();
 
         if (definition) {
-            return definition;
+            return Promise.resolve({ specObj: definition, promises: lookupSegmentPromises });
         }
-        throw new Error("Could not extract values from read page successfully");
+        return Promise.reject(new Error("Could not extract values from read page successfully"));
     }
 
     loadTypeSpec(): Promise<EdifactMessageSpecification> {
         const url: string = "./" + this.type + "_c.htm";
         return this.loadPage(url)
-            .then((page: string) => this.parsePage(page));
+            .then((page: string) => this.parsePage(page))
+            .then((result: ParsingResultType) =>
+                Promise.all(result.promises)
+                    .then(() => {
+                        console.log("Processed all segment definition promises");
+                        return result.specObj;
+                    }).catch((error: Error) => {
+                        console.log(`Error while processing segment definition promises: Reason ${error.message}`);
+                        return result.specObj;
+                    })
+            );
     }
 }
