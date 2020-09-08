@@ -53,7 +53,7 @@ describe("Edifact Reader", () => {
         document += "UNZ+1+00000000000778'";
     });
 
-    fit("should read document", () => {
+    it("should read document", () => {
 
         const sut: Reader = new Reader();
 

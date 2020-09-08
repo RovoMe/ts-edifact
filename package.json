@@ -76,6 +76,13 @@
             "webpack": "^4.43.0",
             "webpack-cli": "^3.3.12"
       },
+      "dependencies": {
+            "@types/htmlparser2": "^3.10.1",
+            "@types/node-fetch": "^2.5.7",
+            "axios": "0.19.2",
+            "htmlparser2": "^4.1.0",
+            "node-fetch": "^2.6.1"
+      },
       "files": [
             "lib/**/*"
       ]

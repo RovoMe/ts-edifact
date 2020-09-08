@@ -88,6 +88,20 @@ import * as D08A_DESADV from "./messages/D08A_DESADV.json";
 import * as D09A_DESADV from "./messages/D09A_DESADV.json";
 import * as D18A_DESADV from "./messages/D18A_DESADV.json";
 
+import * as D16A_APERAK from "./messages/D16A_APERAK.json";
+import * as D16A_AUTHOR from "./messages/D16A_AUTHOR.json";
+import * as D16A_BALANC from "./messages/D16A_BALANC.json";
+import * as D16A_DESADV from "./messages/D16A_DESADV.json";
+import * as D16A_INVOIC from "./messages/D16A_INVOIC.json";
+import * as D16A_INVRPT from "./messages/D16A_INVRPT.json";
+import * as D16A_ORDERS from "./messages/D16A_ORDERS.json";
+import * as D16A_OSTENQ from "./messages/D16A_OSTENQ.json";
+import * as D16A_OSTRPT from "./messages/D16A_OSTRPT.json";
+import * as D16A_PARTIN from "./messages/D16A_PARTIN.json";
+import * as D16A_TAXCON from "./messages/D16A_TAXCON.json";
+import * as D16A_VATDEC from "./messages/D16A_VATDEC.json";
+
 export { APERAK, AUTHOR, BALANC, DESADV, INVOIC, INVRPT, ORDERS, OSTENQ, OSTRPT, PARTIN, TAXCON, VATDEC };
 export { D96A_INVOIC, D01B_INVOIC };
 export { D04A_DESADV, D05A_DESADV, D06A_DESADV, D07A_DESADV, D08A_DESADV, D09A_DESADV, D18A_DESADV};
+export { D16A_APERAK, D16A_AUTHOR, D16A_BALANC, D16A_DESADV, D16A_INVOIC, D16A_INVRPT, D16A_ORDERS, D16A_OSTENQ, D16A_OSTRPT, D16A_PARTIN, D16A_TAXCON, D16A_VATDEC};
