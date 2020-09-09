@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-import { Configuration } from "../main/configuration";
+import { Configuration } from "../src/configuration";
 
 describe("Configuration", () => {
 

@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-import { Cache } from "../main/cache";
+import { Cache } from "../src/cache";
 
 describe("Cache", () => {
 

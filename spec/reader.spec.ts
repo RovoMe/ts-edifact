@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-import { Reader, ResultType } from "../main/reader";
+import { Reader, ResultType } from "../src/reader";
 
 describe("Edifact Reader", () => {
 

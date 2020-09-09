@@ -1,4 +1,3 @@
-/* eslint-disable no-case-declarations */
 /**
  * @author Roman Vottner
  * @copyright 2020 Roman Vottner
@@ -22,7 +21,7 @@ import { MessageType, Pointer } from "./tracker";
 import * as fs from "fs";
 import { MessageHeader, Segment, toSegmentObject } from "./edifact";
 import { Separators } from "./edi/separators";
-
+import { APERAK, AUTHOR, BALANC, DESADV, INVOIC, INVRPT, ORDERS, OSTENQ, OSTRPT, PARTIN, TAXCON, VATDEC } from "./index";
 
 export class Group {
     name: string;
@@ -305,6 +304,7 @@ export class InterchangeBuilder {
                         }
                     }
 
+                    /* eslint-disable no-case-declarations */
                     const message: Message | undefined = interchange?.messages[interchange.messages.length - 1];
                     if (message) {
                         const messageVersion: string = message.messageHeader.messageIdentifier.messageVersionNumber
@@ -477,7 +477,34 @@ export class InterchangeBuilder {
             if (fs.existsSync(path)) {
                 return this.readFileAsMessageStructure(path);
             } else {
-                throw new Error(`Could not find message definiton for message type '${messageType}' of version '${messageVersion}'`);
+                switch (messageType) {
+                    case "APERAK":
+                        return APERAK;
+                    case "AUTHOR":
+                        return AUTHOR;
+                    case "BALANC":
+                        return BALANC;
+                    case "DESADV":
+                        return DESADV;
+                    case "INVOIC":
+                        return INVOIC;
+                    case "INVRPT":
+                        return INVRPT;
+                    case "ORDERS":
+                        return ORDERS;
+                    case "OSTENQ":
+                        return OSTENQ;
+                    case "OSTRPT":
+                        return OSTRPT;
+                    case "PARTIN":
+                        return PARTIN;
+                    case "TAXCON":
+                        return TAXCON;
+                    case "VATDEC":
+                        return VATDEC;
+                    default:
+                        throw new Error(`Could not find message definiton for message type '${messageType}' of version '${messageVersion}'`);
+                }
             }
         }
     }

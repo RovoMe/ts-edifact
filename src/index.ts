@@ -61,6 +61,11 @@ export {
     MonetaryAmount
 } from "./edifact";
 
+export {
+    EdifactMessageSpecification,
+    UNECEMessageStructureParser
+} from "./edi/messageStructureParser";
+
 export { segments as segmentTable } from "./segments";
 export { elements as elementTable} from "./elements";
 

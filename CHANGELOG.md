@@ -4,6 +4,7 @@ All notable changes to the "ts-edifact" library will be documented in this file.
 
 ## [Unreleased]
 - Added CHANGELOG.md
+- Added parser for generating necessary message-, segment- and element structure objects needed for validating Edifact documents
 
 ### 0.0.6
 - Added support for loading external Edifact message structure definition files on generating an Edifact interchange via the `InterchangeBuilder` class

@@ -95,7 +95,7 @@ export type ParsingResultType = {
     promises: Promise<EdifactMessageSpecification>[];
 };
 
-export class MessageStructureParser {
+export class UNECEMessageStructureParser {
 
     private version: string;
     private type: string;

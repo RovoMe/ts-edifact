@@ -16,8 +16,8 @@
  * limitations under the License.
  */
 
-import { Reader, ResultType } from "../reader";
-import { Tracker, MessageType } from "../tracker";
+import { Reader, ResultType } from "../src/reader";
+import { Tracker, MessageType } from "../src/tracker";
 
 import * as fs from "fs";
 

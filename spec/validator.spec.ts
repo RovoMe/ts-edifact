@@ -16,8 +16,8 @@
  * limitations under the License.
  */
 
-import { Validator, ValidatorImpl, Dictionary, SegmentEntry, ElementEntry } from "../main/validator";
-import { Tokenizer } from "../main/tokenizer";
+import { Validator, ValidatorImpl, Dictionary, SegmentEntry, ElementEntry } from "../src/validator";
+import { Tokenizer } from "../src/tokenizer";
 
 describe("Validator", () => {
 
@@ -132,7 +132,7 @@ describe("Validator", () => {
             validator = new ValidatorImpl();
             validator.define(segments);
             validator.define(elements);
-        })
+        });
 
         it("should not throw on optional UNB elements", () => {
             // UNB+UNOC:3+1234567890123:14+3210987654321:14+200608:0945+KC6C2Y-U9NTGBR++++++1'
@@ -195,35 +195,35 @@ describe("Validator", () => {
             expect(() => validator.onOpenComponent(buffer)).not.toThrow();
             setBuffer("");
             expect(() => validator.onCloseComponent(buffer)).not.toThrow();
-            
+
             // 0026
             expect(() => validator.onElement()).not.toThrow();
             setBuffer("");
             expect(() => validator.onOpenComponent(buffer)).not.toThrow();
             setBuffer("");
             expect(() => validator.onCloseComponent(buffer)).not.toThrow();
-            
+
             // 0029
             expect(() => validator.onElement()).not.toThrow();
             setBuffer("");
             expect(() => validator.onOpenComponent(buffer)).not.toThrow();
             setBuffer("");
             expect(() => validator.onCloseComponent(buffer)).not.toThrow();
-            
+
             // 0031
             expect(() => validator.onElement()).not.toThrow();
             setBuffer("");
             expect(() => validator.onOpenComponent(buffer)).not.toThrow();
             setBuffer("");
             expect(() => validator.onCloseComponent(buffer)).not.toThrow();
-            
+
             // 0032
             expect(() => validator.onElement()).not.toThrow();
             setBuffer("");
             expect(() => validator.onOpenComponent(buffer)).not.toThrow();
             setBuffer("");
             expect(() => validator.onCloseComponent(buffer)).not.toThrow();
-            
+
             // 0035
             expect(() => validator.onElement()).not.toThrow();
             setBuffer("");

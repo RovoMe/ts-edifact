@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-import { Parser } from "../main/parser";
+import { Parser } from "../src/parser";
 
 describe("Parser.write", () => {
     let parser: Parser;

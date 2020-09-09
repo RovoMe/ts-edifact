@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-import { Validator, ValidatorImpl } from "../main/validator";
-import { Parser } from "../main/parser";
-import { segments } from "../main/segments";
-import { elements } from "../main/elements";
+import { Validator, ValidatorImpl } from "../src/validator";
+import { Parser } from "../src/parser";
+import { segments } from "../src/segments";
+import { elements } from "../src/elements";
 
 // issue #1 - Differences between ts-edifact and edifact libraries
 describe("Parsing edifact document", () => {
@@ -37,7 +37,7 @@ describe("Parsing edifact document", () => {
         });
 
         it("should parse original sample document", () => {
-            var document = "";
+            let document: string = "";
 
             document += "UNB+UNOA:1+005435656:1+006415160:1+060515:1434+00000000000778'";
             document += "UNH+00000000000117+INV\n\rOIC:D:97B:UN'";
@@ -65,7 +65,7 @@ describe("Parsing edifact document", () => {
             document += "MOA+8:525'";
             document += "UNT+23+00000000000117'";
             document += "UNZ+1+00000000000778'";
-           
+
             expect(() => parser.write(document)).not.toThrow();
         });
 
@@ -73,7 +73,7 @@ describe("Parsing edifact document", () => {
 
             let document: string = "";
             document += "UNA:+.? '";
-            document += "UNH+ME000001+IFTMIN:D:01B:UN:EAN004'"
+            document += "UNH+ME000001+IFTMIN:D:01B:UN:EAN004'";
             document += "BGM+610+569952+9'";
             document += "DTM+137:20020301:102'";
             document += "DTM+2:200203081100:203'";

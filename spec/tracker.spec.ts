@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-import { Tracker } from "../main/tracker";
+import { Tracker } from "../src/tracker";
 
 describe("Tracker", () => {
     let tracker: Tracker;

@@ -2,32 +2,36 @@
 	"compilerOptions": {
 		"module": "commonjs",
 		"target": "es6",
-		"outDir": "./lib",
+		"moduleResolution": "node",
 		"lib": [
 			"es6"
 		],
+		"rootDir": "src",
+		"outDir": "./lib",
 		"declaration": true,
 		"sourceMap": true,
-		"rootDir": "src/main",
+
+		/* Strict Type-Checking Options */
+		"strict": true,
+		"esModuleInterop": true, // Enable emit interop between CommonJS and ES modules via creation of namespace objects for all imports
+
+		/* Advanced Options */
 		"removeComments": true,
 		"noUnusedLocals": true,
 		"strictNullChecks": true,
-		"strict": true,
 		"skipLibCheck": true,
 		"resolveJsonModule": true,
-		"moduleResolution": "node"
 	},
 	"include": [
+		// these files will be target for linting, compiling and stuff
 		"src/**/*.ts",
+		"src/messages/**/*.json",
         "./node_modules/vscode/vscode.d.ts",
-		"./node_modules/vscode/lib/*", 
-		"spec/runner.ts",
-		"src/main/messages/**/*"
+		"./node_modules/vscode/lib/*"
 	],
 	"exclude": [
+		// don't include these files in the final artifact
 		"node_modules",
-		".vscode-test",
-		"**/spec/*",
-		"src/examples/**"
+		".vscode-test"
 	]
 }

@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 
-import { Reader, ResultType } from "../reader";
-import { InterchangeBuilder, Edifact } from "../interchangeBuilder";
-import { Separators } from "../edi/separators";
+import { Reader, ResultType } from "../src/reader";
+import { InterchangeBuilder, Edifact } from "../src/interchangeBuilder";
+import { Separators } from "../src/edi/separators";
 
 let document: string = "";
 document += "UNB+UNOA:1:::::::::::::::::::::+005435656:1+006415160:1+060515:1434+00000000000778'";
