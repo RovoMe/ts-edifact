@@ -42,7 +42,6 @@ export class HttpClient {
     async get(target: string): Promise<string> {
         const uri: string = url.resolve(this.baseUrl, target);
 
-        console.log("starting HTTP call");
         const request: Promise<string> = axios.default.get<string, axios.AxiosResponse<string>>(uri)
             .then(axiosResponse => {
                 if (axiosResponse.status === 200) {

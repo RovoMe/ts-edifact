@@ -199,8 +199,9 @@ describe("InterchangeBuilder", () => {
         const edi: Edifact = builder.interchange;
         expect(edi).toBeDefined();
         expect(edi.messages.length).toEqual(1);
-        // expected 2 LIN group segments
-        expect(edi.messages[0].detail.length).toEqual(2);
+        // expected 1 group holding two 2 subgroups with LIN, IMD, QTY, ALI and further segments
+        expect(edi.messages[0].detail.length).toEqual(1);
+        expect((edi.messages[0].detail[0] as Group).data.length).toEqual(2);
         // looking up the LIN segments by group name should also return the same result
         const segGroup: Group | undefined = edi.messages[0].groupByName("Segment group 26");
         expect(segGroup?.data.length).toEqual(2);

@@ -90,7 +90,7 @@ enum SegmentPart {
     AfterStructureDef
 }
 
-type ParsingResultType = {
+export type ParsingResultType = {
     specObj: EdifactMessageSpecification;
     promises: Promise<EdifactMessageSpecification>[];
 };
@@ -186,23 +186,25 @@ export class MessageStructureParser {
                             complexEleEntry = { "requires": 0, "components": [] };
                         }
                     } else {
-                        if (complexEleEntry !== null) {
-                            complexEleEntry.components.push(id);
-                        }
-                        // simple element definition
-                        if (definition.elementTable.contains(id)) {
-                            continue;
-                        }
+                        if (complexEleEntry !== null && elementDef) {
+                            complexEleEntry.components.push(elementDef);
+                            complexEleEntry.requires = mandatory ? complexEleEntry.requires + 1 : complexEleEntry.requires;
+                        } else {
+                            // simple element definition
+                            if (definition.elementTable.contains(id)) {
+                                continue;
+                            }
 
-                        const eleEntry: ElementEntry = { "requires": 0, "components": [] };
+                            const eleEntry: ElementEntry = { "requires": 0, "components": [] };
 
-                        if (mandatory) {
-                            eleEntry.requires = eleEntry.requires + 1;
+                            if (mandatory) {
+                                eleEntry.requires = eleEntry.requires + 1;
+                            }
+                            if (elementDef) {
+                                eleEntry.components.push(elementDef);
+                            }
+                            definition.elementTable.add(id, eleEntry);
                         }
-                        if (elementDef) {
-                            eleEntry.components.push(elementDef);
-                        }
-                        definition.elementTable.add(id, eleEntry);
                     }
                 } else {
                     const regexpAlt: RegExp = /^([\d]*)\s*([X|\\*]?)\s*<A.*>([a-zA-Z0-9]*)<\/A>\s*([a-zA-Z0-9 \\-\\/]*)/g;
@@ -260,9 +262,9 @@ export class MessageStructureParser {
             } else if (state !== Part.BeforeStructureDef && state !== Part.AfterStructureDef) {
                 if (state === Part.RefLink) {
                     // ignored
-                    console.log(`RefLink: ${text}`);
+                    // console.debug(`RefLink: ${text}`);
                 } else if (state === Part.Pos) {
-                    console.log(`Pos: ${text}`);
+                    // console.debug(`Pos: ${text}`);
                 } else if (state === Part.Deprecated) {
 
                     if (text.includes("- Segment group")) {
@@ -286,11 +288,11 @@ export class MessageStructureParser {
                         // no further tags available, continue on the next line with the RefLink
                         state = Part.RefLink;
                     } else {
-                        console.log(`Deprecated: ${text}`);
+                        // console.debug(`Deprecated: ${text}`);
                         nextState();
                     }
                 } else if (state === Part.Tag) {
-                    console.log(`Tag: ${text}`);
+                    // console.debug(`Tag: ${text}`);
                     const _section: string | undefined = section !== null ? section : undefined;
                     let _data: string[] | undefined;
                     if (definition) {
@@ -308,15 +310,15 @@ export class MessageStructureParser {
                     }
                     section = null;
                 } else if (state === Part.Name) {
-                    console.log(`Name: ${text}`);
+                    // console.debug(`Name: ${text}`);
                     const regex: RegExp = /^([a-zA-Z /\\-]*)\s*?([M|C])\s*?([0-9]*?)([^0-9]*)$/g;
                     const arr: RegExpExecArray | null = regex.exec(text);
                     if (isDefined(arr)) {
-                        const name: string = arr[1].trim();
+                        // const name: string = arr[1].trim();
                         const sMandatory: string = arr[2];
                         const sRepetition: string = arr[3];
                         const remainder: string = arr[4];
-                        console.log(`Processing segment: ${name}`);
+                        // console.debug(`Processing segment: ${name}`);
 
                         // update the last element on the top-most stack with the respective data
                         const segArr: MessageType[] = segStack[segStack.length - 1];
@@ -339,7 +341,7 @@ export class MessageStructureParser {
                         section = "summary";
                     }
                 } else {
-                    console.log(`Unknown part: ${text}`);
+                    console.warn(`Unknown part: ${text}`);
                 }
             }
         };
@@ -355,7 +357,7 @@ export class MessageStructureParser {
                     // skip segments that do not point to the right segment definition page
                     if (curSeg !== "UNH" && curSeg !== "UNS" && curSeg !== "UNT") {
 
-                        console.log(`Adding promise to lookup segment definition for segment ${curSeg} for URI ${attribs.href}`);
+                        // console.debug(`Adding promise to lookup segment definition for segment ${curSeg} for URI ${attribs.href}`);
 
                         const def: EdifactMessageSpecification = definition;
                         lookupSegmentPromises.push(this.loadPage(attribs.href)
@@ -384,11 +386,9 @@ export class MessageStructureParser {
             .then((page: string) => this.parsePage(page))
             .then((result: ParsingResultType) =>
                 Promise.all(result.promises)
-                    .then(() => {
-                        console.log("Processed all segment definition promises");
-                        return result.specObj;
-                    }).catch((error: Error) => {
-                        console.log(`Error while processing segment definition promises: Reason ${error.message}`);
+                    .then(() => result.specObj)
+                    .catch((error: Error) => {
+                        console.warn(`Error while processing segment definition promises: Reason ${error.message}`);
                         return result.specObj;
                     })
             );
