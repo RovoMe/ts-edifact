@@ -15,6 +15,8 @@ Currently supported functionality:
 * Validating data elements and components accepted by a given segment.
 * Parsing and checking standard UN/EDIFACT messages with segment tables.
 * Support for envelopes.
+* Check for well-formed Edifact documents according to the defined message type, version and revision within the `UNH` message header.
+* Generation of Edifact specification definition files (i.e. `D01B_INVOIC.struct.json`, `D01B_INVOIC.segments.json` and `D01B_INVOIC.elements.json`) obtained from the UNECE page directly.
 
 ## Usage
 
@@ -65,8 +67,9 @@ or more streamlined using the `Reader` utility class
 import { Reader, ResultType } from "ts-edifact";
 
 const document: string = ...;
+const specDir: string = ...;
 
-const reader: Reader = new Reader();
+const reader: Reader = new Reader(specDir);
 reader.encoding("UNOC");
 const result: ResultType[] = reader.parse(document);
 ...
@@ -81,11 +84,12 @@ import * as segmentsData from ".../segments.json";
 import * as elementsData from ".../elements.json";
 
 const document: string = ...;
+const specDir: string = ...;
 
 const segments: Dictionary<SegmentEntry> = new Dictionary<SegmentEntry>(segmentsData);
 const elements: Dictionary<ElementEntry> = new Dictionary<ElmentEntry>(elementsData);
 
-const reader: Reader = new Reader();
+const reader: Reader = new Reader(specDir);
 reader.encoding("UNOC");
 reader.define(segments);
 reader.define(elements);
@@ -106,7 +110,14 @@ Keep in mind that this is an ES6 library. It currently can be used with node 4.0
 
 ## Overview
 
-This module is build around a central `Parser` class which provides the core UN/EDIFACT parsing functionality. It only exposes three methods, the `encoding(string)` method defines the admissible character set to be used while parsing, the `write()` method to write some data to the parser and the `close()` method to close an EDI interchange. Data read by the parser can be read by using hooks which will be called on specific parsing events.
+This module is build around a central `Parser` class which provides the core UN/EDIFACT parsing functionality. It only exposes four methods:
+
+- the `encoding(string)` method defines the admissible character set to be used while parsing
+- the `write()` method to write some data to the parser
+- the `separators()`method does return the separators which are used by the parser
+- the `end()` method to close an EDI interchange. 
+
+Data read by the parser can be read by using hooks which will be called on specific parsing events.
 
 ### Segment and element definitions
 
@@ -121,7 +132,7 @@ Definitions can be provided to describe the structure of segments and elements. 
 }
 ```
 
-A corresponding definition from the UN/EDIFACT `D06A` spec for the above mentioned `BGM` segment can be seen following [this link](http://www.unece.org/trade/untdid/d06a/trsd/trsdbgm.htm).
+A corresponding definition from the UN/EDIFACT `D01A` spec for the above mentioned `BGM` segment can be seen following [this link](http://www.unece.org/trade/untdid/d01a/trsd/trsdbgm.htm).
 
 The `requires` property indicates the number of elements which are required to obtain a valid segment. The `elements` array contains the names of the elements which should be provided. Definitions can also be provided for these elements:
 
@@ -138,19 +149,43 @@ The `requires` property indicates the number of elements which are required to o
 }
 ```
 
-An incomplete set of definitions is included with the library in the files [`segments.json`](src/main/definitions/segments.json) and [`elements.json`](src/main/definitions/elements.json) and can be included as follows:
+An incomplete set of D01B definition files can be found in the [`src/messageSpec`](src/messageSpec/) folder. The `*.struct.json` files contain the general structure definition of an Edifact message, i.e. `INVOIC.struct.json` contains the message structure specification of a `D01B` Edifact invoice, while `*.segments.json` contain the respective admissible segments of the acutal processed message type and the `*.elements.json` contain the respective component definitions of elements used by segments.
+
+As of version `0.0.7` such definition files can be generated via the [`UNECEMessageStructureParser`](src/edi/messageStructureParser.ts) class in case the definition is available online at the [unece.org](https://www.unece.org) page. This parser will generate a `EdifactMessageSpecification` object structure that holds the actual message type structe definition as well as the segment- and element tables needed to validate the document to process.
+
+The `persist` utility function of the `src/util` class allows to persist the generated definitions to files which can be used onwards.
 
 ```typescript
-import { Dictionary, SegmentEntry, ElementEntry  } from "./validator";
+import { MessageStructureParser, UNECEMessageStructureParser } from "ts-edifact";
+import { persist } from "ts-edifact/lib/util";
 
-import * as segs from "./definitions/segments.json";
-import * as eles from "./definitions/elements.json";
+...
 
-const segments: Dictionary<SegmentEntry> = new Dictionary<SegmentEntry>(segs);
-const elements: Dictionary<ElementEntry> = new Dictionary<ElementEntry>(eles);
+function storeSpecFiles(specDir: string, type: string, version: string, revision: string): Promise<...> {
+    const structureParser: MessageStructureParser = new UNECEMessageStructureParser(version + revision, type);
+    return loadTypeSpec()
+      .then((response: EdifactMessageSpecification) => {
+          // store downloaded and parsed definition files to the specified directory
+          persist(response, specDir));
+
+          ... // some other work
+      }
+      .catch((error: Error) => handle(error));
+}
+
+...
+await storeSpecFiles("/home/SomeUser/edifact", "invoic", "d", "01b")
+    .then(...);
 ```
 
-A working example using segment and element definitions can be found in the `examples` directory.
+On using the `Reader` class it will attempt to read such specification files from either the provided directory or, if none was provided, it will try to read such definition files from the local directory. The `*.segments.json` and `*.elements.json` files are used during parsing time of the Edifact document to validate that only admissible values are provided for the respective segments/elements. By default, the `ValidatorImpl` class will ignore any unknown segments or element definitions found. If a strict validation should be performed, that throws an error in case an unknown segment or element is contained within the document the validator needs to be initialized with the optional `throwOnMissingDefinitions` parameter set to true.
+
+```typescript
+// use strict validation; will throw an error if unknown segments and elements are found
+const validator: Validator = new ValidatorImpl(true);
+```
+
+The `*.struct.json` file is only used in case an object structure should be generated via the `InterchangeBuilder` class. 
 
 ### Performance
 
@@ -177,6 +212,9 @@ Keep in mind that this avoids any `openSegment` events to be produced and as suc
 | [Validator](#Validator) | The `Validator` can be used as an add-on to the `Parser` class, to enable validation of segments, elements and components. This class implements a tolerant validator, only segments and elements for which definitions are provided will be validated. Other segments or elements will pass through untouched. Validation includes:<ul><li>Checking data element counts, including mandatory elements.</li><li>Checking component counts, including mandatory components.</li><li>Checking components against their required format.</li> |
 | [Counter](#Counter) | The `Counter` class can be used as a validator for the `Parser` class. However it doesn't perform any validation, it only keeps track of segment, element and component counts. Component counts are reset when starting a new element, just like element counts are reset when closing the segment. |
 | [InterchangeBuilder](#InterchangeBuilder)| The `InterchangeBuilder` class will use the parsed result obtained by either the reader or the parser and convert the array of segments, by using a corresponding message version definition, into a JavaScript object structure containing the respective messages contained in the parsed Edifact as well as respective segment groups which are further subgrouped by the iteration count on respective segments. I.e. if multiple LIN and accompanying segments are found, they are grouped in their own subgroup and any accompanying segment belonging to that segment group will be added to that subgroup as well. |
+| [UNECEMessageStructureParser](#UNECEMessageStructureParser) | A helper class to parse the online version of the UNECE hompeage for the respective Edifact message type structure as well as the admissible segments and elements for the respective message type |
+| [SegmentTableBuilder](#SegmentTableBuilder) | A builder for segment definition objects used by the validator and tracker classes |
+| [ElementTableBuilder](#ElementTableBuilder) | A builder for element definition objects used by the validator and tracker classes |
 
 ## Reference
 
@@ -200,6 +238,7 @@ The first constructor will initialize a `NullValidator`, which does not perform 
 | `onComponent(data: string): void` | Add a listener for a parsed component part of an Edifact element. |
 | `encoding(encoding: string): void` | Specifies the character set to use while parsing the Edifact document. By default [`UNOA`](https://blog.sandro-pereira.com/2009/08/15/edifact-encoding-edi-character-set-support/) will be used. |
 | `write(chunk)` | Write a chunk of data to the parser |
+| `separators()` | *Since v0.0.7* Returns an object of the identified and used separators |
 | `end()` | Terminate the EDI interchange |
 
 <a name="Reader"></a>
@@ -208,8 +247,10 @@ The first constructor will initialize a `NullValidator`, which does not perform 
 A convenience class which already implements default callbacks for common parsing tasks. 
 
 ```typescript
-new Reader();
+new Reader(specDir?: string);
 ```
+
+The optional `specDir` parameter should point to the location where the Edifact specification files can be found. If none was provided the reader tries to find them in the local directory.
 
 | Function | Description |
 | -------- | ----------- |
@@ -220,7 +261,7 @@ new Reader();
 <a name="Tracker"></a>
 ### Tracker
 
-A utility class which validates segment order against a given message structure. The constructor accepts a segment table as it's first argument:
+A utility class which validates segment order against a given message structure. The constructor accepts a segment table as its first argument:
 
 ```typescript
 new Tracker(table: MessageType[]);
@@ -237,8 +278,10 @@ new Tracker(table: MessageType[]);
 The `Validator` can be used to validate segments, elements and components. It keeps track of element and component counts and checks if the component types match those in the segment definition.
 
 ```typescript
-new ValidatorImpl();
+new ValidatorImpl(throwOnMissingDefinitions?: boolean = false);
 ```
+
+Since `v0.0.7` a strict validation can be performed on setting the `throwOnMissingDefinitions` parameter to `true` which leads to failures if unknown segments or elements are used within the document under validation. Be default, the current implementation will ignore any unknown segments or elements.
 
 | Function | Description |
 | -------- | ----------- |
@@ -266,3 +309,48 @@ The constructuro expects, besides the parsing result of the Edifact document a b
 ```typescript
 new InterchangeBuilder(parsingResult: ResultType[], basePath: string);
 ```
+
+<a name="UNECEMessageStructureParser"></a>
+### UNECEMessageStructureParser
+
+*Since `v0.0.7`*: This class will parse the [unece.org](https://www.unece.org) Website in order to generate message structure definition as well as segment- and element definitions for a requested message type.
+
+```typescript
+new UNECEmessageStructureParser(version: string, type: string);
+```
+
+| Function | Description |
+| -------- | ----------- |
+| `loadTypeSpec(): Promise<EdifactMessageSpecification>` | Downloads the message structure definition page of a respective Edifact message type, i.e. `INVOIC`, and for all specified segments the respective segment definition pages. These pages will be parsed and converted to a object structure supporting the lookup of the respective entries. |
+
+The generated `EdifactMessageSpecification` object will hold the parsed values for the message type structure as well as the segments- and elements used by this message type.
+
+Note that the respective segments and elements are mapped to own typescript objects which are defined in [src/edifact.ts](src/edifact.ts). The current set of classes is probably incomplete and may fall victim to differences between multiple versions and release tags of the Edifact specification. Consider further work to be done here in the future.
+
+<a name="SegmentTableBuilder"></a>
+
+A helper class to load the respective segment definition files, from either the local directory or a specified one, and convert them to a usable data structure needed by the validator and tracker classes.
+
+```typescript
+new SegmentTableBuilder(type: string);
+```
+
+| Function | Description |
+| -------- | ----------- |
+| `forVersion(version: string): TableBuilder<SegmentEntry>` | Sets the version of the Edifact document this builder should fetch. |
+| `specLocation(location: string): TableBuilder<SegmentEntry>` | Sets the path where to look for the segment definition files. | 
+| `build(): Dictionary<SegmentEntry>` | Attempts to load the `*.segments.json` definition file of the specified message type (and version if specified) and returns a dictionary object with the loaded data. If no file could be found only the basic `UNB`, `UNH`, `UNS`, `UNT` and `UNZ` segment definitions are loaded. |
+
+<a name="ElementTableBuilder"></a>
+
+A helper class to load the respective element definition files, from either the local directory or a specified one, and convert them to a usable data structure needed by the validator and tracker classes.
+
+```typescript
+new ElementTableBuilder(type: string);
+```
+
+| Function | Description |
+| -------- | ----------- |
+| `forVersion(version: string): TableBuilder<ElementEntry>` | Sets the version of the Edifact document this builder should fetch. |
+| `specLocation(location: string): TableBuilder<ElementEntry>` | Sets the path where to look for the element definition files. | 
+| `build(): Dictionary<ElementEntry>` | Attempts to load the `*.elements.json` definition file of the specified message type (and version if specified) and returns a dictionary object with the loaded data. If no file could be found only the basic element definitions used by the `UNB`, `UNH`, `UNS`, `UNT` and `UNZ` segments are loaded. |

@@ -21,7 +21,7 @@ import { MessageType, Pointer } from "./tracker";
 import * as fs from "fs";
 import { MessageHeader, Segment, toSegmentObject } from "./edifact";
 import { Separators } from "./edi/separators";
-import { APERAK, AUTHOR, BALANC, DESADV, INVOIC, INVRPT, ORDERS, OSTENQ, OSTRPT, PARTIN, TAXCON, VATDEC } from "./index";
+import { APERAK, AUTHOR, BALANC, DESADV, IFTMIN, INVOIC, INVRPT, ORDERS, OSTENQ, OSTRPT, PARTIN, TAXCON, VATDEC } from "./index";
 
 export class Group {
     name: string;
@@ -469,15 +469,16 @@ export class InterchangeBuilder {
     }
 
     private getMessageStructureDefForMessage(basePath: string, messageVersion: string, messageType: string): MessageType[] {
-        let path: string = basePath + messageVersion + "_" + messageType + ".json";
+        let path: string = basePath + messageVersion + "_" + messageType + ".struct.json";
         if (fs.existsSync(path)) {
             return this.readFileAsMessageStructure(path);
         } else {
-            path = basePath + messageType + ".json";
+            path = basePath + messageType + "struct.json";
             if (fs.existsSync(path)) {
                 return this.readFileAsMessageStructure(path);
             } else {
                 switch (messageType) {
+                    // default back to D01B messages
                     case "APERAK":
                         return APERAK;
                     case "AUTHOR":
@@ -486,6 +487,8 @@ export class InterchangeBuilder {
                         return BALANC;
                     case "DESADV":
                         return DESADV;
+                    case "IFTMIN":
+                        return IFTMIN;
                     case "INVOIC":
                         return INVOIC;
                     case "INVRPT":

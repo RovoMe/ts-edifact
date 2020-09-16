@@ -244,7 +244,7 @@ export function toSegmentObject(data: ResultType, version: string, decimalSepara
         case "PIA":
             return new AdditionalProductId(data);
         case "PRI":
-            return new PriceDetails(data);
+            return new PriceDetails(data, decimalSeparator);
         case "PYT":
             return new PaymentTerms(data);
         case "QTY":
@@ -2592,15 +2592,15 @@ class PriceInformation {
     unitPriceBasisValue: number | undefined;
     measurementUnitCode: string | undefined;
 
-    constructor(data: string[]) {
+    constructor(data: string[], decimalSeparator: string) {
         this.priceCodeQualifier = data[0];
         if (data.length > 1) {
-            this.priceAmount = parseInt(data[1]);
+            this.priceAmount = sanitizeFloat(data[1], decimalSeparator);
         }
         this.priceTypeCode = data[2];
         this.priceSpecificationCode = data[3];
         if (data.length > 4) {
-            this.unitPriceBasisValue = parseInt(data[4]);
+            this.unitPriceBasisValue = sanitizeFloat(data[4], decimalSeparator);
         }
         this.measurementUnitCode = data[5];
     }
@@ -2613,9 +2613,9 @@ export class PriceDetails implements Segment {
     priceInformation: PriceInformation | undefined;
     subLineItemPriceChangeOperationCode: string | undefined;
 
-    constructor(data: ResultType) {
+    constructor(data: ResultType, decimalSeparator: string) {
         if (data.elements.length > 0) {
-            this.priceInformation = new PriceInformation(data.elements[0]);
+            this.priceInformation = new PriceInformation(data.elements[0], decimalSeparator);
         }
         if (data.elements.length > 1) {
             this.subLineItemPriceChangeOperationCode = data.elements[1][0];

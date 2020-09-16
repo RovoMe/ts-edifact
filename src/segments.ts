@@ -17,7 +17,37 @@
  */
 
 import { Dictionary, SegmentEntry } from "./validator";
+import { TableBuilder, Suffix } from "./tableBuilder";
+import * as fs from "fs";
 
-import * as data from "./definitions/segments.json";
+export class SegmentTableBuilder extends TableBuilder<SegmentEntry> {
 
-export const segments: Dictionary<SegmentEntry> = new Dictionary<SegmentEntry>(data);
+    constructor(type: string) {
+        super(type, Suffix.Segments);
+    }
+
+    static enrichWithDefaultSegments(data: Dictionary<SegmentEntry>): Dictionary<SegmentEntry> {
+        data.add("UNB", { requires: 5, elements: ["S001", "S002", "S003", "S004", "0020", "S005", "0026", "0029", "0031", "0032", "0035"] });
+        data.add("UNH", { requires: 2, elements: ["0062", "S009", "0068", "S010", "S016", "S017", "S018"] });
+        data.add("UNS", { requires: 1, elements: ["0081"] });
+        data.add("UNT", { requires: 2, elements: ["0074", "0062"] });
+        data.add("UNZ", { requires: 2, elements: ["0036", "0020"] });
+
+        return data;
+    }
+
+    build(): Dictionary<SegmentEntry> {
+        const fileLoc: string | undefined = this.getDefinitionFileLoc();
+        let dict: Dictionary<SegmentEntry>;
+        if (fileLoc) {
+            const sData: string = fs.readFileSync(fileLoc, { encoding: "utf-8" });
+            const data: { [key: string]: SegmentEntry} = JSON.parse(sData) as ({ [key: string]: SegmentEntry });
+
+            dict = new Dictionary<SegmentEntry>(data);
+        } else {
+            dict = new Dictionary<SegmentEntry>();
+        }
+
+        return SegmentTableBuilder.enrichWithDefaultSegments(dict);
+    }
+}

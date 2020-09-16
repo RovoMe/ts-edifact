@@ -25,7 +25,7 @@
 	"include": [
 		// these files will be target for linting, compiling and stuff
 		"src/**/*.ts",
-		"src/messages/**/*.json",
+		"src/messageSpec/**/*.json",
         "./node_modules/vscode/vscode.d.ts",
 		"./node_modules/vscode/lib/*"
 	],

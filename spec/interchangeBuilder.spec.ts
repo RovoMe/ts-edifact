@@ -191,11 +191,11 @@ describe("InterchangeBuilder", () => {
     });
 
     it ("shouldn't accept empty parse result as input", () => {
-        expect(() => new InterchangeBuilder([], separators, "src/messages/")).toThrow();
+        expect(() => new InterchangeBuilder([], separators, "src/messageSpec/")).toThrow();
     });
 
     it ("should build D01B interchange correctly", () => {
-        const builder: InterchangeBuilder = new InterchangeBuilder(parseResult, separators, "src/messages/");
+        const builder: InterchangeBuilder = new InterchangeBuilder(parseResult, separators, "src/messageSpec/");
         const edi: Edifact = builder.interchange;
         expect(edi).toBeDefined();
         expect(edi.messages.length).toEqual(1);
@@ -215,6 +215,6 @@ describe("InterchangeBuilder", () => {
             ['00000000000117'],
             ['INVOIC', 'D', '96A', 'UN']
         ];
-        expect(() => new InterchangeBuilder(parseResult, separators, "src/messages/")).toThrow();
+        expect(() => new InterchangeBuilder(parseResult, separators, "src/messageSpec/")).toThrow();
     });
 });

@@ -109,7 +109,7 @@ export class Parser extends EventEmitter {
         }
     }
 
-    una(chunk: string): boolean {
+    private una(chunk: string): boolean {
         if (/^UNA.... ./g.test(chunk)) {
             this.configuration.config.componentDataSeparator = chunk.charCodeAt(3);
             this.configuration.config.dataElementSeparator   = chunk.charCodeAt(4);

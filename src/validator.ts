@@ -27,7 +27,9 @@ export class Dictionary<T> {
 
         if (data) {
             for (const key in data) {
-                this.add(key, data[key]);
+                if (key !== "") {
+                    this.add(key, data[key]);
+                }
             }
         }
     }
@@ -156,8 +158,11 @@ export class ValidatorImpl implements Validator {
     private minimum: number = 0;
     private maximum: number = 0;
 
-    constructor() {
+    private throwOnMissingDefinitions: boolean;
+
+    constructor(throwOnMissingDefinitions: boolean = false) {
         this.state = ValidatorStates.ALL;
+        this.throwOnMissingDefinitions = throwOnMissingDefinitions;
     }
 
     /**
@@ -234,7 +239,10 @@ export class ValidatorImpl implements Validator {
                     // the validator in the elements state.
                     this.state = ValidatorStates.ELEMENTS;
                 } else {
-                    throw this.errors.missingSegmentDefinition(segment);
+                    const error: Error | undefined = this.errors.missingSegmentDefinition(segment, this.throwOnMissingDefinitions);
+                    if (error) {
+                        throw error;
+                    }
                 }
         }
         this.counts.segment += 1;
@@ -247,7 +255,12 @@ export class ValidatorImpl implements Validator {
         switch (this.state) {
             case ValidatorStates.ALL:
                 if (this.segment === undefined) {
-                    throw this.errors.missingSegmentStart();
+                    const error: Error | undefined = this.errors.missingSegmentStart(undefined, this.throwOnMissingDefinitions);
+                    if (error) {
+                        throw error;
+                    } else {
+                        return;
+                    }
                 }
                 name = this.segment.elements[this.counts.element];
                 if (this.element === undefined) {
@@ -264,7 +277,12 @@ export class ValidatorImpl implements Validator {
             // eslint-disable-next-line no-fallthrough
             case ValidatorStates.ELEMENTS:
                 if (this.segment === undefined) {
-                    throw this.errors.missingSegmentStart();
+                    const error: Error | undefined = this.errors.missingSegmentStart(undefined, this.throwOnMissingDefinitions);
+                    if (error) {
+                        throw error;
+                    } else {
+                        return;
+                    }
                 }
                 // eslint-disable-next-line no-case-declarations
                 const key: string = this.segment.elements[this.counts.element];
@@ -272,6 +290,9 @@ export class ValidatorImpl implements Validator {
                     this.state = ValidatorStates.ALL;
                 } else {
                     this.state = ValidatorStates.ELEMENTS;
+                    if (this.throwOnMissingDefinitions) {
+                        throw this.errors.missingElementDefinition(key);
+                    }
                 }
         }
         this.counts.element += 1;
@@ -287,7 +308,12 @@ export class ValidatorImpl implements Validator {
      */
     onOpenComponent(buffer: Tokenizer): void {
         if (this.segment === undefined) {
-            throw this.errors.missingSegmentStart();
+            const error: Error | undefined = this.errors.missingSegmentStart(undefined, this.throwOnMissingDefinitions);
+            if (error) {
+                throw error;
+            } else {
+                return;
+            }
         }
 
         switch (this.state) {
@@ -340,7 +366,12 @@ export class ValidatorImpl implements Validator {
                 if (this.segment) {
                     name = this.segment.elements[this.counts.element];
                 } else {
-                    throw this.errors.missingSegmentStart(this.segment);
+                    const error: Error | undefined = this.errors.missingSegmentStart(this.segment, this.throwOnMissingDefinitions);
+                    if (error) {
+                        throw error;
+                    } else {
+                        return;
+                    }
                 }
 
                 // We perform validation if either the required component count is greater than
@@ -364,7 +395,12 @@ export class ValidatorImpl implements Validator {
         switch (this.state) {
             case ValidatorStates.ALL:
                 if (this.segment === undefined) {
-                    throw this.errors.missingSegmentStart(segment);
+                    const error: Error | undefined = this.errors.missingSegmentStart(segment, this.throwOnMissingDefinitions);
+                    if (error) {
+                        throw error;
+                    } else {
+                        return;
+                    }
                 }
                 if (this.element === undefined) {
                     throw this.errors.missingElementStart(segment);
@@ -377,7 +413,12 @@ export class ValidatorImpl implements Validator {
                 // Fall through to continue with element cound validation
             case ValidatorStates.ELEMENTS:
                 if (this.segment === undefined) {
-                    throw this.errors.missingSegmentStart(segment);
+                    const error: Error | undefined = this.errors.missingSegmentStart(segment, this.throwOnMissingDefinitions);
+                    if (error) {
+                        throw error;
+                    } else {
+                        return;
+                    }
                 }
 
                 if (this.counts.element < this.segment.requires || this.counts.element > this.segment.elements.length) {
@@ -419,20 +460,33 @@ export class ValidatorImpl implements Validator {
             return new Error(start + ` got ${count} ` + array + end);
         },
         missingElementStart: function(segment: string): Error {
-            const message: string = "Active open element expected on segment " + segment ;
+            const message: string = `Active open element expected on segment ${segment}`;
             return new Error(message);
         },
-        missingSegmentStart: function(segment?: string): Error {
+        missingElementDefinition: function(element: string): Error {
+            const message: string = `No definition found for element ${element}`;
+            return new Error(message);
+        },
+        missingSegmentStart: function(segment?: string, throwOnMissingDefinitions?: boolean): Error | undefined {
+            if (!throwOnMissingDefinitions) {
+                return undefined;
+            }
+
             let name: string;
             if (segment) {
-                name = "'" + segment + "' ";
+                name = "'" + segment + "'";
             } else {
-                name = "";
+                name = "''";
             }
             return new Error(`Active open segment ${name} expected. Found none`);
         },
-        missingSegmentDefinition: function(segment: string): Error {
-            return new Error(`No segment definition found for segment name ${segment}`);
+        missingSegmentDefinition: function(segment: string, throwOnMissingDefinitions?: boolean): Error | undefined {
+            if (throwOnMissingDefinitions) {
+                return new Error(`No segment definition found for segment name ${segment}`);
+            } else {
+                console.warn(`No segment definition found for segment name ${segment}`);
+                return undefined;
+            }
         }
     };
 }

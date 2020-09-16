@@ -23,6 +23,7 @@
 import { UNECEMessageStructureParser, EdifactMessageSpecification, ParsingResultType } from "../src/edi/messageStructureParser";
 import { Dictionary, SegmentEntry, ElementEntry } from "../src/validator";
 import { MessageType } from "../src/tracker";
+// import { persist } from "../src/util";
 
 describe("MessageStructureParser", () => {
 
@@ -282,25 +283,64 @@ SUMMARY SECTION
                     done();
                 });
         });
+
+        it("should add multiple element definitions only once", (done) => {
+            const page: string = `
+<H3>       CUX  CURRENCIES</H3>
+
+       Function: To specify currencies used in the transaction
+                 and relevant details for the rate of exchange.
+    
+010    <A HREF = "../trcd/trcdc504.htm">C504</A> CURRENCY DETAILS                           C    1
+       <A HREF = "../tred/tred6347.htm">6347</A>  Currency usage code qualifier             M      an..3
+       <A HREF = "../tred/tred6345.htm">6345</A>  Currency identification code              C      an..3
+       <A HREF = "../tred/tred6343.htm">6343</A>  Currency type code qualifier              C      an..3
+       <A HREF = "../tred/tred6348.htm">6348</A>  Currency rate value                       C      n..4
+
+020    <A HREF = "../trcd/trcdc504.htm">C504</A> CURRENCY DETAILS                           C    1
+       <A HREF = "../tred/tred6347.htm">6347</A>  Currency usage code qualifier             M      an..3
+       <A HREF = "../tred/tred6345.htm">6345</A>  Currency identification code              C      an..3
+       <A HREF = "../tred/tred6343.htm">6343</A>  Currency type code qualifier              C      an..3
+       <A HREF = "../tred/tred6348.htm">6348</A>  Currency rate value                       C      n..4
+
+030    <A HREF = "../tred/tred5402.htm">5402</A> CURRENCY EXCHANGE RATE                     C    1 n..12
+
+040    <A HREF = "../tred/tred6341.htm">6341</A> EXCHANGE RATE CURRENCY MARKET IDENTIFIER   C    1 an..3
+ 
+<P>`;
+            const sut: UNECEMessageStructureParser = new UNECEMessageStructureParser("d01b", "invoic");
+
+            const definitionMock: EdifactMessageSpecification = mockDefinition;
+
+            (sut as any).parseSegmentDefinitionPage("CUX", page, definitionMock)
+                .then((response: EdifactMessageSpecification) => {
+                    const segments: Dictionary<SegmentEntry> = response.segmentTable;
+                    const elements: Dictionary<ElementEntry> = response.elementTable;
+
+                    expect(segments.get("CUX")?.elements).toEqual(jasmine.arrayContaining(["C504", "C504", "5402", "6341"]));
+                    expect(segments.get("CUX")?.requires).toEqual(0);
+
+                    expect(elements.get("C504")?.components.length).toEqual(4);
+                    expect(elements.get("C504")?.components).toEqual(jasmine.arrayContaining(["an..3", "an..3", "an..3", "n..4"]));
+
+                    done();
+                });
+        });
     });
 
     describe("should parse real UNECE page for structure and segment/element definitions", () => {
 
-        it("should parse", (done) => {
-            // download of HTML pages and parsing these does take a bit of time. Occasionally
-            // this test fails due to timeout issues, so we increase it here slightly
-            const oldTimeout: number = jasmine.DEFAULT_TIMEOUT_INTERVAL;
-            jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000; // 10 sec
+        it("successfully", (done) => {
             const sut: UNECEMessageStructureParser = new UNECEMessageStructureParser("d01b", "invoic");
 
             sut.loadTypeSpec()
                 .then((response: EdifactMessageSpecification) => {
+                    // persist(response, ".");
                     expect(response.type()).toEqual("D01B_INVOIC");
                     expect(response.messageStructureDefinition.length).not.toEqual(0);
                     done();
-                    jasmine.DEFAULT_TIMEOUT_INTERVAL = oldTimeout;
                 })
                 .catch((error: Error) => fail(error.message));
-        });
+        }, 10000);
     });
 });

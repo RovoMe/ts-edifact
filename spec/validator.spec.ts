@@ -16,6 +16,9 @@
  * limitations under the License.
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+
 import { Validator, ValidatorImpl, Dictionary, SegmentEntry, ElementEntry } from "../src/validator";
 import { Tokenizer } from "../src/tokenizer";
 
@@ -27,12 +30,13 @@ describe("Validator", () => {
         beforeEach(() => {
             validator = new ValidatorImpl();
             const dict: Dictionary<SegmentEntry> = new Dictionary<SegmentEntry>();
-            dict.add("AAA", { requires: 1, elements: ["A000", "A001"]});
+            dict.add("AAA", { requires: 1, elements: ["A000", "A001"] });
             validator.define(dict);
         });
 
         it("should throw if the required elements aren't provided", () => {
             const segment: string = "AAA";
+            validator.onOpenSegment(segment);
             expect(() => validator.onCloseSegment(segment)).toThrow();
         });
 
@@ -43,6 +47,14 @@ describe("Validator", () => {
             validator.onElement();
             validator.onElement();
             expect(() => validator.onCloseSegment(segment)).toThrow();
+        });
+
+        it ("should ignore segments not available in the segments definition table", () => {
+            const segment: string = "BBB";
+            expect(() => {
+                validator.onOpenSegment(segment);
+                validator.onCloseSegment(segment);
+            }).not.toThrow();
         });
     });
 
@@ -57,13 +69,13 @@ describe("Validator", () => {
         beforeEach(() => {
             validator = new ValidatorImpl();
             const dict: Dictionary<SegmentEntry> = new Dictionary<SegmentEntry>();
-            dict.add("AAA", { requires: 0, elements: ["A000", "A001"]});
+            dict.add("AAA", { requires: 0, elements: ["A000", "A001"] });
             validator.define(dict);
         });
 
         it("should throw if the required components aren't provided", () => {
             const dict: Dictionary<ElementEntry> = new Dictionary<ElementEntry>();
-            dict.add("A000", { requires: 1, components: ["a3"]});
+            dict.add("A000", { requires: 1, components: ["a3"] });
             validator.define(dict);
             validator.onOpenSegment("AAA");
             validator.onElement();
@@ -72,7 +84,7 @@ describe("Validator", () => {
 
         it("should throw if too many components are provided", () => {
             const dict: Dictionary<ElementEntry> = new Dictionary<ElementEntry>();
-            dict.add("A000", { requires: 0, components: ["a3"]});
+            dict.add("A000", { requires: 0, components: ["a3"] });
             validator.define(dict);
             validator.onOpenSegment("AAA");
             validator.onElement();
@@ -103,6 +115,15 @@ describe("Validator", () => {
 
             validator.onOpenComponent(buffer);
             expect(numericHook).toHaveBeenCalled();
+        });
+
+        it("should ignore parsed elements with no definition available", () => {
+            const dict: Dictionary<ElementEntry> = new Dictionary<ElementEntry>();
+            dict.add("A001", { requires: 0, components: ["a3", "an3", "n3"] });
+            validator.define(dict);
+
+            validator.onOpenSegment("AAA");
+            expect(() => validator.onElement()).not.toThrow();
         });
     });
 
@@ -238,5 +259,51 @@ describe("Validator", () => {
             buffer.content = () => value;
             buffer.length = () => value.length;
         }
+    });
+
+    describe("with enabled throwOnMissingDefinitions setting", () => {
+
+        let validator: Validator;
+
+        describe("with only segment definitions", () => {
+            beforeEach(() => {
+                // note the boolean argument passed which enables strict validation, failing if an unknown segment is processed
+                validator = new ValidatorImpl(true);
+                const dict: Dictionary<SegmentEntry> = new Dictionary<SegmentEntry>();
+                dict.add("AAA", { requires: 1, elements: ["A000", "A001"] });
+                validator.define(dict);
+            });
+
+            it("should throw on parsed segments with no definition available", () => {
+                const segment: string = "BBB";
+                expect(() => validator.onOpenSegment(segment)).toThrow();
+            });
+        });
+
+        describe("with segment and element definitions", () => {
+
+            const buffer: Tokenizer = new Tokenizer();
+            buffer.alpha = () => void {};
+            buffer.alphanumeric = () => void {};
+            buffer.numeric = () => void {};
+            buffer.length = () => 0;
+
+            beforeEach(() => {
+                validator = new ValidatorImpl(true);
+                const segments: Dictionary<SegmentEntry> = new Dictionary<SegmentEntry>();
+                segments.add("AAA", { requires: 0, elements: ["A000", "A001"] });
+
+                const elements: Dictionary<ElementEntry> = new Dictionary<ElementEntry>();
+                elements.add("A001", { requires: 1, components: ["a3"] });
+
+                validator.define(segments);
+                validator.define(elements);
+            });
+
+            it("should throw on parsed elements with no definition available", () => {
+                validator.onOpenSegment("AAA");
+                expect(() => validator.onElement()).toThrow();
+            });
+        });
     });
 });

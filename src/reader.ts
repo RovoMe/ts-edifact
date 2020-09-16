@@ -19,9 +19,10 @@
 import { Parser } from "./parser";
 import { Validator, ValidatorImpl, Dictionary, SegmentEntry, ElementEntry } from "./validator";
 
-import { segments as segmentTable } from "./segments";
-import { elements as elementTable} from "./elements";
+import { SegmentTableBuilder } from "./segments";
+import { ElementTableBuilder} from "./elements";
 import { Separators } from "./edi/separators";
+import { isDefined } from "./util";
 
 export type ResultType = {
     name: string;
@@ -49,7 +50,7 @@ export class Reader {
 
     separators: Separators;
 
-    constructor() {
+    constructor(messageSpecDir?: string) {
         this.validator = new ValidatorImpl();
         this.parser = new Parser(this.validator);
 
@@ -62,16 +63,49 @@ export class Reader {
         this.components = [];
         let components: string[] = this.components;
 
-        this.parser.onOpenSegment = function (segment: string): void {
+        let activeSegment: string | null;
+
+        this.parser.onOpenSegment = (segment: string): void => {
             elements = [];
             result.push({ name: segment, elements:  elements });
+            activeSegment = segment;
         };
-        this.parser.onElement = function (): void {
+        this.parser.onElement = (): void => {
             components = [];
             elements.push(components);
         };
-        this.parser.onComponent = function (value: string): void {
+        this.parser.onComponent = (value: string): void => {
             components.push(value);
+        };
+        this.parser.onCloseSegment = (): void => {
+            if (isDefined(activeSegment)) {
+                // Update the respective segment and element definitions once we know the exact version
+                // of the document
+                if (activeSegment === "UNH") {
+                    const messageType: string = elements[1][0];
+                    const messageVersion: string = elements[1][1];
+                    const messageRelease: string = elements[1][2];
+
+                    let segmentTableBuilder: SegmentTableBuilder = new SegmentTableBuilder(messageType);
+                    let elementTableBuilder: ElementTableBuilder = new ElementTableBuilder(messageType);
+
+                    const version: string = (messageVersion + messageRelease).toUpperCase();
+                    segmentTableBuilder = segmentTableBuilder.forVersion(version) as SegmentTableBuilder;
+                    elementTableBuilder = elementTableBuilder.forVersion(version) as ElementTableBuilder;
+
+                    if (messageSpecDir) {
+                        segmentTableBuilder = segmentTableBuilder.specLocation(messageSpecDir);
+                        elementTableBuilder = elementTableBuilder.specLocation(messageSpecDir);
+                    } else {
+                        segmentTableBuilder = segmentTableBuilder.specLocation("./");
+                        elementTableBuilder = elementTableBuilder.specLocation("./");
+                    }
+
+                    this.validator.define(segmentTableBuilder.build());
+                    this.validator.define(elementTableBuilder.build());
+                }
+                activeSegment = null;
+            }
         };
 
         // will initialize default separators
@@ -94,13 +128,14 @@ export class Reader {
 
     private initializeIfNeeded(): void {
         if (!this.defined) {
-            if (this.validationTables.length === 0) {
-                this.validator.define(segmentTable);
-                this.validator.define(elementTable);
-            } else {
+            if (this.validationTables.length > 0) {
                 for (const table of this.validationTables) {
                     this.validator.define(table);
                 }
+            } else {
+                // basic Edifact envelop validation, i.e. UNB, UNH, UNS and UNZ
+                this.validator.define(SegmentTableBuilder.enrichWithDefaultSegments(new Dictionary<SegmentEntry>()));
+                this.validator.define(ElementTableBuilder.enrichWithDefaultElements(new Dictionary<ElementEntry>()));
             }
             this.defined = true;
         }

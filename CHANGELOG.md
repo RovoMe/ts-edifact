@@ -3,8 +3,12 @@
 All notable changes to the "ts-edifact" library will be documented in this file.
 
 ## [Unreleased]
+
+### 0.0.7
 - Added CHANGELOG.md
 - Added parser for generating necessary message-, segment- and element structure objects needed for validating Edifact documents
+- Refactored segment and element objects to make use of a builder pattern and allow to easily load segment/element definitions from a target location
+- Updated project structure to get rid of plenty of ESLint errors
 
 ### 0.0.6
 - Added support for loading external Edifact message structure definition files on generating an Edifact interchange via the `InterchangeBuilder` class

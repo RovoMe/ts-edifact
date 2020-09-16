@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-import { Validator, ValidatorImpl } from "../src/validator";
+import { Validator, ValidatorImpl, Dictionary, SegmentEntry, ElementEntry } from "../src/validator";
 import { Parser } from "../src/parser";
-import { segments } from "../src/segments";
-import { elements } from "../src/elements";
+import { SegmentTableBuilder } from "../src/segments";
+import { ElementTableBuilder } from "../src/elements";
 
 // issue #1 - Differences between ts-edifact and edifact libraries
 describe("Parsing edifact document", () => {
@@ -27,16 +27,19 @@ describe("Parsing edifact document", () => {
     describe("should complete without any errors", () => {
         let parser: Parser;
 
-        beforeEach(() => {
+        it("should parse original sample document", () => {
+            const segments: Dictionary<SegmentEntry> =
+                new SegmentTableBuilder("INVOIC").specLocation("./src/messageSpec").build();
+            const elements: Dictionary<ElementEntry> =
+                new ElementTableBuilder("INVOIC").specLocation("./src/messageSpec").build();
+
             const validator: Validator = new ValidatorImpl();
             validator.define(segments);
             validator.define(elements);
 
             parser = new Parser(validator);
             parser.encoding("UNOA");
-        });
 
-        it("should parse original sample document", () => {
             let document: string = "";
 
             document += "UNB+UNOA:1+005435656:1+006415160:1+060515:1434+00000000000778'";
@@ -70,6 +73,18 @@ describe("Parsing edifact document", () => {
         });
 
         it("should parse issue #1 document", () => {
+
+            const segments: Dictionary<SegmentEntry> =
+            new SegmentTableBuilder("IFTMIN").specLocation("./src/messageSpec").build();
+            const elements: Dictionary<ElementEntry> =
+                new ElementTableBuilder("IFTMIN").specLocation("./src/messageSpec").build();
+
+            const validator: Validator = new ValidatorImpl();
+            validator.define(segments);
+            validator.define(elements);
+
+            parser = new Parser(validator);
+            parser.encoding("UNOA");
 
             let document: string = "";
             document += "UNA:+.? '";

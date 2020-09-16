@@ -95,7 +95,12 @@ export type ParsingResultType = {
     promises: Promise<EdifactMessageSpecification>[];
 };
 
-export class UNECEMessageStructureParser {
+export interface MessageStructureParser {
+
+    loadTypeSpec(): Promise<EdifactMessageSpecification>;
+}
+
+export class UNECEMessageStructureParser implements MessageStructureParser {
 
     private version: string;
     private type: string;
@@ -109,7 +114,7 @@ export class UNECEMessageStructureParser {
         this.httpClient = new HttpClient(baseUrl);
     }
 
-    async loadPage(page: string): Promise<string> {
+    private async loadPage(page: string): Promise<string> {
         const data: string = await this.httpClient.get(page);
         return data;
     }
@@ -130,6 +135,7 @@ export class UNECEMessageStructureParser {
         const segEntry: SegmentEntry = { "requires": 0, "elements": [] };
         let state: SegmentPart = SegmentPart.BeforeStructureDef;
 
+        let skipAddingElement: boolean = false;
         let overflowLine: string | null = null;
         let complexEleId: string | null = null;
         let complexEleEntry: ElementEntry | null = null;
@@ -154,7 +160,12 @@ export class UNECEMessageStructureParser {
                     const elementDef: string | undefined = arr[7] === "" ? undefined :  arr[7];
 
                     if (segGroupId) {
+                        if (id === "") {
+                            console.warn(`Could not determine element ID based on line ${line}`);
+                            continue;
+                        }
                         segEntry.elements.push(id);
+                        skipAddingElement = false;
 
                         if (mandatory) {
                             segEntry.requires = segEntry.requires +  1;
@@ -180,30 +191,33 @@ export class UNECEMessageStructureParser {
                                 definition.elementTable.add(complexEleId, complexEleEntry);
                             }
                             if (definition.elementTable.contains(id)) {
+                                skipAddingElement = true;
                                 continue;
                             }
                             complexEleId =  id;
                             complexEleEntry = { "requires": 0, "components": [] };
                         }
                     } else {
-                        if (complexEleEntry !== null && elementDef) {
-                            complexEleEntry.components.push(elementDef);
-                            complexEleEntry.requires = mandatory ? complexEleEntry.requires + 1 : complexEleEntry.requires;
-                        } else {
-                            // simple element definition
-                            if (definition.elementTable.contains(id)) {
-                                continue;
-                            }
+                        if (!skipAddingElement) {
+                            if (complexEleEntry !== null && elementDef) {
+                                complexEleEntry.components.push(elementDef);
+                                complexEleEntry.requires = mandatory ? complexEleEntry.requires + 1 : complexEleEntry.requires;
+                            } else {
+                                // simple element definition
+                                if (definition.elementTable.contains(id)) {
+                                    continue;
+                                }
 
-                            const eleEntry: ElementEntry = { "requires": 0, "components": [] };
+                                const eleEntry: ElementEntry = { "requires": 0, "components": [] };
 
-                            if (mandatory) {
-                                eleEntry.requires = eleEntry.requires + 1;
+                                if (mandatory) {
+                                    eleEntry.requires = eleEntry.requires + 1;
+                                }
+                                if (elementDef) {
+                                    eleEntry.components.push(elementDef);
+                                }
+                                definition.elementTable.add(id, eleEntry);
                             }
-                            if (elementDef) {
-                                eleEntry.components.push(elementDef);
-                            }
-                            definition.elementTable.add(id, eleEntry);
                         }
                     }
                 } else {
@@ -221,7 +235,9 @@ export class UNECEMessageStructureParser {
         if (complexEleEntry !== null && complexEleId !== null) {
             definition.elementTable.add(complexEleId, complexEleEntry);
         }
-        definition.segmentTable.add(segment, segEntry);
+        if (segment !== "") {
+            definition.segmentTable.add(segment, segEntry);
+        }
 
         return Promise.resolve(definition);
     }
