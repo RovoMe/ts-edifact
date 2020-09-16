@@ -328,6 +328,7 @@ The generated `EdifactMessageSpecification` object will hold the parsed values f
 Note that the respective segments and elements are mapped to own typescript objects which are defined in [src/edifact.ts](src/edifact.ts). The current set of classes is probably incomplete and may fall victim to differences between multiple versions and release tags of the Edifact specification. Consider further work to be done here in the future.
 
 <a name="SegmentTableBuilder"></a>
+### SegmentTableBuilder
 
 A helper class to load the respective segment definition files, from either the local directory or a specified one, and convert them to a usable data structure needed by the validator and tracker classes.
 
@@ -342,6 +343,7 @@ new SegmentTableBuilder(type: string);
 | `build(): Dictionary<SegmentEntry>` | Attempts to load the `*.segments.json` definition file of the specified message type (and version if specified) and returns a dictionary object with the loaded data. If no file could be found only the basic `UNB`, `UNH`, `UNS`, `UNT` and `UNZ` segment definitions are loaded. |
 
 <a name="ElementTableBuilder"></a>
+### ElementTableBuilder
 
 A helper class to load the respective element definition files, from either the local directory or a specified one, and convert them to a usable data structure needed by the validator and tracker classes.
 
