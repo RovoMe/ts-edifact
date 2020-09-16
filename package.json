@@ -1,7 +1,7 @@
 {
       "name": "ts-edifact",
       "description": "Edifact parser library",
-      "version": "0.0.6",
+      "version": "0.0.7",
       "type": "commonjs",
       "engines": {
             "vscode": "^1.46.0"
@@ -30,14 +30,14 @@
       },
       "scripts": {
             "clean": "rm -rf ./lib",
-            "lint": "eslint ./src/main --ext .ts,.tsx",
+            "lint": "eslint ./src --ext .ts,.tsx",
             "build": "tsc -p .",
             "build:watch": "tsc -p . --watch",
             "check": "npm run check:tsc",
             "check:tsc": "tsc -p . --noEmit",
             "pretest": "npm run lint && npm run build",
             "test": "jasmine-ts JASMINE_CONFIG_PATH=spec/support/jasmine.json",
-            "test:alloy": "ts-node -r tsconfig-paths/registernode_modules/jasmine/bin/jasmine.js \"src/test/**/*.spec.ts\"",
+            "test:alloy": "ts-node -r tsconfig-paths/registernode_modules/jasmine/bin/jasmine.js \"src/spec/**/*.spec.ts\"",
             "coverage": "nyc -r lcov -e .ts -x \"*.spec.ts\" jasmine-ts JASMINE_CONFIG_PATH=spec/support/jasmine.json",
             "webpack": "webpack --mode development",
             "webpack-dev": "webpack --mode development --watch",
@@ -75,6 +75,13 @@
             "typescript": "^3.9.7",
             "webpack": "^4.43.0",
             "webpack-cli": "^3.3.12"
+      },
+      "dependencies": {
+            "@types/htmlparser2": "^3.10.1",
+            "@types/node-fetch": "^2.5.7",
+            "axios": "0.19.2",
+            "htmlparser2": "^4.1.0",
+            "node-fetch": "^2.6.1"
       },
       "files": [
             "lib/**/*"
