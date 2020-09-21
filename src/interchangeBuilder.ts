@@ -21,7 +21,7 @@ import { MessageType, Pointer } from "./tracker";
 import * as fs from "fs";
 import { MessageHeader, Segment, toSegmentObject } from "./edifact";
 import { Separators } from "./edi/separators";
-import { APERAK, AUTHOR, BALANC, DESADV, IFTMIN, INVOIC, INVRPT, ORDERS, OSTENQ, OSTRPT, PARTIN, TAXCON, VATDEC } from "./index";
+import { APERAK, AUTHOR, BALANC, DESADV, GENRAL, IFTMIN, INVOIC, INVRPT, ORDERS, OSTENQ, OSTRPT, PARTIN, TAXCON, VATDEC } from "./index";
 
 export class Group {
     name: string;
@@ -487,6 +487,8 @@ export class InterchangeBuilder {
                         return BALANC;
                     case "DESADV":
                         return DESADV;
+                    case "GENRAL":
+                        return GENRAL;
                     case "IFTMIN":
                         return IFTMIN;
                     case "INVOIC":

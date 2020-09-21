@@ -326,6 +326,63 @@ SUMMARY SECTION
                     done();
                 });
         });
+
+        it("should parse segment definition with long element name", (done) => {
+
+            const page: string = `
+<H3>       TAX  DUTY/TAX/FEE DETAILS</H3>
+
+       Function: To specify relevant duty/tax/fee information.
+     
+010    <A HREF = "../tred/tred5283.htm">5283</A> DUTY OR TAX OR FEE FUNCTION CODE QUALIFIER M    1 an..3
+     
+020    <A HREF = "../trcd/trcdc241.htm">C241</A> DUTY/TAX/FEE TYPE                          C    1
+       <A HREF = "../tred/tred5153.htm">5153</A>  Duty or tax or fee type name code         C      an..3
+       <A HREF = "../tred/tred1131.htm">1131</A>  Code list identification code             C      an..17
+       <A HREF = "../tred/tred3055.htm">3055</A>  Code list responsible agency code         C      an..3
+       <A HREF = "../tred/tred5152.htm">5152</A>  Duty or tax or fee type name              C      an..35
+     
+030    <A HREF = "../trcd/trcdc533.htm">C533</A> DUTY/TAX/FEE ACCOUNT DETAIL                C    1
+       <A HREF = "../tred/tred5289.htm">5289</A>  Duty or tax or fee account code           M      an..6
+       <A HREF = "../tred/tred1131.htm">1131</A>  Code list identification code             C      an..17
+       <A HREF = "../tred/tred3055.htm">3055</A>  Code list responsible agency code         C      an..3
+     
+040    <A HREF = "../tred/tred5286.htm">5286</A> DUTY OR TAX OR FEE ASSESSMENT BASIS VALUE  C    1 an..15
+   
+050    <A HREF = "../trcd/trcdc243.htm">C243</A> DUTY/TAX/FEE DETAIL                        C    1
+       <A HREF = "../tred/tred5279.htm">5279</A>  Duty or tax or fee rate code              C      an..7
+       <A HREF = "../tred/tred1131.htm">1131</A>  Code list identification code             C      an..17
+       <A HREF = "../tred/tred3055.htm">3055</A>  Code list responsible agency code         C      an..3
+       <A HREF = "../tred/tred5278.htm">5278</A>  Duty or tax or fee rate                   C      an..17
+       <A HREF = "../tred/tred5273.htm">5273</A>  Duty or tax or fee rate basis code        C      an..12
+       <A HREF = "../tred/tred1131.htm">1131</A>  Code list identification code             C      an..17
+       <A HREF = "../tred/tred3055.htm">3055</A>  Code list responsible agency code         C      an..3
+     
+060    <A HREF = "../tred/tred5305.htm">5305</A> DUTY OR TAX OR FEE CATEGORY CODE           C    1 an..3
+     
+070    <A HREF = "../tred/tred3446.htm">3446</A> PARTY TAX IDENTIFIER                       C    1 an..20
+     
+080    <A HREF = "../tred/tred1227.htm">1227</A> CALCULATION SEQUENCE CODE                  C    1 an..3
+     
+<P>`;
+
+            const sut: UNECEMessageStructureParser = new UNECEMessageStructureParser("d01b", "invoic");
+            (sut as any).parseSegmentDefinitionPage("TAX", page, mockDefinition)
+                .then((response: EdifactMessageSpecification) => {
+                    const segments: Dictionary<SegmentEntry> = response.segmentTable;
+                    const elements: Dictionary<ElementEntry> = response.elementTable;
+
+                    expect(segments.get("TAX")?.elements).toEqual(jasmine.arrayContaining(["5283", "C241", "C533", "5286", "C243", "5305", "3446", "1227"]));
+                    expect(segments.get("TAX")?.requires).toEqual(1);
+
+                    expect(elements.get("5283")?.components).toEqual(jasmine.arrayContaining(["an..3"]));
+                    expect(elements.get("5283")?.requires).toEqual(1);
+                    expect(elements.get("C241")?.components).toEqual(jasmine.arrayContaining(["an..3", "an..17", "an..3", "an..35"]));
+                    expect(elements.get("C241")?.requires).toEqual(0);
+
+                    done();
+                });
+        });
     });
 
     describe("should parse real UNECE page for structure and segment/element definitions", () => {
