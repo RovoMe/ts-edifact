@@ -23,11 +23,22 @@ import { SegmentTableBuilder } from "./segments";
 import { ElementTableBuilder} from "./elements";
 import { Separators } from "./edi/separators";
 import { isDefined } from "./util";
+import { Cache } from "./cache";
 
 export type ResultType = {
     name: string;
     elements: string[][];
 };
+
+class DefinitionTables {
+    segmentTable: Dictionary<SegmentEntry>;
+    elementTable: Dictionary<ElementEntry>;
+
+    constructor(segmentTable: Dictionary<SegmentEntry>, elementTable: Dictionary<ElementEntry>) {
+        this.segmentTable = segmentTable;
+        this.elementTable = elementTable;
+    }
+}
 
 /**
  * The `Reader` class is included for backwards compatibility. It translates an
@@ -47,6 +58,8 @@ export class Reader {
 
     private defined: boolean = false;
     private validationTables: (Dictionary<SegmentEntry> | Dictionary<ElementEntry>)[] = [];
+
+    private definitionCache: Cache<DefinitionTables> = new Cache(15);
 
     separators: Separators;
 
@@ -86,23 +99,33 @@ export class Reader {
                     const messageVersion: string = elements[1][1];
                     const messageRelease: string = elements[1][2];
 
-                    let segmentTableBuilder: SegmentTableBuilder = new SegmentTableBuilder(messageType);
-                    let elementTableBuilder: ElementTableBuilder = new ElementTableBuilder(messageType);
-
-                    const version: string = (messageVersion + messageRelease).toUpperCase();
-                    segmentTableBuilder = segmentTableBuilder.forVersion(version) as SegmentTableBuilder;
-                    elementTableBuilder = elementTableBuilder.forVersion(version) as ElementTableBuilder;
-
-                    if (messageSpecDir) {
-                        segmentTableBuilder = segmentTableBuilder.specLocation(messageSpecDir);
-                        elementTableBuilder = elementTableBuilder.specLocation(messageSpecDir);
+                    const key: string = messageVersion + messageRelease + "_" + messageType;
+                    if (this.definitionCache.contains(key)) {
+                        const tables: DefinitionTables = this.definitionCache.get(key);
+                        this.validator.define(tables.segmentTable);
+                        this.validator.define(tables.elementTable);
                     } else {
-                        segmentTableBuilder = segmentTableBuilder.specLocation("./");
-                        elementTableBuilder = elementTableBuilder.specLocation("./");
-                    }
+                        let segmentTableBuilder: SegmentTableBuilder = new SegmentTableBuilder(messageType);
+                        let elementTableBuilder: ElementTableBuilder = new ElementTableBuilder(messageType);
 
-                    this.validator.define(segmentTableBuilder.build());
-                    this.validator.define(elementTableBuilder.build());
+                        const version: string = (messageVersion + messageRelease).toUpperCase();
+                        segmentTableBuilder = segmentTableBuilder.forVersion(version) as SegmentTableBuilder;
+                        elementTableBuilder = elementTableBuilder.forVersion(version) as ElementTableBuilder;
+
+                        if (messageSpecDir) {
+                            segmentTableBuilder = segmentTableBuilder.specLocation(messageSpecDir);
+                            elementTableBuilder = elementTableBuilder.specLocation(messageSpecDir);
+                        } else {
+                            segmentTableBuilder = segmentTableBuilder.specLocation("./");
+                            elementTableBuilder = elementTableBuilder.specLocation("./");
+                        }
+
+                        const tables: DefinitionTables = new DefinitionTables(segmentTableBuilder.build(), elementTableBuilder.build());
+                        this.validator.define(tables.segmentTable);
+                        this.validator.define(tables.elementTable);
+
+                        this.definitionCache.insert(key, tables);
+                    }
                 }
                 activeSegment = null;
             }

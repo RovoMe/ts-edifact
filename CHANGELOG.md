@@ -4,6 +4,9 @@ All notable changes to the "ts-edifact" library will be documented in this file.
 
 ## [Unreleased]
 
+### 0.0.9
+- Added cache support for already generated segment- and element definition tables to the Reader class
+
 ### 0.0.8
 - Fixed a segment definition generation issue for `TAX` segments, which due to its long name didn't end up in a propper definition
 - Added D01B GENRAL message structure and segment/element definition files
