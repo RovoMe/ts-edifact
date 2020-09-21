@@ -223,7 +223,7 @@ SUMMARY SECTION
 <H3>       DTM  DATE/TIME/PERIOD</H3>
 
        Function: To specify date, and/or time, or period.
-     
+
 010    <A HREF = "../trcd/trcdc507.htm">C507</A> DATE/TIME/PERIOD                           M    1
        <A HREF = "../tred/tred2005.htm">2005</A>  Date or time or period function code
              qualifier                                 M      an..3
@@ -446,7 +446,7 @@ SUMMARY SECTION
 
             sut.loadTypeSpec()
                 .then((response: EdifactMessageSpecification) => {
-                    // persist(response, ".");
+                    // persist(response, "./src/messageSpec");
                     expect(response.type()).toEqual("D01B_INVOIC");
                     expect(response.messageStructureDefinition.length).not.toEqual(0);
                     done();

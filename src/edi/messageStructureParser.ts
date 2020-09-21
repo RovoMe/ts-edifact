@@ -140,6 +140,7 @@ export class UNECEMessageStructureParser implements MessageStructureParser {
         let complexEleId: string | null = null;
         let complexEleEntry: ElementEntry | null = null;
         for (let line of page.split("\n")) {
+            line = line.trimRight();
             if (overflowLine !== null) {
                 line = overflowLine.trimRight() + " " + line.trim();
                 overflowLine =  null;
