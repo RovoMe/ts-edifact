@@ -383,6 +383,60 @@ SUMMARY SECTION
                     done();
                 });
         });
+
+        it("should parse complex segment definition with overflow and special characters", (done) => {
+
+            const page: string = `
+<H3>       PCI  PACKAGE IDENTIFICATION</H3>
+
+       Function: To specify markings and labels on individual
+                 packages or physical units.
+
+010    <A HREF = "../tred/tred4233.htm">4233</A> MARKING INSTRUCTIONS CODE                  C    1 an..3
+
+020    <A HREF = "../trcd/trcdc210.htm">C210</A> MARKS & LABELS                             C    1
+       <A HREF = "../tred/tred7102.htm">7102</A>  Shipping marks description                M      an..35
+       <A HREF = "../tred/tred7102.htm">7102</A>  Shipping marks description                C      an..35
+       <A HREF = "../tred/tred7102.htm">7102</A>  Shipping marks description                C      an..35
+       <A HREF = "../tred/tred7102.htm">7102</A>  Shipping marks description                C      an..35
+       <A HREF = "../tred/tred7102.htm">7102</A>  Shipping marks description                C      an..35
+       <A HREF = "../tred/tred7102.htm">7102</A>  Shipping marks description                C      an..35
+       <A HREF = "../tred/tred7102.htm">7102</A>  Shipping marks description                C      an..35
+       <A HREF = "../tred/tred7102.htm">7102</A>  Shipping marks description                C      an..35
+       <A HREF = "../tred/tred7102.htm">7102</A>  Shipping marks description                C      an..35
+       <A HREF = "../tred/tred7102.htm">7102</A>  Shipping marks description                C      an..35
+
+030    <A HREF = "../tred/tred8275.htm">8275</A> CONTAINER OR PACKAGE CONTENTS INDICATOR
+            CODE                                       C    1 an..3
+
+040    <A HREF = "../trcd/trcdc827.htm">C827</A> TYPE OF MARKING                            C    1
+       <A HREF = "../tred/tred7511.htm">7511</A>  Marking type code                         M      an..3
+       <A HREF = "../tred/tred1131.htm">1131</A>  Code list identification code             C      an..17
+       <A HREF = "../tred/tred3055.htm">3055</A>  Code list responsible agency code         C      an..3
+
+<P>`;
+
+            const sut: UNECEMessageStructureParser = new UNECEMessageStructureParser("d01b", "invoic");
+            (sut as any).parseSegmentDefinitionPage("PCI", page, mockDefinition)
+                .then((response: EdifactMessageSpecification) => {
+                    const segments: Dictionary<SegmentEntry> = response.segmentTable;
+                    const elements: Dictionary<ElementEntry> = response.elementTable;
+
+                    expect(segments.get("PCI")?.elements).toEqual(jasmine.arrayContaining(["4233", "C210", "8275", "C827"]));
+                    expect(segments.get("PCI")?.requires).toEqual(0);
+
+                    expect(elements.get("4233")?.components).toEqual(jasmine.arrayContaining(["an..3"]));
+                    expect(elements.get("4233")?.requires).toEqual(0);
+                    expect(elements.get("C210")?.components).toEqual(jasmine.arrayContaining(["an..35", "an..35", "an..35", "an..35", "an..35", "an..35", "an..35", "an..35", "an..35", "an..35"]));
+                    expect(elements.get("C210")?.requires).toEqual(1);
+                    expect(elements.get("8275")?.components).toEqual(jasmine.arrayContaining(["an..3"]));
+                    expect(elements.get("8275")?.requires).toEqual(0);
+                    expect(elements.get("C827")?.components).toEqual(jasmine.arrayContaining(["an..3", "an..17", "an..3"]));
+                    expect(elements.get("C827")?.requires).toEqual(1);
+
+                    done();
+                });
+        });
     });
 
     describe("should parse real UNECE page for structure and segment/element definitions", () => {

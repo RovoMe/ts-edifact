@@ -20,7 +20,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import * as url from "url";
-import fetch, { Response, RequestInfo } from "node-fetch";
 import * as axios from "axios";
 
 export class HttpClient {
@@ -29,15 +28,6 @@ export class HttpClient {
 
     constructor(baseUrl: string) {
         this.baseUrl = baseUrl;
-    }
-
-    async fetch(target: string): Promise<string> {
-        const uri: string = url.resolve(this.baseUrl, target);
-        const requestInfo: RequestInfo = uri;
-        const response: Response = await fetch(requestInfo);
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const document: string = await response.text();
-        return document;
     }
 
     async get(target: string): Promise<string> {

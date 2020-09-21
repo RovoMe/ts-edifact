@@ -4,6 +4,11 @@ All notable changes to the "ts-edifact" library will be documented in this file.
 
 ## [Unreleased]
 
+### 0.0.10
+- Fixed an issue with parsing complex segment/element definitions
+- Removed node-fetch from the dependencies as it wasn't used
+- Moved htmlparser2 lib and some of its dependencies from dependencies to dev-dependencies. Hope this allows to usage of the lib in other projects
+
 ### 0.0.9
 - Added cache support for already generated segment- and element definition tables to the Reader class
 
