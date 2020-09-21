@@ -4,6 +4,10 @@ All notable changes to the "ts-edifact" library will be documented in this file.
 
 ## [Unreleased]
 
+### 0.0.8
+- Fixed a segment definition generation issue for `TAX` segments, which due to its long name didn't end up in a propper definition
+- Added D01B GENRAL message structure and segment/element definition files
+
 ### 0.0.7
 - Added CHANGELOG.md
 - Added parser for generating necessary message-, segment- and element structure objects needed for validating Edifact documents
