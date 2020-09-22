@@ -4,6 +4,9 @@ All notable changes to the "ts-edifact" library will be documented in this file.
 
 ## [Unreleased]
 
+### 0.0.11
+- Fixed an issue on generating an object structure through the interchange builder class if multiple messages are present within the same document
+
 ### 0.0.10
 - Fixed an issue with parsing complex segment/element definitions
 - Removed node-fetch from the dependencies as it wasn't used

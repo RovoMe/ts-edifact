@@ -296,6 +296,7 @@ export class InterchangeBuilder {
                         const messageType: string = message.messageHeader.messageIdentifier.messageType;
                         const table: MessageType[] = this.getMessageStructureDefForMessage(basePath, messageVersion, messageType);
                         this.stack = [ new Pointer(table, 0) ];
+                        this.curSection = "header";
 
                         if (interchange) {
                             interchange.addMessage(message);

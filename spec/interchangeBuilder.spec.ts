@@ -181,9 +181,156 @@ describe("InterchangeBuilder", () => {
                     ['00000000000117']
                 ]
             },
+            // 2nd message
+            {
+                name: "UNH", elements: [
+                    ['00000000000118'],
+                    ['INVOIC', 'D', '01B', 'UN']
+                ]
+            },
+            {
+                name: "BGM", elements: [
+                    ['380'],
+                    ['342459'],
+                    ['9']
+                ]
+            },
+            {
+                name: "DTM", elements: [
+                    ['3', '20060515', '102']
+                ]
+            },
+            // added for demonstration purpose that the interchange builder values the respective spec
+            {
+                name: "GIR", elements: [
+                    ['3'],
+                    ['00999100', 'ML']
+                ]
+            },
+            {
+                name: "RFF", elements: [
+                    ['ON', '521052']
+                ]
+            },
+            {
+                name: "NAD", elements: [
+                    ['BY'],
+                    ['792820524', '', '16'],
+                    [''],
+                    ['CUMMINS MID-RANGE ENGINE PLANT']
+                ]
+            },
+            {
+                name: "NAD", elements: [
+                    ['SE'],
+                    ['005435656', '', '16'],
+                    [''],
+                    ['GENERAL WIDGET COMPANY']
+                ]
+            },
+            {
+                name: "CUX", elements: [
+                    ['1', 'USD']
+                ]
+            },
+            {
+                name: "LIN", elements: [
+                    ['1'],
+                    [''],
+                    ['157870', 'IN']
+                ]
+            },
+            {
+                name: "IMD", elements: [
+                    ['F'],
+                    [''],
+                    ['', '', '', 'WIDGET']
+                ]
+            },
+            {
+                name: "QTY", elements: [
+                    ['47', '1020', 'EA']
+                ]
+            },
+            {
+                name: "ALI", elements: [
+                    ['US']
+                ]
+            },
+            {
+                name: "MOA", elements: [
+                    ['203', '1202.58']
+                ]
+            },
+            {
+                name: "PRI", elements: [
+                    ['INV', '1.179']
+                ]
+            },
+            {
+                name: "LIN", elements: [
+                    ['2'],
+                    [''],
+                    ['157871', 'IN']
+                ]
+            },
+            {
+                name: "IMD", elements: [
+                    ['F'],
+                    [''],
+                    ['', '', '', 'DIFFERENT WIDGET']
+                ]
+            },
+            {
+                name: "QTY", elements: [
+                    ['47', '20', 'EA']
+                ]
+            },
+            {
+                name: "ALI", elements: [
+                    ['JP']
+                ]
+            },
+            {
+                name: "MOA", elements: [
+                    ['203', '410']
+                ]
+            },
+            {
+                name: "PRI", elements: [
+                    ['INV', '20.5']
+                ]
+            },
+            {
+                name: "UNS", elements: [
+                    ['S']
+                ]
+            },
+            {
+                name: "MOA", elements: [
+                    ['39', '2137.58']
+                ]
+            },
+            {
+                name: "ALC", elements: [
+                    ['C'],
+                    ['ABG']
+                ]
+            },
+            {
+                name: "MOA", elements: [
+                    ['8', '525']
+                ]
+            },
+            {
+                name: "UNT", elements: [
+                    ['23'],
+                    ['00000000000118']
+                ]
+            },
             {
                 name: "UNZ", elements: [
-                    ['1'],
+                    ['2'],
                     ['00000000000778']
                 ]
             }
@@ -198,7 +345,8 @@ describe("InterchangeBuilder", () => {
         const builder: InterchangeBuilder = new InterchangeBuilder(parseResult, separators, "src/messageSpec/");
         const edi: Edifact = builder.interchange;
         expect(edi).toBeDefined();
-        expect(edi.messages.length).toEqual(1);
+        expect(edi.messages.length).toEqual(2);
+
         // expected 1 group holding two 2 subgroups with LIN, IMD, QTY, ALI and further segments
         expect(edi.messages[0].detail.length).toEqual(1);
         expect((edi.messages[0].detail[0] as Group).data.length).toEqual(2);
@@ -208,6 +356,9 @@ describe("InterchangeBuilder", () => {
         // subgroup should contain 6 segments (LIN, IMD, QTY, ALI) or groups (MOA + PRI)
         const linGroup0: Group = segGroup?.data[0] as Group;
         expect(linGroup0.data.length).toEqual(6);
+
+        expect(edi.messages[1].header.length).toEqual(edi.messages[0].header.length);
+        expect(edi.messages[1].detail.length).toEqual(1);
     });
 
     it ("should fail D96A message structure", () => {
