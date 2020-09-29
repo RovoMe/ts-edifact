@@ -3,6 +3,7 @@
 All notable changes to the "ts-edifact" library will be documented in this file.
 
 ## [Unreleased]
+- Removed `MoaType` enum as there are to many possible enum constants available to enumberate them all
 
 ### 0.0.11
 - Fixed an issue on generating an object structure through the interchange builder class if multiple messages are present within the same document

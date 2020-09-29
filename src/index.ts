@@ -52,7 +52,6 @@ export {
     Map,
     MapConstructor,
     sanitizeFloat,
-    MoaType,
     Segment,
     BeginOfMessage,
     LineItem,

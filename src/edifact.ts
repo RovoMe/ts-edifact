@@ -36,100 +36,6 @@ export interface MapConstructor {
 }
 declare let Map: MapConstructor;
 
-// custom enum
-export class MoaType {
-
-    private static map = new Map<string, MoaType>();
-
-    public static get AllowanceOrChargeAmount(): MoaType {
-        return new MoaType(0, "8", "AllowanceOrChargeAmount");
-    }
-    public static get InvoiceAmount(): MoaType {
-        return new MoaType(1, "77", "InvoiceAmount");
-    }
-    public static get TotalLineItemsAmount(): MoaType {
-        return new MoaType(2, "79", "TotalLineItemsAmount");
-    }
-    public static get TaxAmount(): MoaType {
-        return new MoaType(3, "124", "TaxAmount");
-    }
-    public static get TaxableAmount(): MoaType {
-        return new MoaType(4, "125", "TaxableAmount");
-    }
-    public static get TotalChargesOrAllowances(): MoaType {
-        return new MoaType(5, "131", "TotalChargesOrAllowances");
-    }
-    public static get LineItemAmount(): MoaType {
-        return new MoaType(6, "203", "LineItemAmount");
-    }
-    public static get Unknown(): MoaType {
-        return new MoaType(7, "", "Unknown");
-    }
-
-    private static add(moaType: MoaType): void {
-        this.map.set(moaType.key, moaType);
-    }
-
-    public static init(): void {
-        MoaType.add(MoaType.AllowanceOrChargeAmount);
-        MoaType.add(MoaType.InvoiceAmount);
-        MoaType.add(MoaType.TotalLineItemsAmount);
-        MoaType.add(MoaType.TaxAmount);
-        MoaType.add(MoaType.TaxableAmount);
-        MoaType.add(MoaType.TotalChargesOrAllowances);
-        MoaType.add(MoaType.LineItemAmount);
-        MoaType.add(MoaType.Unknown);
-    }
-
-    public static getByOrdinal(ordinal: number): MoaType {
-        this.map.forEach(entry => {
-            if (entry.ordinal === ordinal) {
-                return entry;
-            }
-        });
-        return MoaType.Unknown;
-    }
-
-    public static parse(key: string): MoaType {
-        const moaType: MoaType | undefined = this.map.get(key);
-        if (moaType) {
-            return moaType;
-        }
-        return MoaType.Unknown;
-    }
-
-    readonly ordinal: number;
-    readonly key: string;
-    readonly name: string;
-
-    private constructor(ordinal: number, key: string, name: string) {
-        this.ordinal = ordinal;
-        this.key = key;
-        this.name = name;
-    }
-
-    public toString(): string {
-        return this.name;
-    }
-
-    public equals(other: unknown): boolean {
-        if (other === this) {
-            return true;
-        }
-        if (Object.prototype.hasOwnProperty.call(other, "ordinal")
-            && Object.prototype.hasOwnProperty.call(other, "key")
-            && Object.prototype.hasOwnProperty.call(other, "name")) {
-            const otherMoa: MoaType = other as MoaType;
-            return otherMoa.ordinal === this.ordinal
-                        && otherMoa.key === this.key
-                        && otherMoa.name === this.name;
-        }
-        return false;
-    }
-}
-
-MoaType.init();
-
 export function sanitizeFloat(str: string, decimalSymbol: string): number {
     const updatedStr: string = str.replace(decimalSymbol, ".");
     return parseFloat(updatedStr);
@@ -2090,12 +1996,9 @@ export class MonetaryAmount implements Segment {
 
     tag = "MOA";
 
-    moaType: MoaType;
-
     monetaryAmount: MonetaryAmountData;
 
     constructor(data: ResultType, decimalSeparator: string) {
-        this.moaType = MoaType.parse(data.elements[0][0]);
         this.monetaryAmount = new MonetaryAmountData(data.elements[0], decimalSeparator);
     }
 }
