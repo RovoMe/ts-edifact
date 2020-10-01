@@ -100,22 +100,20 @@ export enum ValidatorStates {
     ENABLE = 5,
 }
 
-export interface EventValidator {
+export interface Validator {
     onOpenSegment(segment: string): void;
     onElement(): void;
     onOpenComponent(buffer: Tokenizer): void;
     onCloseComponent(buffer: Tokenizer): void;
     onCloseSegment(segment: string): void;
-}
 
-export interface Validator extends EventValidator {
     disable(): void;
     enable(): void;
     define(definitions: (Dictionary<SegmentEntry> | Dictionary<ElementEntry>)): void;
     format(formatString: string): FormatType | undefined;
 }
 
-export class NullValidator implements EventValidator {
+export class NullValidator implements Validator {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     onOpenSegment(): void {}
     // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -126,6 +124,14 @@ export class NullValidator implements EventValidator {
     onCloseComponent(): void {}
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     onCloseSegment(): void {}
+
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    disable(): void {}
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    enable(): void {}
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    define(): void {}
+    format(): FormatType | undefined { return undefined; }
 }
 
 /**

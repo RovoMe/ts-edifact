@@ -18,7 +18,7 @@
 
 import { Configuration } from "./configuration";
 import { Tokenizer } from "./tokenizer";
-import { EventValidator, NullValidator } from "./validator";
+import { Validator } from "./validator";
 
 import { EventEmitter } from "events";
 import { Separators, EdifactSeparatorsBuilder } from "./edi/separators";
@@ -35,22 +35,22 @@ enum States {
 
 export class Parser extends EventEmitter {
 
-    private validator: EventValidator;
-    private configuration: Configuration;
+    private validator: Validator;
+    configuration: Configuration;
     private tokenizer: Tokenizer;
     private state: States;
 
-    constructor(validator?: EventValidator) {
+    constructor(configuration?: Configuration) {
         super();
 
         EventEmitter.apply(this);
 
-        if (validator) {
-            this.validator = validator;
+        if (configuration) {
+            this.configuration = configuration;
         } else {
-            this.validator = new NullValidator();
+            this.configuration = new Configuration();
         }
-        this.configuration = new Configuration();
+        this.validator = this.configuration.validator;
         this.tokenizer = new Tokenizer(this.configuration);
         this.state = States.EMPTY;
     }
@@ -85,12 +85,12 @@ export class Parser extends EventEmitter {
      * Set an encoding level.
      * @param level - The encoding level name.
      */
-    encoding(level: string): void {
-        const previous: string = this.configuration.level;
+    updateCharset(charset: string): void {
+        const previous: string = this.configuration.charset;
 
-        this.configuration.encoding(level);
-        if (this.configuration.level !== previous) {
-            this.tokenizer.configure(this.configuration);
+        this.configuration.updateCharset(charset);
+        if (this.configuration.charset !== previous) {
+            this.tokenizer.setCharsetBasedOnConfig(this.configuration);
         }
     }
 
@@ -117,7 +117,6 @@ export class Parser extends EventEmitter {
             this.configuration.config.releaseCharacter       = chunk.charCodeAt(6);
             this.configuration.config.segmentTerminator      = chunk.charCodeAt(8);
 
-            this.tokenizer.configure(this.configuration);
             return true;
         } else {
             return false;
@@ -237,8 +236,8 @@ export class Parser extends EventEmitter {
         },
         invalidControlAfterSegment: function (segment: string, character: string): Error {
             let message: string = "";
-            message += "Invalid character " + character;
-            message += " after reading segment name " + segment;
+            message += "Invalid character '" + character;
+            message += "' after reading segment name " + segment;
             return new Error(message);
         }
     };

@@ -3,7 +3,12 @@
 All notable changes to the "ts-edifact" library will be documented in this file.
 
 ## [Unreleased]
+
+### 0.0.12
 - Removed `MoaType` enum as there are to many possible enum constants available to enumberate them all
+- Improved charset recognition while parsing the Edifact document. The `Reader` class will now update the `Parser`, which furthermore will update its `Tokenizer` once the charset was parsed from the respective `UNB` segment.
+- Replaced charset definition from the `Configuration` class and moved the logic to the `Tokenizer` class
+- Updated the `Parser` class to take a `Configuration` as construction argument and moved the `Validator` definition to the `Configuration` class
 
 ### 0.0.11
 - Fixed an issue on generating an object structure through the interchange builder class if multiple messages are present within the same document

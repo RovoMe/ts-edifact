@@ -21,7 +21,6 @@ export { Configuration } from "./configuration";
 export { Tokenizer } from "./tokenizer";
 export { Parser } from "./parser";
 export {
-    EventValidator,
     NullValidator,
     Validator,
     ValidatorImpl,

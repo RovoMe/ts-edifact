@@ -16,10 +16,11 @@
  * limitations under the License.
  */
 
-import { Validator, ValidatorImpl, Dictionary, SegmentEntry, ElementEntry } from "../src/validator";
+import { Dictionary, SegmentEntry, ElementEntry } from "../src/validator";
 import { Parser } from "../src/parser";
 import { SegmentTableBuilder } from "../src/segments";
 import { ElementTableBuilder } from "../src/elements";
+import { Configuration } from "../src/configuration";
 
 // issue #1 - Differences between ts-edifact and edifact libraries
 describe("Parsing edifact document", () => {
@@ -33,12 +34,11 @@ describe("Parsing edifact document", () => {
             const elements: Dictionary<ElementEntry> =
                 new ElementTableBuilder("INVOIC").specLocation("./src/messageSpec").build();
 
-            const validator: Validator = new ValidatorImpl();
-            validator.define(segments);
-            validator.define(elements);
+            const config: Configuration = new Configuration();
+            config.validator.define(segments);
+            config.validator.define(elements);
 
-            parser = new Parser(validator);
-            parser.encoding("UNOA");
+            parser = new Parser(config);
 
             let document: string = "";
 
@@ -79,12 +79,11 @@ describe("Parsing edifact document", () => {
             const elements: Dictionary<ElementEntry> =
                 new ElementTableBuilder("IFTMIN").specLocation("./src/messageSpec").build();
 
-            const validator: Validator = new ValidatorImpl();
-            validator.define(segments);
-            validator.define(elements);
+            const config: Configuration = new Configuration();
+            config.validator.define(segments);
+            config.validator.define(elements);
 
-            parser = new Parser(validator);
-            parser.encoding("UNOA");
+            parser = new Parser(config);
 
             let document: string = "";
             document += "UNA:+.? '";

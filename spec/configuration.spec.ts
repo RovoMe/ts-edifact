@@ -24,18 +24,6 @@ describe("Configuration", () => {
 
     beforeEach(() => configuration = new Configuration());
 
-    it("should accept known encodings", () => {
-        expect(() => configuration.encoding("UNOA")).not.toThrow();
-        expect(() => configuration.encoding("UNOB")).not.toThrow();
-        expect(() => configuration.encoding("UNOC")).not.toThrow();
-        expect(() => configuration.encoding("UNOY")).not.toThrow();
-        expect(() => configuration.encoding("UCS2")).not.toThrow();
-    });
-
-    it("should reject unknown encodings", () => {
-        expect(() => configuration.encoding("UNKNOWN")).toThrow();
-    });
-
     it("should return the delimiters as a sorted array", () => {
         let count: number = 0;
 

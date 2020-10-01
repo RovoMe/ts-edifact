@@ -17,13 +17,14 @@
  */
 
 import { Parser } from "./parser";
-import { Validator, ValidatorImpl, Dictionary, SegmentEntry, ElementEntry } from "./validator";
+import { Validator, Dictionary, SegmentEntry, ElementEntry, ValidatorImpl } from "./validator";
 
 import { SegmentTableBuilder } from "./segments";
 import { ElementTableBuilder} from "./elements";
 import { Separators } from "./edi/separators";
 import { isDefined } from "./util";
 import { Cache } from "./cache";
+import { Configuration } from "./configuration";
 
 export type ResultType = {
     name: string;
@@ -60,12 +61,14 @@ export class Reader {
     private validationTables: (Dictionary<SegmentEntry> | Dictionary<ElementEntry>)[] = [];
 
     private definitionCache: Cache<DefinitionTables> = new Cache(15);
+    private unbCharsetDefined = false;
 
     separators: Separators;
 
     constructor(messageSpecDir?: string) {
-        this.validator = new ValidatorImpl();
-        this.parser = new Parser(this.validator);
+        const config: Configuration = new Configuration({ validator: new ValidatorImpl() });
+        this.parser = new Parser(config);
+        this.validator = config.validator;
 
         this.result = [];
         const result: ResultType[] = this.result;
@@ -88,6 +91,10 @@ export class Reader {
             elements.push(components);
         };
         this.parser.onComponent = (value: string): void => {
+            if (activeSegment === "UNB" && !this.unbCharsetDefined) {
+                this.parser.updateCharset(value);
+                this.unbCharsetDefined = true;
+            }
             components.push(value);
         };
         this.parser.onCloseSegment = (): void => {
@@ -143,10 +150,6 @@ export class Reader {
      */
     define(definitions: (Dictionary<SegmentEntry> | Dictionary<ElementEntry>)): void {
         this.validator.define(definitions);
-    }
-
-    encoding(level: string): void {
-        this.parser.encoding(level);
     }
 
     private initializeIfNeeded(): void {

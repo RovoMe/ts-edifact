@@ -21,6 +21,7 @@
 
 import { Validator, ValidatorImpl, Dictionary, SegmentEntry, ElementEntry } from "../src/validator";
 import { Tokenizer } from "../src/tokenizer";
+import { Configuration } from "../src/configuration";
 
 describe("Validator", () => {
 
@@ -60,7 +61,7 @@ describe("Validator", () => {
 
     describe("with segment and element definitions", () => {
 
-        const buffer: Tokenizer = new Tokenizer();
+        const buffer: Tokenizer = new Tokenizer(new Configuration());
         buffer.alpha = () => void {};
         buffer.alphanumeric = () => void {};
         buffer.numeric = () => void {};
@@ -131,7 +132,7 @@ describe("Validator", () => {
 
         let validator: Validator;
 
-        const buffer: Tokenizer = new Tokenizer();
+        const buffer: Tokenizer = new Tokenizer(new Configuration());
 
         beforeEach(() => {
             // https://www.stylusstudio.com/edifact/40100/UNB_.htm
@@ -282,7 +283,7 @@ describe("Validator", () => {
 
         describe("with segment and element definitions", () => {
 
-            const buffer: Tokenizer = new Tokenizer();
+            const buffer: Tokenizer = new Tokenizer(new Configuration());
             buffer.alpha = () => void {};
             buffer.alphanumeric = () => void {};
             buffer.numeric = () => void {};

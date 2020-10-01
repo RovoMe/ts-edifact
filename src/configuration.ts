@@ -16,6 +16,8 @@
  * limitations under the License.
  */
 
+import { Validator, ValidatorImpl } from "./validator";
+
 type PropConfig = {
     segmentTerminator?: number;
     dataElementSeparator?: number;
@@ -25,7 +27,8 @@ type PropConfig = {
     lineFeed?: number;
     carriageReturn?: number;
     endOfTag?: number;
-    level?: string;
+    charset?: string;
+    validator?: Validator;
 };
 
 type Config = {
@@ -37,6 +40,7 @@ type Config = {
     lineFeed: number;
     carriageReturn: number;
     endOfTag: number;
+    validator: Validator;
 };
 
 const DEFAULT_CONFIG: Config = {
@@ -47,25 +51,15 @@ const DEFAULT_CONFIG: Config = {
     releaseCharacter: 63,
     lineFeed: 10,
     carriageReturn: 13,
-    endOfTag: 4
-};
-
-type Charsets = {
-    [key: string]: number[][];
+    endOfTag: 4,
+    validator: new ValidatorImpl()
 };
 
 export class Configuration {
 
     readonly config: Config;
-    level: string;
-
-    private readonly charsets: Charsets = {
-        UNOA: [[32, 35], [37, 64], [65, 91]],
-        UNOB: [[32, 35], [37, 64], [65, 91], [97, 123]],
-        UNOC: [[32, 128], [160, 256]],
-        UNOY: [[32, 128], [160, 1114112]],
-        UCS2: [[32, 128], [160, 55296], [57344, 65536]]
-    };
+    charset: string;
+    validator: Validator;
 
     private mergeWithDefault(config?: PropConfig): Config {
         const conf: Config = { ...DEFAULT_CONFIG };
@@ -94,38 +88,21 @@ export class Configuration {
             if (config.endOfTag) {
                 conf.endOfTag = config.endOfTag;
             }
+            if (config.validator) {
+                conf.validator = config.validator;
+            }
         }
         return conf;
     }
 
     constructor(config?: PropConfig) {
         this.config = this.mergeWithDefault(config);
-        if (config && config.level) {
-            this.level = config.level;
+        if (config && config.charset) {
+            this.charset = config.charset;
         } else {
-            this.level = "UNOA";
+            this.charset = "UNOA";
         }
-    }
-
-    /**
-     * Return an array containing the ranges accepted by this configurations
-     * character set.
-     */
-    public charset(): number[][] {
-        return this.charsets[this.level];
-    }
-
-    /**
-     * Set the encoding level.
-     *
-     * @param level - A string identifying the encoding level used.
-     */
-    public encoding(level: string): void {
-        if (Object.prototype.hasOwnProperty.call(this.charsets, level)) {
-            this.level = level;
-        } else {
-            throw this.errors.invalidEncoding(level);
-        }
+        this.validator = this.config.validator;
     }
 
     /**
@@ -161,14 +138,12 @@ export class Configuration {
     }
 
     public toString(): string {
-        let result: string = this.level;
+        let result: string = this.charset;
         result += String.fromCharCode(this.config.componentDataSeparator, this.config.decimalMark, this.config.releaseCharacter, this.config.segmentTerminator);
         return result;
     }
 
-    private errors = {
-        invalidEncoding: function(level: string): Error {
-            return new Error("No definition found for character encoding level " + level);
-        }
-    };
+    public updateCharset(charset: string): void {
+        this.charset = charset;
+    }
 }
