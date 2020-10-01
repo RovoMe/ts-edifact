@@ -4,7 +4,9 @@
 
 # ts-edifact
 
-This is a typescript port of the [node-edifact](https://github.com/tdecaluwe/node-edifact) project.
+`ts-edifact` is an *Edifact* parsing library written in typescript. This implementation was initially based on[node-edifact](https://github.com/tdecaluwe/node-edifact) but has changed a bit since the start of the project. It now is able to build a full object tree based on the general message structure defined in the Edifact documentation and update the tokenizer with the the appropriate charset, which was defined in the `UNB` segment.
+
+By default `ts-edifact` ships with a selection of `D:01B` message structure definitions as well as their respective segment and element definition files. For convenience a parser was added recently to generate such definitions from the [UNECE](https://www.unece.org/) Web page. Plans to generate these definition files from the [Edifact Directory](https://www.unece.org/tradewelcome/un-centre-for-trade-facilitation-and-e-business-uncefact/outputs/standards/unedifact/directories/download.html) exist, though due to time limitations this feature wasn't added yet.
 
 Currently supported functionality:
 
@@ -17,6 +19,7 @@ Currently supported functionality:
 * Support for envelopes.
 * Check for well-formed Edifact documents according to the defined message type, version and revision within the `UNH` message header.
 * Generation of Edifact specification definition files (i.e. `D01B_INVOIC.struct.json`, `D01B_INVOIC.segments.json` and `D01B_INVOIC.elements.json`) obtained from the UNECE page directly.
+* On using the `Reader` class, updating the charset according to the one specified in the `UNB` segment of the interchange is supported.
 
 ## Usage
 
@@ -28,11 +31,10 @@ import { Parser, Validator, ResultType } from 'ts-edifact';
 const enc: string = ...;
 const doc: string = ...;
 
-const validator: Validator = new ValidatorImpl();
-const parser: Parser = new Parser(validator);
+const parser: Parser = new Parser(new Configuration({ validator: new ValidatorImpl() }));
 
 // Provide some segment and element definitions.
-validator.define(...);
+parser.configuration.validator.define(...);
 
 // Parsed segments will be collected in the result array.
 let result: ResultType = [];
@@ -56,8 +58,14 @@ parser.onComponent = (value: string): void => {
   components.push(value);
 });
 
-parser.encoding(enc);
+// by default the tokenizer of the parser will use UNOA charset
+// if characters outside of those defined in the UNOA charset should be used
+// the parser needs to be informed about which characters it should allow for alpha(numeric) values
+parser.updateCharset("UNOC");
+// send the Edifact data to the parser. This method supports streaming and can be invoked when new data
+//  is available and it will continue from where it left
 parser.write(doc);
+// tell the parser that no more data is expected to be received
 parser.end();
 ```
 
@@ -70,7 +78,6 @@ const document: string = ...;
 const specDir: string = ...;
 
 const reader: Reader = new Reader(specDir);
-reader.encoding("UNOC");
 const result: ResultType[] = reader.parse(document);
 ...
 ```
@@ -90,7 +97,6 @@ const segments: Dictionary<SegmentEntry> = new Dictionary<SegmentEntry>(segments
 const elements: Dictionary<ElementEntry> = new Dictionary<ElmentEntry>(elementsData);
 
 const reader: Reader = new Reader(specDir);
-reader.encoding("UNOC");
 reader.define(segments);
 reader.define(elements);
 
@@ -112,12 +118,13 @@ Keep in mind that this is an ES6 library. It currently can be used with node 4.0
 
 This module is build around a central `Parser` class which provides the core UN/EDIFACT parsing functionality. It only exposes four methods:
 
-- the `encoding(string)` method defines the admissible character set to be used while parsing
+- the `updateCharset(string)` method updates the charset used by the `Tokenizer` class to determine valid data values. If a charset is provided which the parser does not yet recognize, this method will throw an error.
 - the `write()` method to write some data to the parser
 - the `separators()`method does return the separators which are used by the parser
 - the `end()` method to close an EDI interchange. 
 
 Data read by the parser can be read by using hooks which will be called on specific parsing events.
+
 
 ### Segment and element definitions
 
@@ -221,11 +228,11 @@ Keep in mind that this avoids any `openSegment` events to be produced and as suc
 <a name="Parser"></a>
 ### Parser
 
-A parser capable of accepting data formatted as an UN/EDIFACT interchange. The constructor accepts a `Validator` instance as an optional argument:
+A parser capable of accepting data formatted as an UN/EDIFACT interchange. The constructor accepts a `Configuration` instance as an optional argument:
 
 ```typescript
 new Parser();
-new Parser(validator);
+new Parser(configuration: Configuration);
 ```
 
 The first constructor will initialize a `NullValidator`, which does not perform any validation and therefore also not throw any errors.
@@ -236,7 +243,7 @@ The first constructor will initialize a `NullValidator`, which does not perform 
 | `onCloseSegment(): void` | Add a listener for a close segment event. |
 | `onElement(): void` | Add a listener for starting processing an element within a segment. |
 | `onComponent(data: string): void` | Add a listener for a parsed component part of an Edifact element. |
-| `encoding(encoding: string): void` | Specifies the character set to use while parsing the Edifact document. By default [`UNOA`](https://blog.sandro-pereira.com/2009/08/15/edifact-encoding-edi-character-set-support/) will be used. |
+| `updateCharset(charset: string): void` | Specifies the character set to use while parsing the Edifact document. By default [`UNOA`](https://blog.sandro-pereira.com/2009/08/15/edifact-encoding-edi-character-set-support/) will be used. This method throws an error if an unknown charset is provided. |
 | `write(chunk)` | Write a chunk of data to the parser |
 | `separators()` | *Since v0.0.7* Returns an object of the identified and used separators |
 | `end()` | Terminate the EDI interchange |
@@ -255,8 +262,9 @@ The optional `specDir` parameter should point to the location where the Edifact 
 | Function | Description |
 | -------- | ----------- |
 | `define(definitions: (Dictionary<SegmentEntry> \| Dictionary<ElementEntry>)): void` | Feeds the validator used inside the reader with the set of known segment and element definitions. Parsed segments which do not adhere to the segments or elements defined in these tables will lead to a failure being thrown and therefore fail the parsing of the Edifact document. |
-| `encoding(encoding: string): void` | Specifies the character set to use while parsing the Edifact document. By default [`UNOA`](https://blog.sandro-pereira.com/2009/08/15/edifact-encoding-edi-character-set-support/) will be used. | 
 | `parse(document: string): ResultType[]` | Will attempt to parse the document to an array of segment objects where each segment object contains a name and a further multidimensional array of strings representing the elements in the outer array and the respective components of an element in the inner array. Any validation error encountered while reading the Edifact document will lead to an error being thrown and does ending the parsing process preemptively. |
+
+Since `0.0.12` the `encoding(string)` function was removed as the charset is now set once the `UNB` header is processed. By default the parser will use the `UNOA` charset and update to the specified one once the respective charset was extracted.
 
 <a name="Tracker"></a>
 ### Tracker
