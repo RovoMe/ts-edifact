@@ -50,6 +50,7 @@
             "postversion": "git push && git push -- tags"
       },
       "devDependencies": {
+            "@initics/tsm": "^1.0.2",
             "@types/events": "3.0.0",
             "@types/htmlparser2": "^3.10.1",
             "@types/jasmine": "^3.5.11",

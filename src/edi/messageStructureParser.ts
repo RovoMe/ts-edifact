@@ -47,7 +47,7 @@ export interface EdifactMessageSpecification {
     versionAbbr(): string;
 }
 
-class EdifactMessageSpecificationImpl implements EdifactMessageSpecification {
+export class EdifactMessageSpecificationImpl implements EdifactMessageSpecification {
 
     messageType: string;
     version: string;
