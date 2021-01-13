@@ -102,9 +102,9 @@ export interface MessageStructureParser {
 
 export class UNECEMessageStructureParser implements MessageStructureParser {
 
-    private version: string;
-    private type: string;
-    private httpClient: HttpClient;
+    readonly version: string;
+    readonly type: string;
+    readonly httpClient: HttpClient;
 
     constructor(version: string, type: string) {
         this.version = version.toLowerCase();
@@ -112,11 +112,6 @@ export class UNECEMessageStructureParser implements MessageStructureParser {
 
         const baseUrl: string = "https://service.unece.org/trade/untdid/" + this.version + "/trmd/" + this.type + "_c.htm";
         this.httpClient = new HttpClient(baseUrl);
-    }
-
-    private async loadPage(page: string): Promise<string> {
-        const data: string = await this.httpClient.get(page);
-        return data;
     }
 
     private extractTextValue(text: string, regex: RegExp, index: number = 0): string {
@@ -127,7 +122,12 @@ export class UNECEMessageStructureParser implements MessageStructureParser {
         return "";
     }
 
-    private async parseSegmentDefinitionPage(segment: string, page: string, definition: EdifactMessageSpecification): Promise<EdifactMessageSpecification> {
+    protected async loadPage(page: string): Promise<string> {
+        const data: string = await this.httpClient.get(page);
+        return data;
+    }
+
+    protected async parseSegmentDefinitionPage(segment: string, page: string, definition: EdifactMessageSpecification): Promise<EdifactMessageSpecification> {
         if (definition.segmentTable.contains(segment)) {
             return Promise.resolve(definition);
         }

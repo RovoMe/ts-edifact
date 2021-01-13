@@ -16,33 +16,15 @@
  * limitations under the License.
  */
 
-import { HttpClient } from "../httpClient";
 import {
     EdifactMessageSpecification,
-    MessageStructureParser,
-    ParsingResultType
+    ParsingResultType,
+    UNECEMessageStructureParser
 } from "./messageStructureParser";
 import { UNECEMetaDataPageParser } from './uneceMetaDataPageParser';
 import { UNECEStructurePageParser } from './uneceStructurePageParser';
 
-export class UNECELegacyMessageStructureParser implements MessageStructureParser {
-
-    private version: string;
-    private type: string;
-    private httpClient: HttpClient;
-
-    constructor(version: string, type: string) {
-        this.version = version.toLowerCase();
-        this.type = type.toLowerCase();
-
-        const baseUrl: string = "https://service.unece.org/trade/untdid/" + this.version + "/trmd/" + this.type + "_c.htm";
-        this.httpClient = new HttpClient(baseUrl);
-    }
-
-    private async loadPage(page: string): Promise<string> {
-        const data: string = await this.httpClient.get(page);
-        return data;
-    }
+export class UNECELegacyMessageStructureParser extends UNECEMessageStructureParser {
 
     parseMetaDataPage(page: string): EdifactMessageSpecification {
         const parser: UNECEMetaDataPageParser = new UNECEMetaDataPageParser();
@@ -76,4 +58,5 @@ export class UNECELegacyMessageStructureParser implements MessageStructureParser
                     })
             );
     }
+
 }
