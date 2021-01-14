@@ -32,9 +32,10 @@ export class UNECELegacyMessageStructureParser extends UNECEMessageStructurePars
         return parser.spec;
     }
 
-    parseStructurePage(page: string, spec: EdifactMessageSpecification): void {
+    parseStructurePage(page: string, spec: EdifactMessageSpecification): string[] {
         const parser: UNECEStructurePageParser = new UNECEStructurePageParser(spec);
         parser.parse(page);
+        return parser.segmentNames;
     }
 
     loadTypeSpec(): Promise<EdifactMessageSpecification> {
@@ -43,10 +44,14 @@ export class UNECELegacyMessageStructureParser extends UNECEMessageStructurePars
             .then(async (metaDataPage: string) => {
                 const spec: EdifactMessageSpecification = this.parseMetaDataPage(metaDataPage);
                 const structurePage: string = await this.loadPage(`./${this.type}_s.htm`);
-                this.parseStructurePage(structurePage, spec);
+                const segmentNames: string[] = this.parseStructurePage(structurePage, spec);
+                const promises: Promise<EdifactMessageSpecification>[] = segmentNames.map(async name => {
+                    const page: string = await this.loadPage(`../trsd/trsd${name.toLowerCase()}.htm`);
+                    return this.parseSegmentDefinitionPage(name, page, spec);
+                });
                 return {
                     specObj: spec,
-                    promises: []
+                    promises
                 };
             })
             .then((result: ParsingResultType) =>

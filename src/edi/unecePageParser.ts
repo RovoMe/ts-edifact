@@ -32,11 +32,10 @@ export abstract class UNECEPageParser {
     }
 
     get spec(): EdifactMessageSpecification {
-        const spec: EdifactMessageSpecification | undefined = this._spec;
-        if (!spec) {
+        if (!this._spec) {
             throw new Error(`EdifactMessageSpecification not defined`);
         }
-        return spec;
+        return this._spec;
     }
 
     parse(page: string): void {

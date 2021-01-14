@@ -58,9 +58,12 @@ const SM_DEFINITION: StateMachineDefinition = {
 
 export class UNECEStructurePageParser extends UNECEPageParser {
 
+    readonly segmentNames: string[];
+
     constructor(spec: EdifactMessageSpecification) {
         super(SM_DEFINITION);
         this._spec = spec;
+        this.segmentNames = [];
     }
 
     protected setupHandler(): DomHandler {
@@ -123,6 +126,7 @@ export class UNECEStructurePageParser extends UNECEPageParser {
 
                 case State.segmentName:
                     name = text;
+                    this.addSegmentName(name);
                     this.sm.transition(State.segmentDescription);
                     break;
 
@@ -156,6 +160,17 @@ export class UNECEStructurePageParser extends UNECEPageParser {
         };
 
         return helper;
+    }
+
+    private addSegmentName(name: string): void {
+        const excludeSegmentNames: string[] = [
+            'UNH',
+            'UNS',
+            'UNT'
+        ];
+        if (!excludeSegmentNames.includes(name) && !this.segmentNames.includes(name)) {
+            this.segmentNames.push(name);
+        }
     }
 
     private parseSegmentGroup(section: string | undefined, descriptionString: string): MessageType {

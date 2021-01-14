@@ -135,6 +135,9 @@ export class UNECEMessageStructureParser implements MessageStructureParser {
         const segEntry: SegmentEntry = { "requires": 0, "elements": [] };
         let state: SegmentPart = SegmentPart.BeforeStructureDef;
 
+        // only relevant for legacy UNECE segment specification pages:
+        let dataSection: boolean = false;
+
         let skipAddingElement: boolean = false;
         let overflowLine: string | null = null;
         let complexEleId: string | null = null;
@@ -146,10 +149,17 @@ export class UNECEMessageStructureParser implements MessageStructureParser {
                 overflowLine =  null;
             }
 
-            if (state === SegmentPart.BeforeStructureDef && line.includes("<H3>")) {
+            if (state === SegmentPart.BeforeStructureDef && line.includes('<HR>')) {
+                dataSection = true;
+            } else if (
+                state === SegmentPart.BeforeStructureDef &&
+                // checking dataSection and <B> tag only relevant for legacy
+                // UNECE segment specification pages:
+                (line.includes("<H3>") || (dataSection && line.includes('<B>')))
+            ) {
                 state = SegmentPart.Data;
             } else if (state === SegmentPart.Data && !line.includes("<P>")) {
-                const regexp: RegExp = /^([\d]*)\s*?([X|\\*]?)\s*<A.*>([a-zA-Z0-9]*)<\/A>([a-zA-Z0-9 \-\\/&]{44,})([M|C])\s*([\d]*)\s*([a-zA-Z0-9\\.]*).*$/g;
+                const regexp: RegExp = /^([\d]*)\s*?([X|\\*]?)\s*<A.*>([a-zA-Z0-9]*)<\/A>([a-zA-Z0-9 ,\-\\/&]{44,})([M|C])\s*([\d]*)\s*([a-zA-Z0-9\\.]*).*$/g;
                 const arr: RegExpExecArray | null = regexp.exec(line);
                 if (isDefined(arr)) {
                     const segGroupId: string | undefined = arr[1] === "" ? undefined : arr[1];
