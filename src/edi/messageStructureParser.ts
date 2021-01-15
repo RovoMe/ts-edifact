@@ -47,7 +47,7 @@ export interface EdifactMessageSpecification {
     versionAbbr(): string;
 }
 
-class EdifactMessageSpecificationImpl implements EdifactMessageSpecification {
+export class EdifactMessageSpecificationImpl implements EdifactMessageSpecification {
 
     messageType: string;
     version: string;
@@ -102,9 +102,9 @@ export interface MessageStructureParser {
 
 export class UNECEMessageStructureParser implements MessageStructureParser {
 
-    private version: string;
-    private type: string;
-    private httpClient: HttpClient;
+    readonly version: string;
+    readonly type: string;
+    readonly httpClient: HttpClient;
 
     constructor(version: string, type: string) {
         this.version = version.toLowerCase();
@@ -112,11 +112,6 @@ export class UNECEMessageStructureParser implements MessageStructureParser {
 
         const baseUrl: string = "https://service.unece.org/trade/untdid/" + this.version + "/trmd/" + this.type + "_c.htm";
         this.httpClient = new HttpClient(baseUrl);
-    }
-
-    private async loadPage(page: string): Promise<string> {
-        const data: string = await this.httpClient.get(page);
-        return data;
     }
 
     private extractTextValue(text: string, regex: RegExp, index: number = 0): string {
@@ -127,13 +122,21 @@ export class UNECEMessageStructureParser implements MessageStructureParser {
         return "";
     }
 
-    private async parseSegmentDefinitionPage(segment: string, page: string, definition: EdifactMessageSpecification): Promise<EdifactMessageSpecification> {
+    protected async loadPage(page: string): Promise<string> {
+        const data: string = await this.httpClient.get(page);
+        return data;
+    }
+
+    protected async parseSegmentDefinitionPage(segment: string, page: string, definition: EdifactMessageSpecification): Promise<EdifactMessageSpecification> {
         if (definition.segmentTable.contains(segment)) {
             return Promise.resolve(definition);
         }
 
         const segEntry: SegmentEntry = { "requires": 0, "elements": [] };
         let state: SegmentPart = SegmentPart.BeforeStructureDef;
+
+        // only relevant for legacy UNECE segment specification pages:
+        let dataSection: boolean = false;
 
         let skipAddingElement: boolean = false;
         let overflowLine: string | null = null;
@@ -146,10 +149,17 @@ export class UNECEMessageStructureParser implements MessageStructureParser {
                 overflowLine =  null;
             }
 
-            if (state === SegmentPart.BeforeStructureDef && line.includes("<H3>")) {
+            if (state === SegmentPart.BeforeStructureDef && line.includes('<HR>')) {
+                dataSection = true;
+            } else if (
+                state === SegmentPart.BeforeStructureDef &&
+                // checking dataSection and <B> tag only relevant for legacy
+                // UNECE segment specification pages:
+                (line.includes("<H3>") || (dataSection && line.includes('<B>')))
+            ) {
                 state = SegmentPart.Data;
             } else if (state === SegmentPart.Data && !line.includes("<P>")) {
-                const regexp: RegExp = /^([\d]*)\s*?([X|\\*]?)\s*<A.*>([a-zA-Z0-9]*)<\/A>([a-zA-Z0-9 \-\\/&]{44,})([M|C])\s*([\d]*)\s*([a-zA-Z0-9\\.]*).*$/g;
+                const regexp: RegExp = /^([\d]*)\s*?([X|\\*]?)\s*<A.*>([a-zA-Z0-9]*)<\/A>([a-zA-Z0-9 ,\-\\/&]{44,})([M|C])\s*([\d]*)\s*([a-zA-Z0-9\\.]*).*$/g;
                 const arr: RegExpExecArray | null = regexp.exec(line);
                 if (isDefined(arr)) {
                     const segGroupId: string | undefined = arr[1] === "" ? undefined : arr[1];
