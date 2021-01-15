@@ -110,7 +110,7 @@ export class UNECEMessageStructureParser implements MessageStructureParser {
         this.version = version.toLowerCase();
         this.type = type.toLowerCase();
 
-        const baseUrl: string = "https://www.unece.org/trade/untdid/" + this.version + "/trmd/" + this.type + "_c.htm";
+        const baseUrl: string = "https://service.unece.org/trade/untdid/" + this.version + "/trmd/" + this.type + "_c.htm";
         this.httpClient = new HttpClient(baseUrl);
     }
 
