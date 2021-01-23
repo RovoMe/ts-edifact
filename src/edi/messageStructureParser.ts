@@ -295,7 +295,7 @@ export class UNECEMessageStructureParser implements MessageStructureParser {
                 } else if (state === Part.Deprecated) {
 
                     if (text.includes("- Segment group")) {
-                        const regex: RegExp = /^\s*-* (Segment group \d*)\s*-*\s*([M|C])\s*(\d*)([-|\\+|\\|]*).*/g;
+                        const regex: RegExp = /^[\s*+-]*-* (Segment group \d*)\s*-*\s*([M|C])\s*(\d*)([-|\\+|\\|]*).*/g;
                         const arr: RegExpExecArray | null = regex.exec(text);
                         if (isDefined(arr)) {
                             const groupArray: MessageType[] = [];

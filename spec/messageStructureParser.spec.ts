@@ -51,17 +51,17 @@ describe("MessageStructureParser", () => {
 
 4.3.1  Segment table
 
-<A NAME = "0010_X"></A><A HREF = "invoic_c.htm#0010">0010</A>   <A HREF="http://www.gefeg.com/jswg/">UNH</A> Message header                            M   1     
-<A NAME = "0020_X"></A><A HREF = "invoic_c.htm#0020">0020</A>   <A HREF = "../trsd/trsdbgm.htm">BGM</A> Beginning of message                      M   1     
-<A NAME = "0030_X"></A><A HREF = "invoic_c.htm#0030">0030</A>   <A HREF = "../trsd/trsddtm.htm">DTM</A> Date/time/period                          M   35    
-<A NAME = "0040_X"></A><A HREF = "invoic_c.htm#0040">0040</A>   <A HREF = "../trsd/trsdpai.htm">PAI</A> Payment instructions                      C   1     
-<A NAME = "0050_X"></A><A HREF = "invoic_c.htm#0050">0050</A>   <A HREF = "../trsd/trsdali.htm">ALI</A> Additional information                    C   5     
-<A NAME = "0060_X"></A><A HREF = "invoic_c.htm#0060">0060</A>   <A HREF = "../trsd/trsdimd.htm">IMD</A> Item description                          C   1     
-<A NAME = "0070_X"></A><A HREF = "invoic_c.htm#0070">0070</A>   <A HREF = "../trsd/trsdftx.htm">FTX</A> Free text                                 C   99    
-<A NAME = "0080_X"></A><A HREF = "invoic_c.htm#0080">0080</A>   <A HREF = "../trsd/trsdloc.htm">LOC</A> Place/location identification             C   10    
-<A NAME = "0090_X"></A><A HREF = "invoic_c.htm#0090">0090</A> X <A HREF = "../trsd/trsdgis.htm">GIS</A> General indicator                         C   10    
-<A NAME = "0100_X"></A><A HREF = "invoic_c.htm#0100">0100</A>   <A HREF = "../trsd/trsddgs.htm">DGS</A> Dangerous goods                           C   1     
-<A NAME = "0110_X"></A><A HREF = "invoic_c.htm#0110">0110</A>   <A HREF = "../trsd/trsdgir.htm">GIR</A> Related identification numbers            C   10    
+<A NAME = "0010_X"></A><A HREF = "invoic_c.htm#0010">0010</A>   <A HREF="http://www.gefeg.com/jswg/">UNH</A> Message header                            M   1
+<A NAME = "0020_X"></A><A HREF = "invoic_c.htm#0020">0020</A>   <A HREF = "../trsd/trsdbgm.htm">BGM</A> Beginning of message                      M   1
+<A NAME = "0030_X"></A><A HREF = "invoic_c.htm#0030">0030</A>   <A HREF = "../trsd/trsddtm.htm">DTM</A> Date/time/period                          M   35
+<A NAME = "0040_X"></A><A HREF = "invoic_c.htm#0040">0040</A>   <A HREF = "../trsd/trsdpai.htm">PAI</A> Payment instructions                      C   1
+<A NAME = "0050_X"></A><A HREF = "invoic_c.htm#0050">0050</A>   <A HREF = "../trsd/trsdali.htm">ALI</A> Additional information                    C   5
+<A NAME = "0060_X"></A><A HREF = "invoic_c.htm#0060">0060</A>   <A HREF = "../trsd/trsdimd.htm">IMD</A> Item description                          C   1
+<A NAME = "0070_X"></A><A HREF = "invoic_c.htm#0070">0070</A>   <A HREF = "../trsd/trsdftx.htm">FTX</A> Free text                                 C   99
+<A NAME = "0080_X"></A><A HREF = "invoic_c.htm#0080">0080</A>   <A HREF = "../trsd/trsdloc.htm">LOC</A> Place/location identification             C   10
+<A NAME = "0090_X"></A><A HREF = "invoic_c.htm#0090">0090</A> X <A HREF = "../trsd/trsdgis.htm">GIS</A> General indicator                         C   10
+<A NAME = "0100_X"></A><A HREF = "invoic_c.htm#0100">0100</A>   <A HREF = "../trsd/trsddgs.htm">DGS</A> Dangerous goods                           C   1
+<A NAME = "0110_X"></A><A HREF = "invoic_c.htm#0110">0110</A>   <A HREF = "../trsd/trsdgir.htm">GIR</A> Related identification numbers            C   10
 
 <A NAME = "0120_X"></A><A HREF = "invoic_c.htm#0120">0120</A>       ----- Segment group 1  ------------------ C   99999-------+
 <A NAME = "0130_X"></A><A HREF = "invoic_c.htm#0130">0130</A>   <A HREF = "../trsd/trsdrff.htm">RFF</A> Reference                                 M   1           |
@@ -104,8 +104,8 @@ DETAIL SECTION
 
 SUMMARY SECTION
 
-<A NAME = "2170_X"></A><A HREF = "invoic_c.htm#2170">2170</A>   <A HREF="http://www.gefeg.com/jswg/">UNS</A> Section control                           M   1   
-<A NAME = "2320_X"></A><A HREF = "invoic_c.htm#2320">2320</A>   <A HREF="http://www.gefeg.com/jswg/">UNT</A> Message trailer                           M   1     
+<A NAME = "2170_X"></A><A HREF = "invoic_c.htm#2170">2170</A>   <A HREF="http://www.gefeg.com/jswg/">UNS</A> Section control                           M   1
+<A NAME = "2320_X"></A><A HREF = "invoic_c.htm#2320">2320</A>   <A HREF="http://www.gefeg.com/jswg/">UNT</A> Message trailer                           M   1
 <P>
 `;
             const expectedBGMEntry: MessageType = {
@@ -252,7 +252,7 @@ SUMMARY SECTION
 <H3>       DTM  DATE/TIME/PERIOD</H3>
 
        Function: To specify date, and/or time, or period.
-     
+
 010    <A HREF = "../trcd/trcdc507.htm">C507</A> DATE/TIME/PERIOD                           M    1
        <A HREF = "../tred/tred2005.htm">2005</A>  Date or time or period function code
              qualifier                                 M      an..3
@@ -290,7 +290,7 @@ SUMMARY SECTION
 
        Function: To specify currencies used in the transaction
                  and relevant details for the rate of exchange.
-    
+
 010    <A HREF = "../trcd/trcdc504.htm">C504</A> CURRENCY DETAILS                           C    1
        <A HREF = "../tred/tred6347.htm">6347</A>  Currency usage code qualifier             M      an..3
        <A HREF = "../tred/tred6345.htm">6345</A>  Currency identification code              C      an..3
@@ -306,7 +306,7 @@ SUMMARY SECTION
 030    <A HREF = "../tred/tred5402.htm">5402</A> CURRENCY EXCHANGE RATE                     C    1 n..12
 
 040    <A HREF = "../tred/tred6341.htm">6341</A> EXCHANGE RATE CURRENCY MARKET IDENTIFIER   C    1 an..3
- 
+
 <P>`;
             const sut: UNECEMessageStructureParser = new UNECEMessageStructureParser("d01b", "invoic");
 
@@ -333,22 +333,22 @@ SUMMARY SECTION
 <H3>       TAX  DUTY/TAX/FEE DETAILS</H3>
 
        Function: To specify relevant duty/tax/fee information.
-     
+
 010    <A HREF = "../tred/tred5283.htm">5283</A> DUTY OR TAX OR FEE FUNCTION CODE QUALIFIER M    1 an..3
-     
+
 020    <A HREF = "../trcd/trcdc241.htm">C241</A> DUTY/TAX/FEE TYPE                          C    1
        <A HREF = "../tred/tred5153.htm">5153</A>  Duty or tax or fee type name code         C      an..3
        <A HREF = "../tred/tred1131.htm">1131</A>  Code list identification code             C      an..17
        <A HREF = "../tred/tred3055.htm">3055</A>  Code list responsible agency code         C      an..3
        <A HREF = "../tred/tred5152.htm">5152</A>  Duty or tax or fee type name              C      an..35
-     
+
 030    <A HREF = "../trcd/trcdc533.htm">C533</A> DUTY/TAX/FEE ACCOUNT DETAIL                C    1
        <A HREF = "../tred/tred5289.htm">5289</A>  Duty or tax or fee account code           M      an..6
        <A HREF = "../tred/tred1131.htm">1131</A>  Code list identification code             C      an..17
        <A HREF = "../tred/tred3055.htm">3055</A>  Code list responsible agency code         C      an..3
-     
+
 040    <A HREF = "../tred/tred5286.htm">5286</A> DUTY OR TAX OR FEE ASSESSMENT BASIS VALUE  C    1 an..15
-   
+
 050    <A HREF = "../trcd/trcdc243.htm">C243</A> DUTY/TAX/FEE DETAIL                        C    1
        <A HREF = "../tred/tred5279.htm">5279</A>  Duty or tax or fee rate code              C      an..7
        <A HREF = "../tred/tred1131.htm">1131</A>  Code list identification code             C      an..17
@@ -357,13 +357,13 @@ SUMMARY SECTION
        <A HREF = "../tred/tred5273.htm">5273</A>  Duty or tax or fee rate basis code        C      an..12
        <A HREF = "../tred/tred1131.htm">1131</A>  Code list identification code             C      an..17
        <A HREF = "../tred/tred3055.htm">3055</A>  Code list responsible agency code         C      an..3
-     
+
 060    <A HREF = "../tred/tred5305.htm">5305</A> DUTY OR TAX OR FEE CATEGORY CODE           C    1 an..3
-     
+
 070    <A HREF = "../tred/tred3446.htm">3446</A> PARTY TAX IDENTIFIER                       C    1 an..20
-     
+
 080    <A HREF = "../tred/tred1227.htm">1227</A> CALCULATION SEQUENCE CODE                  C    1 an..3
-     
+
 <P>`;
 
             const sut: UNECEMessageStructureParser = new UNECEMessageStructureParser("d01b", "invoic");
@@ -448,6 +448,18 @@ SUMMARY SECTION
                 .then((response: EdifactMessageSpecification) => {
                     // persist(response, "./src/messageSpec");
                     expect(response.type()).toEqual("D01B_INVOIC");
+                    expect(response.messageStructureDefinition.length).not.toEqual(0);
+                    done();
+                })
+                .catch((error: Error) => fail(error.message));
+        }, 10000);
+
+        it("D19A COARRI (containing segment groups with change identificators like +-*)", (done) => {
+            const sut: UNECEMessageStructureParser = new UNECEMessageStructureParser("d19a", "coarri");
+
+            sut.loadTypeSpec()
+                .then((response: EdifactMessageSpecification) => {
+                    expect(response.type()).toEqual("D19A_COARRI");
                     expect(response.messageStructureDefinition.length).not.toEqual(0);
                     done();
                 })
