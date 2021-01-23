@@ -83,6 +83,8 @@ SOURCE: Joint Rapporteurs Message Design Group JM2
 
 const D99A_INVOIC_STRUCTURE_PAGE: string =
     readFileSync(join(__dirname, 'data', 'd99a_invoic_s.html'), 'utf-8');
+const D99A_APERAK_STRUCTURE_PAGE: string =
+    readFileSync(join(__dirname, 'data', 'd99a_aperak_s.html'), 'utf-8');
 
 describe('UNECELegacyMessageStructureParser', () => {
 
@@ -136,7 +138,6 @@ describe('UNECELegacyMessageStructureParser', () => {
     describe('parseStructurePage', () => {
 
         it("should extract message structure correctly from D99A INVOIC structure page", () => {
-
             const expectedSegmentNames: string[] = [
                 'BGM', 'DTM', 'PAI', 'ALI',
                 'IMD', 'FTX', 'LOC', 'GIS', 'DGS',
@@ -160,6 +161,42 @@ describe('UNECELegacyMessageStructureParser', () => {
                 spec.messageStructureDefinition.find(item => item.name === 'Segment group 26');
             expect(sg26).toBeDefined();
             expect((sg26 as any).content).toContain(expectedSegmentGroup27Entry);
+        });
+
+        it("should correctly parse D99A APERAK structure page (no header section)", () => {
+            const expectedSegmentNames: string[] = [
+                'BGM', 'DTM', 'FTX',
+                'CNT', 'DOC', 'RFF', 'NAD',
+                'CTA', 'COM', 'ERC'
+            ];
+            const expectedBGMEntry_APERAK: MessageType = {
+                ...expectedBGMEntry,
+                section: undefined
+            };
+            const expectedSegmentGroup5Entry: MessageType = {
+                name: "Segment group 5",
+                content: [
+                    { content: "RFF", mandatory: true, repetition: 1, data: undefined, section: undefined },
+                    { content: "FTX", mandatory: false, repetition: 9, data: undefined, section: undefined }
+                ],
+                mandatory: false,
+                repetition: 9,
+                data: undefined,
+                section: undefined
+            };
+
+            const spec: EdifactMessageSpecification =
+                new EdifactMessageSpecificationImpl('APERAK', 'D', '99A', 'UN');
+
+            const segmentNames: string[] = sut.parseStructurePage(D99A_APERAK_STRUCTURE_PAGE, spec);
+
+            expect(segmentNames).toEqual(expectedSegmentNames);
+
+            expect(spec.messageStructureDefinition).toContain(expectedBGMEntry_APERAK);
+            const sg4: MessageType | undefined =
+                spec.messageStructureDefinition.find(item => item.name === 'Segment group 4');
+            expect(sg4).toBeDefined();
+            expect((sg4 as any).content).toContain(expectedSegmentGroup5Entry);
         });
 
     });
