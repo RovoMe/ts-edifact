@@ -85,6 +85,8 @@ const D99A_INVOIC_STRUCTURE_PAGE: string =
     readFileSync(join(__dirname, 'data', 'd99a_invoic_s.html'), 'utf-8');
 const D99A_APERAK_STRUCTURE_PAGE: string =
     readFileSync(join(__dirname, 'data', 'd99a_aperak_s.html'), 'utf-8');
+const D96A_ORDERS_STRUCTURE_PAGE: string =
+    readFileSync(join(__dirname, 'data', 'd96a_orders_s.html'), 'utf-8');
 
 describe('UNECELegacyMessageStructureParser', () => {
 
@@ -197,6 +199,22 @@ describe('UNECELegacyMessageStructureParser', () => {
                 spec.messageStructureDefinition.find(item => item.name === 'Segment group 4');
             expect(sg4).toBeDefined();
             expect((sg4 as any).content).toContain(expectedSegmentGroup5Entry);
+        });
+
+        it("should correctly parse D96A ORDERS structure page", () => {
+            const spec: EdifactMessageSpecification =
+                new EdifactMessageSpecificationImpl('ORDERS', 'D', '96A', 'UN');
+            sut.parseStructurePage(D96A_ORDERS_STRUCTURE_PAGE, spec);
+
+            expect(spec.messageStructureDefinition).toContain({ ...expectedBGMEntry, section: 'header' });
+            expect(spec.messageStructureDefinition).toContain(expectedUNSEntry);
+            expect(spec.messageStructureDefinition[7]).toBeDefined();
+            expect(spec.messageStructureDefinition[7].name).toBe('Segment group 1');
+            expect(spec.messageStructureDefinition[8]).toBeDefined();
+            expect(spec.messageStructureDefinition[8].name).toBe('Segment group 2');
+            const sg25: MessageType | undefined = spec.messageStructureDefinition
+                .find(item => item.name === 'Segment group 25');
+            expect(sg25).toBeDefined();
         });
 
     });

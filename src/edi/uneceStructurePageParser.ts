@@ -57,6 +57,10 @@ const SM_DEFINITION: StateMachineDefinition = {
     ]
 };
 
+/**
+ * This class is capable to parse legacy UN/EDIFACT message type specification
+ * pages from UNECE up to version D99A.
+ */
 export class UNECEStructurePageParser extends UNECEPageParser {
 
     readonly segmentNames: string[];
@@ -185,11 +189,7 @@ export class UNECEStructurePageParser extends UNECEPageParser {
     }
 
     private addSegmentName(name: string): void {
-        const excludeSegmentNames: string[] = [
-            'UNH',
-            'UNS',
-            'UNT'
-        ];
+        const excludeSegmentNames: string[] = ['UNH', 'UNS', 'UNT'];
         if (!excludeSegmentNames.includes(name) && !this.segmentNames.includes(name)) {
             this.segmentNames.push(name);
         }
@@ -241,8 +241,21 @@ export class UNECEStructurePageParser extends UNECEPageParser {
         if (!matches) {
             throw new Error('Invalid segment description string');
         }
+
+        // Create the "level string" by reversing the segment group description.
         const levelString: string = Array.from(matches[1]).reverse().join('');
-        return levelString.indexOf('Ŀ');
+        let normalization: number = 0;
+
+        // In some message type specifications the segment group description
+        // ends with LF and sometimes with CRLF.
+        // Make sure both cases are covered:
+        if (levelString.charCodeAt(0) !== 10) {
+            console.warn(`Unrecognized character in level string: ${levelString[0]} (${levelString.charCodeAt(0)})`);
+        } else if (levelString.charCodeAt(1) === 13) {
+            normalization = 1;
+        }
+
+        return levelString.indexOf('Ŀ') - normalization;
     }
 
     private isSegmentGroupEnd(descriptionString: string): boolean {
