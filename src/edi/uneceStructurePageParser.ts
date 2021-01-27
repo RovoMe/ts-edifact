@@ -42,6 +42,7 @@ const SM_DEFINITION: StateMachineDefinition = {
     transitions: [
         { from: State.initial, to: State.messageStructureStart },
         { from: State.messageStructureStart, to: State.headerSection },
+        { from: State.messageStructureStart, to: State.segmentPosition },
         { from: State.headerSection, to: State.segmentPosition },
         { from: State.detailSection, to: State.segmentPosition },
         { from: State.summarySection, to: State.segmentPosition },
@@ -56,6 +57,10 @@ const SM_DEFINITION: StateMachineDefinition = {
     ]
 };
 
+/**
+ * This class is capable to parse legacy UN/EDIFACT message type specification
+ * pages from UNECE up to version D99A.
+ */
 export class UNECEStructurePageParser extends UNECEPageParser {
 
     readonly segmentNames: string[];
@@ -71,8 +76,17 @@ export class UNECEStructurePageParser extends UNECEPageParser {
 
         let index: number = 0;
         const stack: MessageType[][] = [];
+        const resetStack = () => {
+            for (; index > 0; index--) {
+                stack.pop();
+            }
+        };
+
+        let isSegmentGroupEnd: boolean = false;
         let section: string | undefined;
         let name: string;
+
+        stack.push(this.spec.messageStructureDefinition);
 
         helper.ontext = (text: string) => {
             switch (this.sm.state) {
@@ -84,7 +98,6 @@ export class UNECEStructurePageParser extends UNECEPageParser {
 
                 case State.messageStructureStart:
                     if (text.includes('HEADER SECTION')) {
-                        stack.push(this.spec.messageStructureDefinition);
                         this.sm.transition(State.headerSection);
                         section = 'header';
                         this.sm.transition(State.segmentPosition);
@@ -101,6 +114,7 @@ export class UNECEStructurePageParser extends UNECEPageParser {
 
                 case State.segmentGroup:
                     if (text.includes('Segment group')) {
+                        isSegmentGroupEnd = false;
                         const group: MessageType = this.parseSegmentGroup(section, text);
                         const level: number = this.parseSegmentGroupLevel(text);
                         const delta: number = level - index;
@@ -120,6 +134,11 @@ export class UNECEStructurePageParser extends UNECEPageParser {
 
                         this.sm.transition(State.segmentPosition);
                     } else {
+                        // if the previous segment group was has ended and there
+                        // is not a new segment group => reset the stack.
+                        if (isSegmentGroupEnd) {
+                            resetStack();
+                        }
                         this.sm.transition(State.segmentName);
                     }
                     break;
@@ -134,12 +153,13 @@ export class UNECEStructurePageParser extends UNECEPageParser {
                     const item: MessageType = this.parseSegment(name, section, text);
                     stack[index].push(item);
 
+                    isSegmentGroupEnd = this.isSegmentGroupEnd(text);
+
                     const detailSection: boolean = text.includes('DETAIL SECTION');
                     const summarySection: boolean = text.includes('SUMMARY SECTION');
                     if (detailSection || summarySection) {
-                        for (; index > 0; index--) {
-                            stack.pop();
-                        }
+                        // reset the stack if a new section begins
+                        resetStack();
                         if (detailSection) {
                             section = 'detial';
                             this.sm.transition(State.detailSection);
@@ -159,15 +179,17 @@ export class UNECEStructurePageParser extends UNECEPageParser {
             }
         };
 
+        helper.onopentag = name => {
+            if (this.sm.state === State.messageStructureStart && name === 'a') {
+                this.sm.transition(State.segmentPosition);
+            }
+        };
+
         return helper;
     }
 
     private addSegmentName(name: string): void {
-        const excludeSegmentNames: string[] = [
-            'UNH',
-            'UNS',
-            'UNT'
-        ];
+        const excludeSegmentNames: string[] = ['UNH', 'UNS', 'UNT'];
         if (!excludeSegmentNames.includes(name) && !this.segmentNames.includes(name)) {
             this.segmentNames.push(name);
         }
@@ -198,7 +220,7 @@ export class UNECEStructurePageParser extends UNECEPageParser {
         const regex: RegExp = /^([a-zA-Z /\\-]*)\s*?([M|C])\s*?([0-9]*?)([^0-9]*)$/g;
         const matches: RegExpExecArray | null = regex.exec(descriptionString);
         if (!matches) {
-            throw new Error('Invalid segment description string');
+            throw new Error(`${name}: Invalid segment description string: ${descriptionString}`);
         }
 
         const mandatoryString: string = matches[2];
@@ -219,8 +241,26 @@ export class UNECEStructurePageParser extends UNECEPageParser {
         if (!matches) {
             throw new Error('Invalid segment description string');
         }
+
+        // Create the "level string" by reversing the segment group description.
         const levelString: string = Array.from(matches[1]).reverse().join('');
-        return levelString.indexOf('Ŀ');
+        let normalization: number = 0;
+
+        // In some message type specifications the segment group description
+        // ends with LF and sometimes with CRLF.
+        // Make sure both cases are covered:
+        if (levelString.charCodeAt(0) !== 10) {
+            console.warn(`Unrecognized character in level string: ${levelString[0]} (${levelString.charCodeAt(0)})`);
+        } else if (levelString.charCodeAt(1) === 13) {
+            normalization = 1;
+        }
+
+        return levelString.indexOf('Ŀ') - normalization;
+    }
+
+    private isSegmentGroupEnd(descriptionString: string): boolean {
+        const regex: RegExp = /\d+�+/g;
+        return !!regex.exec(descriptionString);
     }
 
 }

@@ -1,0 +1,631 @@
+
+<!-- saved from url=(0061)https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Author" content="Claudio Meza, e-Business Team">
+<meta http-equiv="Description" content="United Nations EDIFACT Directories on the WWW">
+<meta http-equiv="Keywords" content="EDI, e-commerce, e-business, UN/EDIFACT, UN/CEFACT UN/ECE, ECE, UNECE, CEFACT, XML,  United Nations,  Economic Commission for Europe, United Nations Directories for Administration, Commerce and Transport">
+<title>UN/EDIFACT D.19A - Message [COARRI]</title>
+<script data-dapp-detection="">!function(){let e=!1;function n(){if(!e){const n=document.createElement("meta");n.name="dapp-detected",document.head.appendChild(n),e=!0}}if(window.hasOwnProperty("ethereum")){if(window.__disableDappDetectionInsertion=!0,void 0===window.ethereum)return;n()}else{var t=window.ethereum;Object.defineProperty(window,"ethereum",{configurable:!0,enumerable:!1,set:function(e){window.__disableDappDetectionInsertion||n(),t=e},get:function(){if(!window.__disableDappDetectionInsertion){const e=arguments.callee;e&&e.caller&&e.caller.toString&&-1!==e.caller.toString().indexOf("getOwnPropertyNames")||n()}return t}})}}();</script></head>
+<body><pre>
+<table width="460" border="0"><tbody><tr><td align="center" valign="top">&nbsp;<br>
+    <font size="+1" color="003399" face="Arial, Helvetica, Geneva, Futura"><b>
+    United Nations Directories <br>for Electronic Data Interchange for<br>
+     Administration, Commerce and Transport</b></font><b><br><br>
+<img src="./d19a_coarri_s_files/unlog1.gif" width="142" height="116" border="0"> <br>
+<font size="+5" color="003399" face="Arial, Helvetica, Geneva, Futura"><b>&nbsp;UN/EDIFACT</b></font><p></p>
+ </b></td></tr></tbody></table>
+<p>
+</p><p>
+
+
+
+
+
+                                           Message Type : COARRI
+                                           Version      : D
+                                           Release      : 19A
+                                           Contr. Agency: UN
+
+                                           Revision     : 10
+                                           Date         : 2019-04-11
+
+
+
+
+
+
+SOURCE: TBG3 Transport
+
+
+
+                                  CONTENTS
+
+                Container discharge/loading report message
+
+0.     INTRODUCTION
+
+1.     SCOPE
+
+       1.1   Functional definition
+
+       1.2   Field of application
+
+       1.3   Principles
+
+2.     REFERENCES
+
+3.     TERMS AND DEFINITIONS
+
+       3.1   Standard terms and definitions
+
+4.     MESSAGE DEFINITION
+
+       4.1   Segment clarification
+
+       4.2   Segment index (alphabetical sequence by tag)
+
+       4.3   Message structure
+             4.3.1 Segment table
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------------------------------------------------------------
+For general information on UN standard message types see UN Trade Data
+Interchange Directory, UNTDID, Part 4, Section 2.3, UN/ECE UNSM
+General Introduction
+---------------------------------------------------------------------------
+
+
+
+0.     INTRODUCTION
+
+       This specification provides the definition of the Container
+       discharge/loading report message (COARRI) to be used in Electronic
+       Data Interchange (EDI) between trading partners involved in
+       administration, commerce and transport.
+
+1.     SCOPE
+
+1.1    Functional definition
+
+       A message by which the container terminal reports that the
+       containers specified have been discharged from a seagoing vessel
+       (discharged as ordered, overlanded or shortlanded), or have been
+       loaded into a seagoing vessel.
+       
+       This message is part of a total set of container-related messages.
+       These messages serve to facilitate the intermodal handling of
+       containers by streamlining the information exchange.
+       The business scenario for the container messages is clarified in a
+       separate document, called: 'Guide to the scenario of EDIFACT
+       container messages'.
+
+1.2    Field of application
+
+       The Container discharge/loading report message may be used for both
+       national and international applications. It is based on universal
+       practice related to administration, commerce and transport, and is
+       not dependent on the type of business or industry.
+
+1.3    Principles
+
+       Business area:
+       Loading and discharging of containers/equipment
+       
+       Sending functions include:
+       Container terminal, Stevedore
+       
+       Receiving functions include:
+       Ship's agent, Liner agent
+       
+       In the context of the 'Guide to the scenario of EDIFACT container
+       messages' (as referred to at the start of section 1) the following
+       guidelines, rules and functionality apply to this Container
+       discharge/loading report message:
+       
+       *   The message contents can be uniquely identified by a combination
+       of the following data elements:
+       - ordering customer, coded (NAD)
+       - ordering customer agent, coded (NAD)
+       - container discharge/loading order reference (RFF)
+       
+       The ordering customer agent, coded is needed to supplement the
+       unique identification only in the following situation: the agent
+       acts on behalf of several ordering customers issuing the same range
+       of reference numbers for each customer.
+       E.g., the ship's agent acts on behalf of several shipping lines
+       issuing for each shipping line the same range of numbers.
+       
+       *   A message contains information on only one visit/conveyance of a
+       seagoing container vessel either arriving or departing.
+       
+       *   A message contains a report of either discharged or loaded
+       containers from or into the seagoing container vessel. One report
+       message does not necessarily cover all loaded/discharged containers.
+       
+       *   An indicator for the equipment status may be completed on
+       container level (EQD-segment), e.g., import, overlanded or
+       shortlanded (for a discharged container) or export (for a loaded
+       container).
+       
+       *   One shipping line can be specified on message level.
+       
+       *   The seagoing container vessel and sea voyage number can be
+       specified on message level.
+       
+       *   For each container its cell position on board the container
+       vessel and its port of discharge can be given.
+       
+       *   For each container dangerous goods information can be specified.
+       
+       *   A supplementary container reference number (container sequence
+       number) is used to refer to the information of the container(s) in
+       the loading order message, if the container prefix and number was
+       not completed in that message.
+       
+       *   Goods item details cannot be completed.
+       
+       The transport sub-working group (D4) has developed recommendations
+       for a harmonised implementation of this message through its subgroup
+       ITIGG (International Transport Implementation Guidelines Group).
+       Users implementing the message are strongly advised to apply these
+       recommendations, which may be obtained from the D4 secretariat.
+
+2.     REFERENCES
+
+       See UNTDID, Part 4, Chapter 2.3 UN/ECE UNSM - General Introduction,
+       Section 1.
+
+3.     TERMS AND DEFINITIONS
+
+3.1    Standard terms and definitions
+
+       See UNTDID, Part 4, Chapter 2.3 UN/ECE UNSM - General Introduction,
+       Section 2.
+
+4.     MESSAGE DEFINITION
+
+4.1    Segment clarification
+
+       This section should be read in conjunction with the segment table
+       which indicates mandatory, conditional and repeating requirements.
+
+<a name="00010"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00010_X">00010</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdunh.htm">UNH</a>, Message header
+        A service segment starting and uniquely identifying a message. The
+        message type code for the Container discharge/loading report
+        message is COARRI.
+
+        Note: Container discharge/loading report messages conforming to
+        this document must contain the following data in segment UNH,
+        composite S009:
+
+        Data element  0065 COARRI
+                      0052 D
+                      0054 19A
+                      0051 UN
+
+<a name="00020"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00020_X">00020</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdbgm.htm">BGM</a>, Beginning of message
+        A segment to indicate the beginning of a message and to transmit
+        identifying number and the further specification of the message
+        type (in data element 1001: Document name code), such as Loading
+        report, Discharge report.
+
+<a name="00030"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00030_X">00030</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsddtm.htm">DTM</a>, Date/time/period
+        A segment to indicate a date and/or time applying to the whole
+        message, such as date and time of document or message issue.
+
+<a name="00040"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00040_X">00040</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdftx.htm">FTX</a>, Free text
+        A segment to specify free form or processable supplementary
+        information, such as:
+        -   change information
+
+
+<a name="00050"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00050_X">00050</a>   Segment group 1:  RFF-DTM
+        A group of segments to specify a reference relating to the whole
+        message, and its date and/or time.
+
+<a name="00060"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00060_X">00060</a>      <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdrff.htm">RFF</a>, Reference
+           A segment to express a reference which applies to the entire
+           message, such as:
+           -   container discharge/loading order reference
+           -   reference to previous message
+
+<a name="00070"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00070_X">00070</a>      <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsddtm.htm">DTM</a>, Date/time/period
+           A segment to indicate date and/or time related to the reference.
+
+
+<a name="00080"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00080_X">00080</a>   Segment group 2:  TDT-DTM-RFF-SG3
+        A group of segments to indicate the main carriage means of
+        transport.
+
+<a name="00090"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00090_X">00090</a>      <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdtdt.htm">TDT</a>, Transport information
+           A segment identifying the voyage of the vessel relevant to the
+           message (main transport).
+
+<a name="00100"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00100_X">00100</a>      <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsddtm.htm">DTM</a>, Date/time/period
+           A segment to identify the date(s) and time(s) related to the
+           main carriage means of transport.
+
+<a name="00110"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00110_X">00110</a>      <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdrff.htm">RFF</a>, Reference
+           A segment identifying a relevant reference number, such as:
+           -   shipping
+           -   syndicate
+           -   marketing organization
+           -   conference code
+
+
+<a name="00120"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00120_X">00120</a>      Segment group 3:  LOC-DTM
+           A segment group to identify locations related to the means of
+           transport.
+
+<a name="00130"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00130_X">00130</a>         <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdloc.htm">LOC</a>, Place/location identification
+              A segment to specify a location related to the means of
+              transport such as places and ports of arrival and departure.
+
+<a name="00140"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00140_X">00140</a>         <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsddtm.htm">DTM</a>, Date/time/period
+              A segment to specify the date(s) and time(s) related to a
+              location.
+
+
+<a name="00150"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00150_X">00150</a>   Segment group 4:  NAD-SG5
+        A group of segments to identify a party and related contacts.
+
+<a name="00160"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00160_X">00160</a>      <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdnad.htm">NAD</a>, Name and address
+           A segment to identify the party's name, address, and function,
+           and other addresses, such as:
+           -   message recipient
+           -   message sender
+           -   ordering customer
+           -   ordering customer agent
+
+
+<a name="00170"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00170_X">00170</a>      Segment group 5:  CTA-COM
+           A group of segments to identify a contact and its communications
+           related to the party.
+
+<a name="00180"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00180_X">00180</a>         <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdcta.htm">CTA</a>, Contact information
+              A segment to identify a person or department of a message
+              sender and/or message recipient, such as:
+              -   information contact
+
+<a name="00190"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00190_X">00190</a>         <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdcom.htm">COM</a>, Communication contact
+              A segment to identify a communication number of a person or
+              department to whom communication should be directed.
+
+
+<a name="00200"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00200_X">00200</a>   Segment group 6:  EQD-RFF-GDS-TMD-DTM-SG7-MEA-DIM-SG8-SEL-FTX-PCD-
+                          SG9-EQA-PIA-COD-HAN-SG11-SG12-NAD
+        A group of segments to specify containers either loaded or
+        discharged; in the latter case - only in case of shortlanded - the
+        group of segments is to specify containers that had to be
+        discharged (according to the discharge order message).
+        
+        In a normal discharge report and load report message the container
+        details are only required if they differ from the details given in
+        the respective order message.
+        In case of overlanded containers this group will contain the full
+        container details giving as much information as possible. In case
+        of shortlanded containers this group will only contain the
+        container prefix and number.
+
+<a name="00210"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00210_X">00210</a>      <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdeqd.htm">EQD</a>, Equipment details
+           A segment identifying a container, container size/type.
+           The equipment status may be e.g. overlanded, shortlanded,
+           import, export.
+
+<a name="00220"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00220_X">00220</a>      <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdrff.htm">RFF</a>, Reference
+           A segment identifying a relevant reference number, such as:
+           -   container sequence number
+           -   booking reference number
+
+<a name="00230"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00230_X">00230</a>      <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdgds.htm">GDS</a>, Nature of cargo
+           A segment to show the broad classification of the goods within a
+           container for operational and general information purposes.
+
+<a name="00240"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00240_X">00240</a>      <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdtmd.htm">TMD</a>, Transport movement details
+           A segment to indicate a Full Container Load (FCL) or a Less than
+           Full Container Load (LCL).
+
+<a name="00250"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00250_X">00250</a>      <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsddtm.htm">DTM</a>, Date/time/period
+           A segment to identify a date and time related to the equipment,
+           such as:
+           -  Date and/or time of actual loading or discharge
+           -  CSC expiration date (International Convention for Safe
+           Containers)
+
+
+<a name="00260"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00260_X">00260</a>      Segment group 7:  LOC-DTM
+           A group of segments to identify a location or country related to
+           the equipment.
+
+<a name="00270"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00270_X">00270</a>         <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdloc.htm">LOC</a>, Place/location identification
+              A segment to identify a location or country related to the
+              equipment, such as:
+              -   stowage cell
+              -   (final) place/port of discharge
+              -   transhipment place
+              -   place of delivery
+              -   country of origin/destination
+
+<a name="00280"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00280_X">00280</a>         <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsddtm.htm">DTM</a>, Date/time/period
+              A segment to specify date(s) and time(s) related to a
+              location.
+
+<a name="00290"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00290_X">00290</a>      <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdmea.htm">MEA</a>, Measurements
+           A segment specifying a physical measurement related to the
+           equipment, such as:
+           -   gross weight
+
+<a name="00300"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00300_X">00300</a>      <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsddim.htm">DIM</a>, Dimensions
+           A segment specifying physical dimensions related to the
+           equipment, such as:
+           -   gross dimensions
+           -   off standard dimension general
+           -   off standard dimension left
+           -   off standard dimension right
+           -   off standard dimension back
+           -   off standard dimension front
+
+
+<a name="00310"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00310_X">00310</a>      Segment group 8:  TMP-RNG
+           A segment group to identify transport related temperature
+           settings.
+
+<a name="00320"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00320_X">00320</a>         <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdtmp.htm">TMP</a>, Temperature
+              A segment which identifies the transport temperature setting
+              of the container.
+
+<a name="00330"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00330_X">00330</a>         <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdrng.htm">RNG</a>, Range details
+              A segment to specify the transport temperature range setting
+              of the container.
+
+<a name="00340"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00340_X">00340</a>      <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdsel.htm">SEL</a>, Seal number
+           A segment identifying a seal number related to the equipment.
+
+<a name="00350"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00350_X">00350</a>      <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdftx.htm">FTX</a>, Free text
+           A segment to specify supplementary information related to the
+           equipment, such as:
+           -   blockade reason
+           -   government inspection service
+           -   container loading remarks
+           -   container remarks
+           -   container order information
+           -   additional remarks concerning the container
+           -   container safety convention plate
+           -   continuous examination program (ACEP)
+
+<a name="00360"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00360_X">00360</a>      <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdpcd.htm">PCD</a>, Percentage details
+           A segment to specify percentages related to the equipment such
+           as percentage humidity.
+
+
+<a name="00370"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00370_X">00370</a>      Segment group 9:  DGS-ATT-FTX-MEA-SG10
+           A group of segments to specify dangerous goods details.
+
+<a name="00380"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00380_X">00380</a>         <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsddgs.htm">DGS</a>, Dangerous goods
+              A segment to identify the UN-number and the class of the
+              dangerous goods loaded in the container.
+
+<a name="00390"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00390_X">00390</a> +       <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdatt.htm">ATT</a>, Attribute
+              A segment to specify an additional dangerousgoods attribute
+              relating to this hazard such as such as UNDG extension code,
+              proper shipping name or others.
+
+<a name="00400"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00400_X">00400</a>         <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdftx.htm">FTX</a>, Free text
+              A segment to give additional information regarding dangerous
+              goods.
+
+<a name="00410"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00410_X">00410</a>         <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdmea.htm">MEA</a>, Measurements
+              A segment to specify measurements of the dangerous goods,
+              such as: - net net weight.
+
+
+<a name="00420"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00420_X">00420</a>         Segment group 10: CTA-COM
+              A group of segments to specify contact information.
+
+<a name="00430"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00430_X">00430</a>            <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdcta.htm">CTA</a>, Contact information
+                 A segment to identify a person or department to be
+                 contacted regarding dangerous goods.
+
+<a name="00440"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00440_X">00440</a>            <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdcom.htm">COM</a>, Communication contact
+                 A segment to specify communication details of the
+                 dangerous goods contact.
+
+<a name="00450"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00450_X">00450</a>      <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdeqa.htm">EQA</a>, Attached equipment
+           A segment to identify clip-on units, such as:
+           -   generator sets
+
+<a name="00460"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00460_X">00460</a>      <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdpia.htm">PIA</a>, Additional product id
+           A segment to specify a commodity code relating to goods in the
+           container.
+
+<a name="00470"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00470_X">00470</a>      <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdcod.htm">COD</a>, Component details
+           A segment to specify the details of the components of transport
+           equipment.
+
+<a name="00480"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00480_X">00480</a>      <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdhan.htm">HAN</a>, Handling instructions
+           A segment to specify handling instructions related to the
+           equipment.
+
+
+<a name="00490"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00490_X">00490</a>      Segment group 11: DAM-COD
+           A group of segments to specify damage details related to the
+           equipment.
+
+<a name="00500"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00500_X">00500</a>         <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsddam.htm">DAM</a>, Damage
+              A segment to specify equipment damages, such as the point of
+              the damage on the equipment, and the type of damage.
+
+<a name="00510"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00510_X">00510</a>         <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdcod.htm">COD</a>, Component details
+              A segment to specify component details of the damaged
+              equipment.
+
+
+<a name="00520"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00520_X">00520</a>      Segment group 12: TDT-DTM-SG13
+           A group of segments to specify the planned on-carriage details
+           in case this message is a discharge report message.
+
+<a name="00530"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00530_X">00530</a>         <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdtdt.htm">TDT</a>, Transport information
+              A segment to identify the on-carriage transport details of
+              the mode, means of transport by which the container will
+              depart after being discharged.
+
+<a name="00540"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00540_X">00540</a>         <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsddtm.htm">DTM</a>, Date/time/period
+              A segment to specify a date/time relating to the on-carriage
+              transport, such as arrival or departure date/time.
+
+
+<a name="00550"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00550_X">00550</a>         Segment group 13: LOC-DTM
+              A group of segments to identify locations related to on-
+              carriage transport.
+
+<a name="00560"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00560_X">00560</a>            <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdloc.htm">LOC</a>, Place/location identification
+                 A segment identifying a location related to the transport
+                 details, such as:
+                 - place of departure
+
+<a name="00570"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00570_X">00570</a>            <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsddtm.htm">DTM</a>, Date/time/period
+                 A segment to specify a date/time relating to the on-
+                 carriage transport, such as arrival.
+
+<a name="00580"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00580_X">00580</a>      <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdnad.htm">NAD</a>, Name and address
+           A segment to specify a related address or party, such as:
+           -   container operator
+
+<a name="00590"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00590_X">00590</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdcnt.htm">CNT</a>, Control total
+        A segment to specify the number of containers in the message,
+        explicitly given by the sender.
+
+<a name="00600"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00600_X">00600</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdunt.htm">UNT</a>, Message trailer
+        A service segment ending a message, giving the total number of
+        segments in the message (including the UNH &amp; UNT) and the control
+        reference number of the message.
+
+4.2    Segment index (alphabetical sequence by tag)
+
+       +  <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdatt.htm">ATT</a> Attribute
+          <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdbgm.htm">BGM</a> Beginning of message
+          <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdcnt.htm">CNT</a> Control total
+          <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdcod.htm">COD</a> Component details
+          <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdcom.htm">COM</a> Communication contact
+          <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdcta.htm">CTA</a> Contact information
+          <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsddam.htm">DAM</a> Damage
+          <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsddgs.htm">DGS</a> Dangerous goods
+          <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsddim.htm">DIM</a> Dimensions
+          <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsddtm.htm">DTM</a> Date/time/period
+          <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdeqa.htm">EQA</a> Attached equipment
+          <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdeqd.htm">EQD</a> Equipment details
+          <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdftx.htm">FTX</a> Free text
+          <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdgds.htm">GDS</a> Nature of cargo
+          <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdhan.htm">HAN</a> Handling instructions
+          <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdloc.htm">LOC</a> Place/location identification
+          <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdmea.htm">MEA</a> Measurements
+          <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdnad.htm">NAD</a> Name and address
+          <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdpcd.htm">PCD</a> Percentage details
+          <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdpia.htm">PIA</a> Additional product id
+          <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdrff.htm">RFF</a> Reference
+          <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdrng.htm">RNG</a> Range details
+          <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdsel.htm">SEL</a> Seal number
+          <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdtdt.htm">TDT</a> Transport information
+          <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdtmd.htm">TMD</a> Transport movement details
+          <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdtmp.htm">TMP</a> Temperature
+          <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdunh.htm">UNH</a> Message header
+          <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdunt.htm">UNT</a> Message trailer
+
+</p><p>
+</p><p>
+4.3    Message structure
+
+4.3.1  Segment table
+
+Pos     Tag Name                                     S   R
+
+<a name="00010_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00010">00010</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdunh.htm">UNH</a> Message header                           M   1     
+<a name="00020_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00020">00020</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdbgm.htm">BGM</a> Beginning of message                     M   1     
+<a name="00030_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00030">00030</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsddtm.htm">DTM</a> Date/time/period                         C   9     
+<a name="00040_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00040">00040</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdftx.htm">FTX</a> Free text                                C   9     
+
+<a name="00050_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00050">00050</a>       ---- Segment group 1  ------------------ C   9----------------+
+<a name="00060_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00060">00060</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdrff.htm">RFF</a> Reference                                M   1                |
+<a name="00070_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00070">00070</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsddtm.htm">DTM</a> Date/time/period                         C   9----------------+
+
+<a name="00080_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00080">00080</a>       ---- Segment group 2  ------------------ M   1----------------+
+<a name="00090_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00090">00090</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdtdt.htm">TDT</a> Transport information                    M   1                |
+<a name="00100_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00100">00100</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsddtm.htm">DTM</a> Date/time/period                         C   9                |
+<a name="00110_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00110">00110</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdrff.htm">RFF</a> Reference                                C   9                |
+                                                                          |
+<a name="00120_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00120">00120</a>       ---- Segment group 3  ------------------ C   9---------------+|
+<a name="00130_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00130">00130</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdloc.htm">LOC</a> Place/location identification            M   1               ||
+<a name="00140_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00140">00140</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsddtm.htm">DTM</a> Date/time/period                         C   9---------------++
+
+<a name="00150_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00150">00150</a>       ---- Segment group 4  ------------------ M   9----------------+
+<a name="00160_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00160">00160</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdnad.htm">NAD</a> Name and address                         M   1                |
+                                                                          |
+<a name="00170_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00170">00170</a>       ---- Segment group 5  ------------------ C   9---------------+|
+<a name="00180_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00180">00180</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdcta.htm">CTA</a> Contact information                      M   1               ||
+<a name="00190_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00190">00190</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdcom.htm">COM</a> Communication contact                    C   9---------------++
+
+<a name="00200_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00200">00200</a> *     ---- Segment group 6  ------------------ C   99999------------+
+<a name="00210_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00210">00210</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdeqd.htm">EQD</a> Equipment details                        M   1                |
+<a name="00220_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00220">00220</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdrff.htm">RFF</a> Reference                                C   9                |
+<a name="00230_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00230">00230</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdgds.htm">GDS</a> Nature of cargo                          C   9                |
+<a name="00240_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00240">00240</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdtmd.htm">TMD</a> Transport movement details               C   9                |
+<a name="00250_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00250">00250</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsddtm.htm">DTM</a> Date/time/period                         C   9                |
+                                                                          |
+<a name="00260_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00260">00260</a>       ---- Segment group 7  ------------------ C   9---------------+|
+<a name="00270_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00270">00270</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdloc.htm">LOC</a> Place/location identification            M   1               ||
+<a name="00280_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00280">00280</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsddtm.htm">DTM</a> Date/time/period                         C   9---------------+|
+<a name="00290_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00290">00290</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdmea.htm">MEA</a> Measurements                             C   9                |
+<a name="00300_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00300">00300</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsddim.htm">DIM</a> Dimensions                               C   9                |
+                                                                          |
+<a name="00310_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00310">00310</a>       ---- Segment group 8  ------------------ C   9---------------+|
+<a name="00320_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00320">00320</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdtmp.htm">TMP</a> Temperature                              M   1               ||
+<a name="00330_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00330">00330</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdrng.htm">RNG</a> Range details                            C   1---------------+|
+<a name="00340_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00340">00340</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdsel.htm">SEL</a> Seal number                              C   9                |
+<a name="00350_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00350">00350</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdftx.htm">FTX</a> Free text                                C   9                |
+<a name="00360_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00360">00360</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdpcd.htm">PCD</a> Percentage details                       C   9                |
+                                                                          |
+<a name="00370_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00370">00370</a> *     ---- Segment group 9  ------------------ C   999-------------+|
+<a name="00380_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00380">00380</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsddgs.htm">DGS</a> Dangerous goods                          M   1               ||
+<a name="00390_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00390">00390</a> + <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdatt.htm">ATT</a> Attribute                                C   9               ||
+<a name="00400_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00400">00400</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdftx.htm">FTX</a> Free text                                C   9               ||
+<a name="00410_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00410">00410</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdmea.htm">MEA</a> Measurements                             C   9               ||
+                                                                         ||
+<a name="00420_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00420">00420</a>       ---- Segment group 10 ------------------ C   9--------------+||
+<a name="00430_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00430">00430</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdcta.htm">CTA</a> Contact information                      M   1              |||
+<a name="00440_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00440">00440</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdcom.htm">COM</a> Communication contact                    C   9--------------++|
+<a name="00450_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00450">00450</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdeqa.htm">EQA</a> Attached equipment                       C   9                |
+<a name="00460_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00460">00460</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdpia.htm">PIA</a> Additional product id                    C   9                |
+<a name="00470_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00470">00470</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdcod.htm">COD</a> Component details                        C   1                |
+<a name="00480_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00480">00480</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdhan.htm">HAN</a> Handling instructions                    C   9                |
+                                                                          |
+<a name="00490_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00490">00490</a>       ---- Segment group 11 ------------------ C   9---------------+|
+<a name="00500_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00500">00500</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsddam.htm">DAM</a> Damage                                   M   1               ||
+<a name="00510_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00510">00510</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdcod.htm">COD</a> Component details                        C   1---------------+|
+                                                                          |
+<a name="00520_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00520">00520</a>       ---- Segment group 12 ------------------ C   1---------------+|
+<a name="00530_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00530">00530</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdtdt.htm">TDT</a> Transport information                    M   1               ||
+<a name="00540_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00540">00540</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsddtm.htm">DTM</a> Date/time/period                         C   9               ||
+                                                                         ||
+<a name="00550_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00550">00550</a>       ---- Segment group 13 ------------------ C   9--------------+||
+<a name="00560_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00560">00560</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdloc.htm">LOC</a> Place/location identification            M   1              |||
+<a name="00570_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00570">00570</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsddtm.htm">DTM</a> Date/time/period                         C   9--------------++|
+<a name="00580_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00580">00580</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdnad.htm">NAD</a> Name and address                         C   9----------------+
+<a name="00590_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00590">00590</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdcnt.htm">CNT</a> Control total                            C   1     
+<a name="00600_X"></a><a href="https://service.unece.org/trade/untdid/d19a/trmd/coarri_c.htm#00600">00600</a>   <a href="https://service.unece.org/trade/untdid/d19a/trsd/trsdunt.htm">UNT</a> Message trailer                          M   1     
+</p><p>
+</p><p>
+    </p><center><font face="arial, Helvetica" size="-1" color="#003399"><a href="http://live.unece.org/legal_notice/copyrightnotice.html">Copyright United Nations,</a> all rights reserved <br> &nbsp;<br> <a href="http://www.unece.org/"> UN Economic Commission for Europe</a><br> Palais des Nations, CH-1211 Geneva 10, Switzerland <br> Tel: +41-22 917 1366 Fax: +41-22 917 0037  E-mail: <a href="mailto:TradeMaster@unece.org">TradeMaster@unece.org</a><br>&nbsp;<br><a href="http://www.unece.org/trade/untdid/welcome.htm">UN/EDIFACT Directories</a></font></center>
+
+
+</pre></body></html>
