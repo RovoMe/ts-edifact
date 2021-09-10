@@ -16,9 +16,7 @@
     },
     "plugins": [
         "@typescript-eslint",
-        "@typescript-eslint/tslint",
         "eslint-plugin-jsdoc",
-        "@typescript-eslint/eslint-plugin-tslint",
         "eslint-plugin-import"
     ],
     "extends": [
@@ -120,49 +118,6 @@
         ],
         "use-isnan": "error",
         "valid-typeof": "error",
-        "yoda": "error",
-        "@typescript-eslint/tslint/config": [
-            "error",
-            {
-                "rules": {
-                    "encoding": true,
-                    "file-header": [
-                        true,
-                        ".*"
-                    ],
-                    "import-spacing": true,
-                    "match-default-export-name": true,
-                    "no-boolean-literal-compare": true,
-                    "no-mergeable-namespace": true,
-                    "no-reference-import": true,
-                    "no-unnecessary-callback-wrapper": true,
-                    "number-literal-format": true,
-                    "one-line": [
-                        true,
-                        "check-catch",
-                        "check-finally",
-                        "check-else",
-                        "check-open-brace",
-                        "check-whitespace"
-                    ],
-                    "prefer-method-signature": true,
-                    "prefer-while": true,
-                    "typedef": [
-                        true,
-                        "variable-declaration",
-                        "call-signature",
-                        "variable-declaration-ignore-function"
-                    ],
-                    "whitespace": [
-                        true,
-                        "check-branch",
-                        "check-operator",
-                        "check-separator",
-                        "check-preblock",
-                        "check-type"
-                    ]
-                }
-            }
-        ]
+        "yoda": "error"
     }
 }

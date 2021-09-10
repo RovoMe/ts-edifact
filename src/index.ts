@@ -48,8 +48,6 @@ export {
     RecipientsRef
 } from "./interchangeBuilder";
 export {
-    Map,
-    MapConstructor,
     sanitizeFloat,
     Segment,
     BeginOfMessage,

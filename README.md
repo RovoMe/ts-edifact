@@ -21,6 +21,22 @@ Currently supported functionality:
 * Generation of Edifact specification definition files (i.e. `D01B_INVOIC.struct.json`, `D01B_INVOIC.segments.json` and `D01B_INVOIC.elements.json`) obtained from the UNECE page directly.
 * On using the `Reader` class, updating the charset according to the one specified in the `UNB` segment of the interchange is supported.
 
+## Current status
+
+We switched from `ts-edifact` to a currently proprietary Java-based implementation I developed in the past year. During this process I learned a lot in regards to parsing Edifact files and, sadly, the current `ts-edifact` version has its limitations which briefly summarized look as such:
+
+* The syntax version has no impact on the Edifact document. Neither charsets are correctly restricted or timestamps validated here correctly nor are service segments initialized here for the appropriate syntax version
+* Charsets ([v3](https://www.gefeg.com/jswg/cl/v3/21a/cl1.htm), [v4](https://www.gefeg.com/jswg/cl/v4x/40219/cl1.htm)) in `UNB` segments are not correctly supported which can lead to issues for `UNOX` and `UNOY` encodings that may utilize up to 4 bytes per character
+* Code-list values are not parsed and therefore not included in the validation process
+* Objects generated for the object tree do not respect the specifications in different Edifact directories
+* `segments.ts` and `elements.ts` only support basic service segments (`UNB`, `UNH`, ...), that are more or less mixing things of different syntax versions, but are missing a lot of [others](https://www.gefeg.com/jswg/v3/se/sl1.htm), especially ones defined in [syntax version 4](https://www.gefeg.com/jswg/v4x/se/sl1.htm)
+* Parsing and validation should be decoupled
+* More configuration options are needed
+* More sample files are needed, especially ones with uncommon charsets
+* Better mechanism for loading message structure, segments and element definition tables needed to reduce the size of this artifact and to load definitions only when really needed. Any help from more experienced JS/TS developers is more than appreciated here on how such a mechanism may look like
+
+Changing these things, unfortunately, takes a bit time of which I'm currently not having that much of. I try to port the necessary changes to this project as soon as possible, but my schedule for the upcoming months looks pretty exhausting TBH.
+
 ## Usage
 
 This example parses a document and translates it to a javascript array `result` containing segments. Each segment is an object containing a `name` and an `elements` array. An element is an array of components.

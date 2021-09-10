@@ -18,24 +18,6 @@
 
 import { ResultType } from "./reader";
 
-// lend from lib.es2015.collection.d.ts as it refused to get imported
-export interface Map<K, V> {
-    clear(): void;
-    delete(key: K): boolean;
-    forEach(callbackfn: (value: V, key: K, map: Map<K, V>) => void, thisArg?: unknown): void;
-    get(key: K): V | undefined;
-    has(key: K): boolean;
-    set(key: K, value: V): this;
-    readonly size: number;
-}
-
-export interface MapConstructor {
-    new(): Map<unknown, unknown>;
-    new<K, V>(entries?: readonly (readonly [K, V])[] | null): Map<K, V>;
-    readonly prototype: Map<unknown, unknown>;
-}
-declare let Map: MapConstructor;
-
 export function sanitizeFloat(str: string, decimalSymbol: string): number {
     const updatedStr: string = str.replace(decimalSymbol, ".");
     return parseFloat(updatedStr);
