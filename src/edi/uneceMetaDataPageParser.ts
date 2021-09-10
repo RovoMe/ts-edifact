@@ -17,7 +17,7 @@
  */
 
 import { StateMachineDefinition } from "@initics/tsm";
-import { DomHandler } from "htmlparser2";
+import { UNECEDomHandler } from "./uneceDomHandler";
 
 import { EdifactMessageSpecificationImpl } from "./messageStructureParser";
 import { UNECEPageParser } from "./unecePageParser";
@@ -48,10 +48,10 @@ export class UNECEMetaDataPageParser extends UNECEPageParser {
         super(SM_DEFINITION);
     }
 
-    protected setupHandler(): DomHandler {
-        const handler: DomHandler = super.setupHandler();
+    protected setupHandler(): UNECEDomHandler {
+        const handler: UNECEDomHandler = super.setupHandler();
 
-        handler.ontext = (text: string) => {
+        handler.onText = (text: string) => {
             switch (this.sm.state) {
                 case State.initial:
                     if (text.includes('Message Type')) {

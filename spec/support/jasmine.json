@@ -4,7 +4,7 @@
         "**/*.spec.ts"
     ],
     "helpers": [
-        "jasmine-helpers/**/*.ts"
+        "helpers/**/*.ts"
     ],
     "stopSpecOnExpectationFailure": false,
     "reporters": [

@@ -13,7 +13,7 @@ const config = {
   output: {
     // the bundle is stored in the 'dist' folder (check package.json)
     path: path.resolve(__dirname, 'dist'),
-    filename: 'extension.js',
+    filename: 'index.js',
     libraryTarget: 'commonjs2',
     devtoolModuleFilenameTemplate: '../[resource-path]'
   },

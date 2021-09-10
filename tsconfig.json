@@ -7,19 +7,35 @@
 			"es6"
 		],
 		"rootDir": "src",
+		/* The source root path for debuggers to find the reference source code */
+		"sourceRoot": "./lib",
+		/* The output directory to write the translated JS and source map files to */
 		"outDir": "./lib",
+		/* Enable coloring and formatting TypeScript output for easier reading */
+		"pretty": true,
+		/* Generate .d.ts files alongside generated .js files */
 		"declaration": true,
+		/* Generate .d.ts files for source maps */
+		"declarationMap": true,
+		/* Create a source mapping debuggers can use to trace back from JS code to TS code */
 		"sourceMap": true,
 
 		/* Strict Type-Checking Options */
 		"strict": true,
-		"esModuleInterop": true, // Enable emit interop between CommonJS and ES modules via creation of namespace objects for all imports
+		/* Enable emit interop between CommonJS and ES modules via creation of namespace objects for all imports */
+		"esModuleInterop": true,
 
 		/* Advanced Options */
+
+		/* Remove comments from generated files to reduce size */
 		"removeComments": true,
+		/* Do not include unsued local variables in the generaed output */
 		"noUnusedLocals": true,
+		/* Enable strict checks for possible null values */
 		"strictNullChecks": true,
+		/* Skip type checking all .d.ts files */
 		"skipLibCheck": true,
+		/* Enable importing JSON files */
 		"resolveJsonModule": true,
 	},
 	"include": [

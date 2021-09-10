@@ -17,7 +17,7 @@
  */
 
 import { StateMachineDefinition } from "@initics/tsm";
-import { DomHandler } from "htmlparser2";
+import { UNECEDomHandler } from "./uneceDomHandler";
 import { MessageType } from "../tracker";
 
 import { EdifactMessageSpecification } from "./messageStructureParser";
@@ -71,8 +71,8 @@ export class UNECEStructurePageParser extends UNECEPageParser {
         this.segmentNames = [];
     }
 
-    protected setupHandler(): DomHandler {
-        const helper: DomHandler = super.setupHandler();
+    protected setupHandler(): UNECEDomHandler {
+        const helper: UNECEDomHandler = super.setupHandler();
 
         let index: number = 0;
         const stack: MessageType[][] = [];
@@ -88,7 +88,7 @@ export class UNECEStructurePageParser extends UNECEPageParser {
 
         stack.push(this.spec.messageStructureDefinition);
 
-        helper.ontext = (text: string) => {
+        helper.onText = (text: string) => {
             switch (this.sm.state) {
                 case State.initial:
                     if (text.includes('Message structure')) {
@@ -178,8 +178,7 @@ export class UNECEStructurePageParser extends UNECEPageParser {
                 default: this.throwInvalidParserState(this.sm.state);
             }
         };
-
-        helper.onopentag = name => {
+        helper.onOpenTag = name => {
             if (this.sm.state === State.messageStructureStart && name === 'a') {
                 this.sm.transition(State.segmentPosition);
             }

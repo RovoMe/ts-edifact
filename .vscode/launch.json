@@ -11,12 +11,19 @@
 			"request": "launch",
 			"program": "${workspaceFolder}/node_modules/jasmine-ts/lib/index",
 			"args": [
-				"--config=./spec/support/jasmine.json",
-				"${file}"
+				"--config=./spec/support/jasmine.json"
 			],
 			"console": "integratedTerminal",
-			"internalConsoleOptions": "neverOpen",
-			"preLaunchTask": "build"
+			"internalConsoleOptions": "neverOpen"
+		},
+		{
+			"name": "Debug Jasmine Test",
+			"type": "node",
+			"request": "launch",
+			"program": "${workspaceFolder}/node_modules/jasmine-ts/lib/index",
+			"args": ["--config=./spec/support/jasmine.json", "${file}"],
+			"console": "internalConsole",
+			"internalConsoleOptions": "neverOpen"
 		}
 	]
 }

@@ -16,7 +16,8 @@
  * limitations under the License.
  */
 
-import { Parser, DomHandler } from "htmlparser2";
+import { Parser } from "htmlparser2";
+import { UNECEDomHandler } from "./uneceDomHandler";
 import { StateMachine, StateMachineDefinition } from "@initics/tsm";
 
 import { isDefined } from "../util";
@@ -44,8 +45,16 @@ export abstract class UNECEPageParser {
         parser.end();
     }
 
-    protected setupHandler(): DomHandler {
-        return new DomHandler();
+    protected setupHandler(): UNECEDomHandler {
+        return new class extends UNECEDomHandler {
+            public override onOpenTag(): void {
+                //
+            }
+
+            public override onText(): void {
+                //
+            }
+        }();
     }
 
     protected extractTextValue(text: string, regex: RegExp, index: number = 0): string {
