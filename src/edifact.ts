@@ -1067,22 +1067,31 @@ export class MessageDetails implements Segment {
 
 // DTM
 
-export class DateTimePeriod implements Segment {
-
-    tag = "DTM";
+class DateTimePeriod {
 
     dateTimeOrPeriodFunctionCodeQualifier: string;
     dateTimeOrPeriodText: string | undefined;
     dateTimeOrPeriodFormatCode: string | undefined;
 
+    constructor(data: string[]) {
+        this.dateTimeOrPeriodFunctionCodeQualifier = data[0];
+        if (data.length > 1) {
+            this.dateTimeOrPeriodText = data[1];
+        }
+        if (data.length > 2) {
+            this.dateTimeOrPeriodFormatCode = data[2];
+        }
+    }
+}
+
+export class DateTimePeriod implements Segment {
+
+    tag = "DTM";
+
+    dateTimePeriod: DateTimePeriod;
+
     constructor(data: ResultType) {
-        this.dateTimeOrPeriodFunctionCodeQualifier = data.elements[0][0];
-        if (data.elements[0].length > 1) {
-            this.dateTimeOrPeriodText = data.elements[0][1];
-        }
-        if (data.elements[0].length > 2) {
-            this.dateTimeOrPeriodFormatCode = data.elements[0][2];
-        }
+        this.dateTimePeriod = new DateTimePeriod(data.elements[0]);
     }
 }
 
