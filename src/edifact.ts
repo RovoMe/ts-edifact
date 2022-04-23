@@ -2066,9 +2066,9 @@ class Street {
 
     constructor(data: string[]) {
         this.streetAndNumberOrPostOfficeBoxIdentifier1 = data[0];
-        this.streetAndNumberOrPostOfficeBoxIdentifier2 = data[0];
-        this.streetAndNumberOrPostOfficeBoxIdentifier3 = data[0];
-        this.streetAndNumberOrPostOfficeBoxIdentifier4 = data[0];
+        this.streetAndNumberOrPostOfficeBoxIdentifier2 = data[1];
+        this.streetAndNumberOrPostOfficeBoxIdentifier3 = data[2];
+        this.streetAndNumberOrPostOfficeBoxIdentifier4 = data[3];
     }
 }
 
