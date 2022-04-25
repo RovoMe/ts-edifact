@@ -1088,7 +1088,7 @@ export class DateTimePeriod implements Segment {
 
     tag = "DTM";
 
-    dateTimePeriod: DateTimePeriod;
+    dateTimePeriod: DateTimePeriodData;
 
     constructor(data: ResultType) {
         this.dateTimePeriod = new DateTimePeriod(data.elements[0]);
