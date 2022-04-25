@@ -1067,7 +1067,7 @@ export class MessageDetails implements Segment {
 
 // DTM
 
-class DateTimePeriod {
+class DateTimePeriodData {
 
     dateTimeOrPeriodFunctionCodeQualifier: string;
     dateTimeOrPeriodText: string | undefined;
