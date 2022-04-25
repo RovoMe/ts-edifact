@@ -1091,7 +1091,7 @@ export class DateTimePeriod implements Segment {
     dateTimePeriod: DateTimePeriodData;
 
     constructor(data: ResultType) {
-        this.dateTimePeriod = new DateTimePeriod(data.elements[0]);
+        this.dateTimePeriod = new DateTimePeriodData(data.elements[0]);
     }
 }
 
