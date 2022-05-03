@@ -159,7 +159,7 @@ export class UNECEMessageStructureParser implements MessageStructureParser {
             ) {
                 state = SegmentPart.Data;
             } else if (state === SegmentPart.Data && !line.includes("<P>")) {
-                const regexp: RegExp = /^([\d]*)\s*?([X|\\*]?)\s*<A.*>([a-zA-Z0-9]*)<\/A>([a-zA-Z0-9 ,\-\\/&]{44,})([M|C])\s*([\d]*)\s*([a-zA-Z0-9\\.]*).*$/g;
+                const regexp: RegExp = /^([\d]*)\s*?([X|\\*]?)\s*<A.*>([a-zA-Z0-9]*)<\/A>([a-zA-Z0-9 ,\-\\/&\\()]{44,})([M|C])\s*([\d]*)\s*([a-zA-Z0-9\\.]*).*$/g;
                 const arr: RegExpExecArray | null = regexp.exec(line);
                 if (isDefined(arr)) {
                     const segGroupId: string | undefined = arr[1] === "" ? undefined : arr[1];
