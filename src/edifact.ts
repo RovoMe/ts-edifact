@@ -1067,22 +1067,31 @@ export class MessageDetails implements Segment {
 
 // DTM
 
-export class DateTimePeriod implements Segment {
-
-    tag = "DTM";
+class DateTimePeriodData {
 
     dateTimeOrPeriodFunctionCodeQualifier: string;
     dateTimeOrPeriodText: string | undefined;
     dateTimeOrPeriodFormatCode: string | undefined;
 
+    constructor(data: string[]) {
+        this.dateTimeOrPeriodFunctionCodeQualifier = data[0];
+        if (data.length > 1) {
+            this.dateTimeOrPeriodText = data[1];
+        }
+        if (data.length > 2) {
+            this.dateTimeOrPeriodFormatCode = data[2];
+        }
+    }
+}
+
+export class DateTimePeriod implements Segment {
+
+    tag = "DTM";
+
+    dateTimePeriod: DateTimePeriodData;
+
     constructor(data: ResultType) {
-        this.dateTimeOrPeriodFunctionCodeQualifier = data.elements[0][0];
-        if (data.elements[0].length > 1) {
-            this.dateTimeOrPeriodText = data.elements[0][1];
-        }
-        if (data.elements[0].length > 2) {
-            this.dateTimeOrPeriodFormatCode = data.elements[0][2];
-        }
+        this.dateTimePeriod = new DateTimePeriodData(data.elements[0]);
     }
 }
 
@@ -2066,9 +2075,9 @@ class Street {
 
     constructor(data: string[]) {
         this.streetAndNumberOrPostOfficeBoxIdentifier1 = data[0];
-        this.streetAndNumberOrPostOfficeBoxIdentifier2 = data[0];
-        this.streetAndNumberOrPostOfficeBoxIdentifier3 = data[0];
-        this.streetAndNumberOrPostOfficeBoxIdentifier4 = data[0];
+        this.streetAndNumberOrPostOfficeBoxIdentifier2 = data[1];
+        this.streetAndNumberOrPostOfficeBoxIdentifier3 = data[2];
+        this.streetAndNumberOrPostOfficeBoxIdentifier4 = data[3];
     }
 }
 

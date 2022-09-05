@@ -161,7 +161,7 @@ export class UNECEStructurePageParser extends UNECEPageParser {
                         // reset the stack if a new section begins
                         resetStack();
                         if (detailSection) {
-                            section = 'detial';
+                            section = 'detail';
                             this.sm.transition(State.detailSection);
                         } else {
                             section = 'summary';
